@@ -6,4 +6,4 @@ Goods auction site with Node.js.
   등
   장
   *^^*
-<h1> 나가
+<h1> 연재도 있어요
