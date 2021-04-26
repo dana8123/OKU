@@ -1,5 +1,4 @@
 // main 연결페이지
-
 const express = require('express');
 const app = express();
 require('dotenv').config();
@@ -25,7 +24,7 @@ const {productRouter} = require("./routes/productRoutes");
 const {userRouter} = require("./routes/userRoutes");
 
 app.use('/',[chatRouter]);
-app.use('/',[productRouter]);
+app.use('/products',[productRouter]);
 app.use('/user',[userRouter]);
 
 app.listen(port, () => {
