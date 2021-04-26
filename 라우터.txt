@@ -4,7 +4,11 @@
 /product/:id 상품상세
 /product/like/:id 찜하기
 /product/auction/:id 입찰하기
-/product/
+/product/recentlist 최신등록상품
+/product/deadlinelist 마감임박 상품
+/product/:bigCategory
+/product/:bigCategory/:smallCategory
+
 
 유저관련 (/user) < 회원가입/로그인
 /user/login
@@ -15,5 +19,4 @@
 
 메인 라우터(/)
 /
-/register
-/login
+/ring

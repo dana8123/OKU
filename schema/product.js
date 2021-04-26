@@ -33,9 +33,9 @@ const product = new Schema({
   tag: {
     type: Array,
   },
-  bicCategory: {
+  bigCategory: {
     type: String,
-    required: true,
+    required: true
   },
   smallCategory: {
     type: String,
