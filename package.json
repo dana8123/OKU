@@ -1,0 +1,30 @@
+{
+  "name": "hanghae99Final",
+  "version": "1.0.0",
+  "description": "Goods auction site with Node.js.",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danaisboss/hanghae99Final.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danaisboss/hanghae99Final/issues"
+  },
+  "homepage": "https://github.com/danaisboss/hanghae99Final#readme",
+  "dependencies": {
+    "cookieparser": "^0.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
+    "mongoose": "^5.12.5",
+    "multer": "^1.4.2"
+  }
+}
