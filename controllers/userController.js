@@ -21,10 +21,13 @@ exports.signup = async (req, res) => {
 
 	//javascript dotdotdot 이렇게 검색하면 나와요!
 	try {
-		const user = await User.findOne({ userId });
-		if (user) {
-			return res.status(400).send({ msg: "이미 존재하는 회원입니다." });
-		}
+		const user = await User.findOne({ email });
+		//userEmail 중복 여부 체크
+		// if (user) {
+		// 	return res.status(400).send({
+		// 		result: false,
+		// 	});
+		// }
 		const NewUser = new User({ ...req.body });
 		//bcrypt사용하여 비밀번호를 암호화하여 저장
 		bcrypt.genSalt(saltRounds, function (err, salt) {
@@ -34,7 +37,7 @@ exports.signup = async (req, res) => {
 			});
 		});
 		res.send({
-			msg: "회원 가입이 완료되었습니다.",
+			result: true,
 		});
 	} catch (err) {
 		res.status(400).send({
@@ -42,6 +45,46 @@ exports.signup = async (req, res) => {
 		});
 		console.log(err);
 	}
+};
+
+exports.checkId = async (req, res) => {
+	const { body: userId } = req;
+	const user = await User.findOne(userId);
+	if (user) {
+		res.send({ result: false });
+		return;
+	}
+	res.send({ result: true });
+};
+
+exports.checkEmail = async (req, res) => {
+	const { body: email } = req;
+	const user = await User.findOne(email);
+	if (user) {
+		res.send({ result: false });
+		return;
+	}
+	res.send({ result: true });
+};
+
+exports.checkEmail = async (req, res) => {
+	const { body: email } = req;
+	const user = await User.findOne(email);
+	if (user) {
+		res.send({ result: false });
+		return;
+	}
+	res.send({ result: true });
+};
+
+exports.checkNickname = async (req, res) => {
+	const { body: nickname } = req;
+	const user = await User.findOne(nickname);
+	if (user) {
+		res.send({ result: false });
+		return;
+	}
+	res.send({ result: true });
 };
 
 // exports.passportRegister = async (req, res) => {
@@ -86,7 +129,8 @@ exports.login = async (req, res) => {
 		if (match) {
 			const token = jwt.sign({ userId }, process.env.SECRET_KEY);
 			return res.send({
-				"Access-Token": token,
+				access_token: token,
+				nickname: user.nickname,
 			});
 		}
 	} catch (error) {
