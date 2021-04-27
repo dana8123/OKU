@@ -33,7 +33,3 @@ exports.register = async (req, res) => {
 		console.log(err);
 	}
 };
-
-exports.login = async (req, res) => {
-	res.send("login");
-};
