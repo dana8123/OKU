@@ -20,13 +20,12 @@ app.use(express.urlencoded({ extended: false }));
 // app.use(express.static('public'));
 
 const { productRouter } = require("./routes/productroutes");
-//const { chatRouter } = require("./routes/chatRoutes");
-// const { userRouter } = require("./routes/userroutes");
-
+//const { chatRouter } = require("./routes/chatroutes");
+const { userRouter } = require("./routes/userroutes");
 
 app.use("/product", productRouter);
 //app.use("/", [chatRouter]);
-// app.use("/user", userRouter);
+app.use("/user", userRouter);
 
 app.listen(port, () => {
 	console.log(`Server start at http://localhost:${port}`);

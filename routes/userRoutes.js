@@ -6,7 +6,7 @@ const { login, register } = require("../controllers/usercontroller");
 const userRouter = express.Router();
 
 //두번째 인자의 경우, 임의로 넣어놓은겁니다!
-userRouter.get("/login", login);
+//userRouter.get("/login", login);
 userRouter.post("/register", register);
 
 module.exports = { userRouter };
