@@ -2,12 +2,14 @@
 const { Router } = require("express");
 const express = require("express");
 const productRouter = express.Router();
-const { test } = require("../controllers/productController");
-const { upload } = require("../controllers/usercontroller");
+const multer = require('multer');
+// const { test } = require("../controllers/productController");
+const { test,popo } = require("../controllers/postcontroller");
+const {authMiddlesware } = require("../middlewares/auth-middleware.js");
+const { upload } = require("../middlewares/imageupload.js");
 
-// 잘연결됐는지 확인
-productRouter.get("/test", test);
 
-//productRouter.get("/", upload);
+
+productRouter.post("/",popo);
 
 module.exports = { productRouter };
