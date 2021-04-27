@@ -31,7 +31,7 @@ const product = new Schema({
     required: true,
   },
   tag: {
-    type: Array,
+    type: Array
   },
   bigCategory: {
     type: String,
