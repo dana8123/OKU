@@ -57,8 +57,7 @@ const product = new Schema({
   createAt: {
     type: Date,
     default: Date.now,
-  },
-  
+  }, 
 });
 
 module.exports = mongoose.model('Product', product);

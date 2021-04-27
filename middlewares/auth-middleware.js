@@ -2,7 +2,10 @@ const jwt = require('jsonwebtoken');
 const User = require('../schema/user');
 require('dotenv').config();
 
-module.exports = (req, res, next) => {
+// module.exports < 이렇게 export했다가 오지게 에러나서
+// 이렇게 수정함
+
+exports.authMiddlesware = (req, res, next) => {
    try {
       const { authorization } = req.headers;
       const [tokenType, tokenValue] = authorization.split(" ");

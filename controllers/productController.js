@@ -1,6 +1,24 @@
-// 상품 리스트 프론트에 내려주는것들 여기다
+// 상품 리스트 관련
+const Product = require("../schema/product");
+const user = require("../schema/user");
 
-exports.test = async (req, res) => {
-	res.send("잘 연결이 되었습니다!");
-	console.log("연결이 잘 되었습니다!");
+exports.bigCate = async (req, res) => {
+	const {bigCate} = req.params;
+	console.log(bigCate);
+
+	try {
+		const a = await Product.find({});
+
+	} catch (error) {
+		
+	}
 };
+
+exports.smallCate = async (req, res) => {
+	try {
+		
+	} catch (error) {
+		
+	}
+};
+
