@@ -1,6 +1,10 @@
 // 유저정보
 //로직 짤 때 필요한 디비 등등 불러서 바로 쓰시면 됩니다.
+const passport = require("passport");
 const User = require("../schema/user");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 exports.register = async (req, res) => {
 	const {
@@ -22,7 +26,13 @@ exports.register = async (req, res) => {
 			return res.status(400).send({ msg: "이미 존재하는 회원입니다." });
 		}
 		const NewUser = new User({ ...req.body });
-		await NewUser.save();
+		//bcrypt사용하여 비밀번호를 암호화하여 저장
+		bcrypt.genSalt(saltRounds, function (err, salt) {
+			bcrypt.hash(NewUser.password, salt, function (err, hash) {
+				NewUser.password = hash;
+				NewUser.save();
+			});
+		});
 		res.send({
 			msg: "회원가입 성공!",
 		});
@@ -31,5 +41,57 @@ exports.register = async (req, res) => {
 			msg: "회원가입에 실패했습니다.",
 		});
 		console.log(err);
+	}
+};
+
+// exports.passportRegister = async (req, res) => {
+// 	const {
+// 		userId,
+// 		password,
+// 		number,
+// 		address,
+// 		nickname,
+// 		email,
+// 		profileImg,
+// 	} = req.body;
+
+// 	User.register(new User({ ...req.body }), (err, user) => {
+// 		if (err) {
+// 			return res.status(400).send({
+// 				msg: "passport error",
+// 			});
+// 			console.log(err);
+// 		}
+// 		passport.authenticate("local")(req, res, () => {
+// 			req.session.save((err) => {
+// 				if (err) {
+// 					return next(err);
+// 				}
+// 				res.send({ msg: "인증에러!" });
+// 			});
+// 		});
+// 	});
+// };
+
+exports.login = async (req, res) => {
+	const { userId, password } = req.body;
+	const user = await User.findOne({ userId });
+	try {
+		if (user == null) {
+			return res.status(400).send({
+				msg: "이메일 혹은 비밀번호가 일치하지 않습니다.",
+			});
+		}
+		console.log(password, user.password);
+		const match = await bcrypt.compare(password, user.password);
+		if (match) {
+			const token = jwt.sign({ userId }, process.env.SECRET_KEY);
+			return res.send({ token });
+		}
+	} catch (error) {
+		res.status(400).send({
+			msg: "로그인 에러!",
+		});
+		console.log(error);
 	}
 };
