@@ -82,15 +82,16 @@ exports.login = async (req, res) => {
 				msg: "이메일 혹은 비밀번호가 일치하지 않습니다.",
 			});
 		}
-		console.log(password, user.password);
 		const match = await bcrypt.compare(password, user.password);
 		if (match) {
 			const token = jwt.sign({ userId }, process.env.SECRET_KEY);
-			return res.send({ "Acess-Token": token });
+			return res.set("Access-Token", token).send({
+				msg: "로그인 성공...",
+			});
 		}
 	} catch (error) {
 		res.status(400).send({
-			msg: "로그인 에러!",
+			msg: "로그인 에러!??",
 		});
 		console.log(error);
 	}
