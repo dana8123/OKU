@@ -85,8 +85,8 @@ exports.login = async (req, res) => {
 		const match = await bcrypt.compare(password, user.password);
 		if (match) {
 			const token = jwt.sign({ userId }, process.env.SECRET_KEY);
-			return res.set("Access-Token", token).send({
-				msg: "로그인 성공...",
+			return res.send({
+				"Access-Token": token,
 			});
 		}
 	} catch (error) {
