@@ -4,7 +4,7 @@ const User = require("../schema/user");
 
 exports.register = async (req, res) => {
 	const {
-		u_id,
+		userId,
 		password,
 		number,
 		address,
@@ -17,7 +17,7 @@ exports.register = async (req, res) => {
 
 	//javascript dotdotdot 이렇게 검색하면 나와요!
 	try {
-		const user = await User.findOne({ email });
+		const user = await User.findOne({ userId });
 		if (user) {
 			return res.status(400).send({ msg: "이미 존재하는 회원입니다." });
 		}
