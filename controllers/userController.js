@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-exports.register = async (req, res) => {
+exports.signup = async (req, res) => {
 	const {
 		userId,
 		password,
@@ -34,7 +34,7 @@ exports.register = async (req, res) => {
 			});
 		});
 		res.send({
-			msg: "회원가입 성공!",
+			msg: "회원 가입이 완료되었습니다.",
 		});
 	} catch (err) {
 		res.status(400).send({
@@ -86,7 +86,7 @@ exports.login = async (req, res) => {
 		const match = await bcrypt.compare(password, user.password);
 		if (match) {
 			const token = jwt.sign({ userId }, process.env.SECRET_KEY);
-			return res.send({ token });
+			return res.send({ "Acess-Token": token });
 		}
 	} catch (error) {
 		res.status(400).send({
