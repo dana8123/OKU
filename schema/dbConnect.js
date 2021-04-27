@@ -11,8 +11,8 @@ const connect = () => {
 				useUnifiedTopology: true,
 				useCreateIndex: true,
 				ignoreUndefined: true,
-				// user: `${process.env.DB_ID}`,
-				// pass: `${process.env.DB_PASS}`
+				user: `${process.env.DB_ID}`,
+				pass: `${process.env.DB_PASS}`
 			}
 		)
 		.catch((err) => console.error(err));

@@ -11,7 +11,7 @@ exports.test = async (req, res) => {
     res.send("잘연결됨")
 }
 
-exports.popo = async (req, res) => {
+exports.productpost = async (req, res) => {
     // 로그인기능 구현되고나서 라우트에 미들웨어 붙이기
     // const user = res.locals.user;
 
@@ -53,6 +53,12 @@ exports.popo = async (req, res) => {
     } catch (error) {
         res.send({msg:"상품이 등록에 실패하였습니다."});
     }
-
 }
 
+exports.bidding = async (req,res) =>{
+    try {
+        
+    } catch (error) {
+        
+    }
+}

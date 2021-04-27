@@ -17,6 +17,7 @@ exports.register = async (req, res) => {
 //TODO: validation data
 
 const user = await User.findOne({ email });
+
 if (user) {
 	return res.status(400).send({ msg: "이미 존재하는 회원입니다." });
 }
