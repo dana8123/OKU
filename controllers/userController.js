@@ -6,25 +6,34 @@ exports.register = async (req, res) => {
 	const {
 		u_id,
 		password,
-		password2,
 		number,
 		address,
 		nickname,
 		email,
+		profileImg,
 	} = req.body;
+
+	//TODO: validation data
+
+	//javascript dotdotdot 이렇게 검색하면 나와요!
+	try {
+		const user = await User.findOne({ email });
+		if (user) {
+			return res.status(400).send({ msg: "이미 존재하는 회원입니다." });
+		}
+		const NewUser = new User({ ...req.body });
+		await NewUser.save();
+		res.send({
+			msg: "회원가입 성공!",
+		});
+	} catch (err) {
+		res.status(400).send({
+			msg: "회원가입에 실패했습니다.",
+		});
+		console.log(err);
+	}
 };
 
-//TODO: validation data
-
-const user = await User.findOne({ email });
-if (user) {
-	return res.status(400).send({ msg: "이미 존재하는 회원입니다." });
-}
-if (password !== password2) {
-	return res.status(400).send({ msg: "비밀번호가 불일치합니다." });
-}
-//javascript dotdotdot 이렇게 검색하면 나와요!
-try {
-	const NewUser = new User({ ...req.body });
-	await User.register();
-}
+exports.login = async (req, res) => {
+	res.send("login");
+};

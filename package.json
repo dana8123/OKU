@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/danaisboss/hanghae99Final#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cookieparser": "^0.1.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

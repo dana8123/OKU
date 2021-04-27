@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-require('dotenv').config();
+const mongoose = require("mongoose");
+require("dotenv").config();
 
 const connect = () => {
 	mongoose
@@ -11,15 +11,15 @@ const connect = () => {
 				useUnifiedTopology: true,
 				useCreateIndex: true,
 				ignoreUndefined: true,
-				// user: `${process.env.DB_ID}`,
-				// pass: `${process.env.DB_PASS}`
+				user: `${process.env.DB_ID}`,
+				pass: `${process.env.DB_PASS}`,
 			}
 		)
 		.catch((err) => console.error(err));
 };
 
-mongoose.connection.on('error', (err) => {
-	console.error('몽고디비 연결 에러', err);
+mongoose.connection.on("error", (err) => {
+	console.error("몽고디비 연결 에러", err);
 });
 
 module.exports = connect;
