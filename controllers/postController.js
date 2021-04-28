@@ -7,24 +7,11 @@ const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
 
 exports.test = async (req, res) => {
-    let image = '';
-    if (req["file"]) {
-        images = req.file.filename
-        image = `http://localhost:9090/` + req.file.filename
-    }
-
-    try {
-
-        res.send("콘솔로그확인")
-    } catch (error) {
-        res.send(error)
-    }
+    console.log(res.locals.user);
+    res.send(res.locals.user);
 }
 
 exports.productpost = async (req, res) => {
-    // 로그인기능 구현되고나서 라우트에 미들웨어 붙이기
-    // const user = res.locals.user;
-    // 이미지도 나중에
     const {
         title,
         img,
