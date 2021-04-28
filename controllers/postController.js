@@ -6,19 +6,6 @@ const Product = require("../schema/product");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
 
-exports.test = async (req, res) => {
-	console.log(res.locals.user);
-	res.send(res.locals.user);
-};
-
-exports.test02 = async (req, res) => {
-    const{test} = req.body;
-    console.log(test);
-    console.log(req.body);
-    res.send(req.body);
-}
-
-
 exports.productpost = async (req, res) => {
     let image = '';
     if(req["file"]){
@@ -64,6 +51,18 @@ exports.productpost = async (req, res) => {
 		res.send({ msg: "상품이 등록에 실패하였습니다.", error });
 	}
 };
+
+exports.detail = async(req,res)=>{
+    // res.send(req.params);
+    // console.log(req.params["id"]);
+    
+    try {
+        const product = await Product.findOne({_id:req.params["id"]},{__v:0});
+        res.json({okay:true,result:product});
+    } catch (error) {
+        res.send({okay:false});
+    }
+}
 
 exports.bidding = async (req, res) => {
 	// const user = res.locals.user;
