@@ -70,7 +70,9 @@ exports.signup = async (req, res) => {
 			});
 		});
 		res.send({
-			msg: true,
+			msg: {
+				dupMsg: true,
+			},
 		});
 	} catch (err) {
 		res.status(400).send({
@@ -145,7 +147,7 @@ exports.login = async (req, res) => {
 	try {
 		if (user == null) {
 			return res.status(400).send({
-				msg: "이메일 혹은 비밀번호가 일치하지 않습니다.",
+				msg: "userId False",
 			});
 		}
 		const match = await bcrypt.compare(password, user.password);
@@ -161,7 +163,7 @@ exports.login = async (req, res) => {
 		});
 	} catch (error) {
 		res.status(400).send({
-			msg: "로그인 에러!??",
+			msg: "로그인 에러",
 		});
 		console.log(error);
 	}
