@@ -25,6 +25,7 @@ const { userRouter } = require("./routes/userroutes");
 app.use("/product", productRouter);
 //app.use("/", [chatRouter]);
 app.use("/user", userRouter);
+//app.use(express.static(__dirname));
 
 app.listen(port, () => {
 	console.log(`Server start at http://localhost:${port}`);
