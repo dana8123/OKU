@@ -20,6 +20,12 @@ exports.test02 = async (req, res) => {
 
 
 exports.productpost = async (req, res) => {
+    let image = '';
+    if(req["file"]){
+        images = req.file.filename
+        image = 'http://13.125.250.74:9090/' + req.file.filename  
+      }
+
 	const {
 		title,
 		nickname,
@@ -34,12 +40,13 @@ exports.productpost = async (req, res) => {
 		deliveryprice,
 		deadline,
 	} = req.body;
+
 	const file = req.file.path;
 	console.log(req.file.path);
 	try {
 		await Product.create({
 			title,
-			img: file,
+			img: image,
 			nickname,
 			lowBid: lowbid,
 			sucBid: sucbid,
