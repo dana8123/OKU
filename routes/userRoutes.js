@@ -13,15 +13,10 @@ const {
 const userRouter = express.Router();
 
 //두번째 인자의 경우, 임의로 넣어놓은겁니다!
-<<<<<<< HEAD
-userRouter.get("/login", login);
-userRouter.post("/register", register);
-=======
 userRouter.post("/signup", signup);
 userRouter.post("/signup/id", checkId);
 userRouter.post("/signup/email", checkEmail);
 userRouter.post("/signup/nickname", checkNickname);
 userRouter.post("/login", login);
->>>>>>> 626520987b6c9f8589c3eb92109ce92c7c982584
 
 module.exports = { userRouter };

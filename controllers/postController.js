@@ -1,15 +1,26 @@
 // 상품등록관련
-require('dotenv').config();
+const express = require('express');
+const multer = require('multer');
 const user = require("../schema/user");
 const Product = require("../schema/product");
 // const user = require("../schema/user");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
 
-exports.test = async (req, res) => {
-    console.log(res.locals.user);
-    res.send(res.locals.user);
+exports.test01 = async (req, res) => {
+    const{test} = req.body;
+    console.log(test);
+    console.log(req.body);
+    res.send(req.body);
 }
+
+exports.test02 = async (req, res) => {
+    const{test} = req.body;
+    console.log(test);
+    console.log(req.body);
+    res.send(req.body);
+}
+
 
 exports.productpost = async (req, res) => {
     const {
@@ -28,6 +39,8 @@ exports.productpost = async (req, res) => {
         deadline
     } = req.body;
 
+    console.log(req.body);
+    
     try {
         await Product.create({
             title: title,

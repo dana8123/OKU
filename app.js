@@ -13,11 +13,10 @@ connect();
 const cors = require("cors");
 app.use(cors());
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.static('public'));
 
-// 뮬터 사용시에 활성화
-// app.use(express.static('public'));
 
 const { productRouter } = require("./routes/productroutes");
 //const { chatRouter } = require("./routes/chatroutes");
