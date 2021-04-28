@@ -23,7 +23,7 @@ exports.productpost = async (req, res) => {
     let image = '';
     if(req["file"]){
         images = req.file.filename
-        image = 'http://13.125.250.74:9090/' + req.file.filename  
+        image = `http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` + req.file.filename  
       }
 
 	const {
