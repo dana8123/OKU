@@ -156,6 +156,9 @@ exports.login = async (req, res) => {
 				nickname: user.nickname,
 			});
 		}
+		res.send({
+			msg: "password False",
+		});
 	} catch (error) {
 		res.status(400).send({
 			msg: "로그인 에러!??",

@@ -12,16 +12,10 @@ const {
 } = require("../controllers/userController");
 const userRouter = express.Router();
 
-//두번째 인자의 경우, 임의로 넣어놓은겁니다!
-<<<<<<< HEAD
-userRouter.get("/login", login);
-userRouter.post("/register", register);
-=======
 userRouter.post("/signup", signup);
 userRouter.get("/signup/id/:userId", checkId);
 userRouter.get("/signup/email/:email", checkEmail);
 userRouter.get("/signup/nickname/:nickname", checkNickname);
 userRouter.post("/login", login);
->>>>>>> 626520987b6c9f8589c3eb92109ce92c7c982584
 
 module.exports = { userRouter };
