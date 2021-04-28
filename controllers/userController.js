@@ -10,8 +10,10 @@ exports.signup = async (req, res) => {
 	const {
 		userId,
 		password,
+		password2,
 		number,
 		address,
+		detailaddress,
 		nickname,
 		email,
 		profileImg,
@@ -21,13 +23,44 @@ exports.signup = async (req, res) => {
 
 	//javascript dotdotdot 이렇게 검색하면 나와요!
 	try {
-		const user = await User.findOne({ email });
+		const checkId = await User.findOne({ userId });
+		//userId 중복 여부 체크
+		if (checkId) {
+			return res.send({
+				msg: {
+					dupMsg: "IdFalse",
+				},
+			});
+		}
+
+		if (password != password2) {
+			return res.send({
+				msg: {
+					dupMsg: "pwFalse",
+				},
+			});
+		}
+
+		const checkNickname = await User.findOne({ nickname });
+		//usernickname 중복 여부 체크
+		if (checkNickname) {
+			return res.send({
+				msg: {
+					dupMsg: "nicknameFalse",
+				},
+			});
+		}
+
+		const checkEmail = await User.findOne({ email });
 		//userEmail 중복 여부 체크
-		// if (user) {
-		// 	return res.status(400).send({
-		// 		result: false,
-		// 	});
-		// }
+		if (checkEmail) {
+			return res.send({
+				msg: {
+					dupMsg: "emailFalse",
+				},
+			});
+		}
+
 		const NewUser = new User({ ...req.body });
 		//bcrypt사용하여 비밀번호를 암호화하여 저장
 		bcrypt.genSalt(saltRounds, function (err, salt) {
@@ -37,7 +70,7 @@ exports.signup = async (req, res) => {
 			});
 		});
 		res.send({
-			result: true,
+			msg: true,
 		});
 	} catch (err) {
 		res.status(400).send({
@@ -48,7 +81,7 @@ exports.signup = async (req, res) => {
 };
 
 exports.checkId = async (req, res) => {
-	const { body: userId } = req;
+	const { params: userId } = req;
 	const user = await User.findOne(userId);
 	if (user) {
 		res.send({ result: false });
@@ -58,17 +91,7 @@ exports.checkId = async (req, res) => {
 };
 
 exports.checkEmail = async (req, res) => {
-	const { body: email } = req;
-	const user = await User.findOne(email);
-	if (user) {
-		res.send({ result: false });
-		return;
-	}
-	res.send({ result: true });
-};
-
-exports.checkEmail = async (req, res) => {
-	const { body: email } = req;
+	const { params: email } = req;
 	const user = await User.findOne(email);
 	if (user) {
 		res.send({ result: false });
@@ -78,7 +101,7 @@ exports.checkEmail = async (req, res) => {
 };
 
 exports.checkNickname = async (req, res) => {
-	const { body: nickname } = req;
+	const { params: nickname } = req;
 	const user = await User.findOne(nickname);
 	if (user) {
 		res.send({ result: false });

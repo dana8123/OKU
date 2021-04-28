@@ -17,6 +17,9 @@ const user = new Schema({
 	address: {
 		type: String,
 	},
+	detailaddress: {
+		type: String,
+	},
 	nickname: {
 		type: String,
 		required: true,
@@ -26,8 +29,7 @@ const user = new Schema({
 	},
 	profileImg: {
 		type: String,
-		required: true,
-		default: "에뎨뎯",
+		default: "public/profile.png",
 	},
 });
 
