@@ -13,7 +13,7 @@ productRouter.get("/test", authMiddlesware,test);
 
 // 상품등록
 // 미들웨어 붙이고 로그인처리 필요
-productRouter.post("/", upload.array("img", 3), productpost);
+productRouter.post("/", upload.array("img", 3),authMiddlesware, productpost);
 
 // 상품상세보기
 productRouter.get("/detail/:id", detail);

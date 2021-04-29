@@ -14,6 +14,10 @@ const product = new Schema({
 		type: String,
 		required: true,
 	},
+	sellerunique: {
+		type: String,
+		required: true,
+	},
 	lowBid: {
 		type: Number,
 		required: true,

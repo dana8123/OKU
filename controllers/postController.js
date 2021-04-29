@@ -22,6 +22,8 @@ exports.test02 = async (req, res) => {
 };
 
 exports.productpost = async (req, res) => {
+    const user = res.locals.user;
+
 	let image = "";
 	let images = [];
 	let val = "";
@@ -36,7 +38,6 @@ exports.productpost = async (req, res) => {
 
     const {
         title,
-        nickname,
         lowbid,
         sucbid,
         state,
@@ -54,9 +55,10 @@ exports.productpost = async (req, res) => {
 
     try {
         await Product.create({
-            title,
+            title:title,
             img: image,
-            nickname,
+            nickname:user["nickname"],
+            sellerunique:user["_id"],
             lowBid: lowbid,
             sucBid: sucbid,
             state: state,
