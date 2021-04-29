@@ -59,7 +59,7 @@ const product = new Schema({
 		default: 0,
 	},
 	createAt: {
-		type: String,
+		type: Date,
 		default: Date.now,
 	}
 });
