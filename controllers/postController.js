@@ -7,11 +7,13 @@ const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
 
 exports.productpost = async (req, res) => {
-    let image = '';
-    if(req["file"]){
-        images = req.file.filename
-        image = `http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` + req.file.filename  
-      }
+	let image = [];
+	if (req["file"]) {
+		images = req.file.filename;
+		image =
+			`http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` +
+			req.file.filename;
+	}
 
 	const {
 		title,
@@ -52,17 +54,20 @@ exports.productpost = async (req, res) => {
 	}
 };
 
-exports.detail = async(req,res)=>{
-    // res.send(req.params);
-    // console.log(req.params["id"]);
-    
-    try {
-        const product = await Product.findOne({_id:req.params["id"]},{__v:0});
-        res.json({okay:true,result:product});
-    } catch (error) {
-        res.send({okay:false});
-    }
-}
+exports.detail = async (req, res) => {
+	// res.send(req.params);
+	// console.log(req.params["id"]);
+
+	try {
+		const product = await Product.findOne(
+			{ _id: req.params["id"] },
+			{ __v: 0 }
+		);
+		res.json({ okay: true, result: product });
+	} catch (error) {
+		res.send({ okay: false });
+	}
+};
 
 exports.bidding = async (req, res) => {
 	// const user = res.locals.user;
