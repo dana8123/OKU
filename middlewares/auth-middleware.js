@@ -17,7 +17,7 @@ exports.authMiddlesware = (req, res, next) => {
          return;
       }
       const { userId } = jwt.verify(tokenValue, process.env.SECRET_KEY);
-      User.findOne({ id: userId }).then((user) => {
+      User.findOne({ userId: userId }).then((user) => {
          res.locals.user = user;
          next();
       });

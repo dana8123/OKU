@@ -14,6 +14,10 @@ const product = new Schema({
 		type: String,
 		required: true,
 	},
+	sellerunique: {
+		type: String,
+		required: true,
+	},
 	lowBid: {
 		type: Number,
 		required: true,
@@ -45,7 +49,7 @@ const product = new Schema({
 		type: String,
 	},
 	deliveryPrice: {
-		type: Number,
+		type: Boolean,
 	},
 	deadLine: {
 		type: Number,
@@ -55,9 +59,9 @@ const product = new Schema({
 		default: 0,
 	},
 	createAt: {
-		type: Date,
+		type: String,
 		default: Date.now,
-	},
+	}
 });
 
 module.exports = mongoose.model("Product", product);

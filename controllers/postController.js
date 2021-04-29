@@ -1,14 +1,16 @@
 // 상품등록관련
 require("dotenv").config();
-const user = require("../schema/user");
 const Product = require("../schema/product");
+const User = require("../schema/user");
+const jwt = require("jsonwebtoken");
 // const user = require("../schema/user");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
 
 exports.test = async (req, res) => {
-	console.log(res.locals.user);
-	res.send(res.locals.user);
+	const user = res.locals.user;
+	console.log(user);
+	res.send({ result: "test" });
 };
 
 exports.test02 = async (req, res) => {
@@ -75,10 +77,10 @@ exports.productpost = async (req, res, next) => {
 exports.detail = async (req, res) => {
 	// res.send(req.params);
 	// console.log(req.params["id"]);
-
 	try {
-		const product = await Product.findOne(
+		const product = await Product.findOneAndUpdate(
 			{ _id: req.params["id"] },
+			{ $inc: { views: 1 } },
 			{ __v: 0 }
 		);
 		res.json({ okay: true, result: product });
