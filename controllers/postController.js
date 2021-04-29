@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 // const user = require("../schema/user");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
+const multer = require("multer");
 
 exports.test = async (req, res) => {
 	const user = res.locals.user;
@@ -21,6 +22,7 @@ exports.test02 = async (req, res) => {
 };
 
 exports.productpost = async (req, res, next) => {
+	const user = res.locals.user;
 	try {
 		console.log("이미지파일", req.files);
 		console.log("BODY", req.body);
@@ -35,7 +37,6 @@ exports.productpost = async (req, res, next) => {
 
 		const {
 			title,
-			nickname,
 			lowbid,
 			sucbid,
 			state,
@@ -45,13 +46,14 @@ exports.productpost = async (req, res, next) => {
 			smallCategory,
 			region,
 			deliveryprice,
-			deadline,
+			deadLine,
 		} = req.body;
 
 		await Product.create({
 			title,
 			img: images,
-			nickname,
+			nickname: user["nickname"],
+			sellerunique: user["_id"],
 			lowBid: lowbid,
 			sucBid: sucbid,
 			state: state,
@@ -61,7 +63,7 @@ exports.productpost = async (req, res, next) => {
 			smallCategory: smallCategory,
 			region: region,
 			deliveryPrice: deliveryprice,
-			deadLine: deadline,
+			deadLine,
 		});
 		res.send({ msg: "상품이 등록되었습니다" });
 	} catch (error) {
@@ -71,6 +73,26 @@ exports.productpost = async (req, res, next) => {
 		}
 		res.send({ msg: "상품이 등록에 실패하였습니다.", error });
 		console.log(error);
+	}
+};
+
+exports.popular = async (req, res) => {
+	try {
+		const a = await Product.find({}).sort("-views").limit(3);
+		console.log(a);
+		res.send({ okay: true, result: a });
+	} catch (error) {
+		res.send({ okay: false });
+	}
+};
+
+exports.newone = async (req, res) => {
+	try {
+		const a = await Product.find({}).sort("-createAt").limit(3);
+		console.log(a);
+		res.send({ okay: true, result: a });
+	} catch (error) {
+		res.send({ okay: false });
 	}
 };
 

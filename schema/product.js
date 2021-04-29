@@ -52,7 +52,8 @@ const product = new Schema({
 		type: Boolean,
 	},
 	deadLine: {
-		type: Number,
+		type: Date,
+		required: true,
 	},
 	views: {
 		type: Number,
@@ -61,7 +62,7 @@ const product = new Schema({
 	createAt: {
 		type: Date,
 		default: Date.now,
-	}
+	},
 });
 
 module.exports = mongoose.model("Product", product);
