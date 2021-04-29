@@ -4,7 +4,11 @@ const { Router } = require("express");
 const productRouter = express.Router();
 const multer = require("multer");
 const { upload } = require("../middlewares/imageupload.js");
-const { bigCate, smallCate } = require("../controllers/productController");
+const {
+	bigCate,
+	smallCate,
+	search,
+} = require("../controllers/productController");
 const {
 	bidding,
 	productpost,
@@ -37,6 +41,7 @@ productRouter.get("/Category/:bigCategory", bigCate);
 productRouter.get("/Category/:bigCategory/:smallCategory", smallCate);
 
 // 검색
+productRouter.get("/search", search);
 
 // 상품 입찰
 productRouter.post("/auction", authMiddlesware, bidding);
