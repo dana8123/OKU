@@ -2,13 +2,16 @@
 require("dotenv").config();
 const user = require("../schema/user");
 const Product = require("../schema/product");
+const User = require("../schema/user");
+const jwt = require("jsonwebtoken");
 // const user = require("../schema/user");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
 
 exports.test = async (req, res) => {
-	console.log(res.locals.user);
-	res.send(res.locals.user);
+    const user = res.locals.user;
+    console.log(user);
+	res.send({result:"test"});
 };
 
 exports.test02 = async (req, res) => {
@@ -46,8 +49,9 @@ exports.productpost = async (req, res) => {
         deadline,
     } = req.body;
 
-    const file = req.file.path;
-    console.log(req.file.path);
+    // const file = req.file.path;
+    // console.log(req.file.path);
+
     try {
         await Product.create({
             title,
