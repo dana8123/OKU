@@ -1,6 +1,5 @@
 // 상품등록관련
 require("dotenv").config();
-const user = require("../schema/user");
 const Product = require("../schema/product");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");

@@ -25,9 +25,9 @@ productRouter.get("/popularlist", popular);
 productRouter.get("/recentlist", newone);
 
 // 대분류에 따른 상품리스트
-productRouter.get("/product/:bigCategory", bigCate);
+productRouter.get("/Category/:bigCategory", bigCate);
 // 중분류에 따른 상품리스트
-productRouter.get("/product/:bigCategory/:smallCategory", smallCate);
+productRouter.get("/Category/:bigCategory/:smallCategory", smallCate);
 
 // 검색
 
