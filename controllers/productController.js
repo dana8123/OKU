@@ -26,7 +26,7 @@ exports.smallCate = async (req, res) => {
 };
 
 exports.search = async(req,res)=>{
-	console.log(req.query["term"]);
+	console.log(req.query);
 	try {
 		const product = await Product.find({});
 		res.send({okay:true,result:product});
