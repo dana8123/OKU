@@ -77,10 +77,18 @@ exports.productpost = async (req, res) => {
 };
 
 exports.popular = async (req, res) => {
-    const a = await Product.find({});
-    console.log(a);
     try {
         const a = await Product.find({}).sort("-views").limit(3);
+        console.log(a);
+        res.send({ okay:true,result: a });
+    } catch (error) {
+        res.send({okay:false });
+    }
+};
+
+exports.newone = async(req,res)=>{
+    try {
+        const a = await Product.find({}).sort("-createAt").limit(3);
         console.log(a);
         res.send({ okay:true,result: a });
     } catch (error) {

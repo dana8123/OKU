@@ -5,7 +5,7 @@ const productRouter = express.Router();
 const multer = require("multer");
 const { upload } = require("../middlewares/imageupload.js");
 const { bigCate, smallCate } = require("../controllers/productController");
-const { bidding, productpost, detail, popular ,test } = require("../controllers/postController");
+const { bidding, productpost, detail, popular ,newone,test } = require("../controllers/postController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
 // 테스트용 api
@@ -21,10 +21,15 @@ productRouter.get("/detail/:id", detail);
 // 실시간 인기상품 리스트
 productRouter.get("/popularlist", popular);
 
+// 최신 등록 상품 리스트
+productRouter.get("/recentlist", newone);
+
 // 대분류에 따른 상품리스트
 productRouter.get("/product/:bigCategory", bigCate);
 // 중분류에 따른 상품리스트
 productRouter.get("/product/:bigCategory/:smallCategory", smallCate);
+
+// 검색
 
 // 상품 입찰
 productRouter.post("/auction", authMiddlesware, bidding);

@@ -49,7 +49,7 @@ const product = new Schema({
 		type: String,
 	},
 	deliveryPrice: {
-		type: Number,
+		type: Boolean,
 	},
 	deadLine: {
 		type: Number,
