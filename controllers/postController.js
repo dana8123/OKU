@@ -46,41 +46,47 @@ exports.productpost = async (req, res) => {
         deadline,
     } = req.body;
 
-	const file = req.files;
-	// console.log(req.files);
-	// console.log(file.length);
-	// console.log(file[0].path);
-	try {
-		await Product.create({
-			title,
-			img: images,
-			nickname,
-			lowBid: lowbid,
-			sucBid: sucbid,
-			state: state,
-			description: description,
-			tag: tag,
-			bigCategory: bigCategory,
-			smallCategory: smallCategory,
-			region: region,
-			deliveryPrice: deliveryprice,
-			deadLine: deadline,
-		});
-		res.send({ msg: "상품이 등록되었습니다" });
-	} catch (error) {
-		res.send({ msg: "상품이 등록에 실패하였습니다.", error });
-	}
+    const file = req.file.path;
+    console.log(req.file.path);
+    try {
+        await Product.create({
+            title,
+            img: image,
+            nickname,
+            lowBid: lowbid,
+            sucBid: sucbid,
+            state: state,
+            description: description,
+            tag: tag,
+            bigCategory: bigCategory,
+            smallCategory: smallCategory,
+            region: region,
+            deliveryPrice: deliveryprice,
+            deadLine: deadline,
+        });
+        res.send({ msg: "상품이 등록되었습니다" });
+    } catch (error) {
+        res.send({ msg: "상품이 등록에 실패하였습니다.", error });
+    }
+};
+
+exports.popular = async (req, res) => {
+    const a = await Product.find({});
+    console.log(a);
+    try {
+        const a = await Product.find({}).sort("-views").limit(3);
+        console.log(a);
+        res.send({ okay:true,result: a });
+    } catch (error) {
+        res.send({okay:false });
+    }
 };
 
 exports.detail = async (req, res) => {
 	// res.send(req.params);
 	// console.log(req.params["id"]);
-
 	try {
-		const product = await Product.findOne(
-			{ _id: req.params["id"] },
-			{ __v: 0 }
-		);
+        const product = await Product.findOneAndUpdate({ _id: req.params["id"] }, { $inc: { views: 1 } }, { __v: 0 });
 		res.json({ okay: true, result: product });
 	} catch (error) {
 		res.send({ okay: false });
