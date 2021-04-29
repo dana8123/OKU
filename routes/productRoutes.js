@@ -5,7 +5,11 @@ const productRouter = express.Router();
 const multer = require("multer");
 const { upload } = require("../middlewares/imageupload.js");
 const { bigCate, smallCate } = require("../controllers/productController");
-const { bidding, productpost, detail } = require("../controllers/postController");
+const {
+	bidding,
+	productpost,
+	detail,
+} = require("../controllers/postController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
 // 테스트용 api
@@ -16,7 +20,7 @@ const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 productRouter.post("/", upload.array("img", 3), productpost);
 
 // 상품상세보기
-productRouter.get("/:id",detail);
+productRouter.get("/:id", detail);
 
 // 상품 입찰
 productRouter.post("/auction", authMiddlesware, bidding);

@@ -18,39 +18,34 @@ exports.test02 = async (req, res) => {
 	res.send(req.body);
 };
 
-exports.productpost = async (req, res) => {
-	let image = "";
-	let images = [];
-	let val = "";
-	for (val of req.files) {
-		image = val.filename;
-		//image = `http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` + image;
-		images.push(
-			`http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` + image
-		);
-	}
-	console.log("images", images);
-
-	const {
-		title,
-		nickname,
-		lowbid,
-		sucbid,
-		state,
-		description,
-		tag,
-		bigCategory,
-		smallCategory,
-		region,
-		deliveryprice,
-		deadline,
-	} = req.body;
-
-	const file = req.files;
-	// console.log(req.files);
-	// console.log(file.length);
-	// console.log(file[0].path);
+exports.productpost = async (req, res, next) => {
 	try {
+		console.log("이미지파일", req.files);
+		console.log("BODY", req.body);
+		let images = [];
+		let image = "";
+		for (let i = 0; i < req.files.length; i++) {
+			image = req.files[i].filename;
+			images.push(
+				`http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` + image
+			);
+		}
+
+		const {
+			title,
+			nickname,
+			lowbid,
+			sucbid,
+			state,
+			description,
+			tag,
+			bigCategory,
+			smallCategory,
+			region,
+			deliveryprice,
+			deadline,
+		} = req.body;
+
 		await Product.create({
 			title,
 			img: images,
@@ -68,7 +63,12 @@ exports.productpost = async (req, res) => {
 		});
 		res.send({ msg: "상품이 등록되었습니다" });
 	} catch (error) {
+		if (error instanceof multer.MulterError) {
+			console.log("multer error", error);
+			res.send({ msg: "multer error" });
+		}
 		res.send({ msg: "상품이 등록에 실패하였습니다.", error });
+		console.log(error);
 	}
 };
 
