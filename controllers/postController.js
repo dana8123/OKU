@@ -6,14 +6,30 @@ const Product = require("../schema/product");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
 
+exports.test = async (req, res) => {
+	console.log(res.locals.user);
+	res.send(res.locals.user);
+};
+
+exports.test02 = async (req, res) => {
+	const { test } = req.body;
+	console.log(test);
+	console.log(req.body);
+	res.send(req.body);
+};
+
 exports.productpost = async (req, res) => {
-	let image = [];
-	if (req["file"]) {
-		images = req.file.filename;
-		image =
-			`http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` +
-			req.file.filename;
+	let image = "";
+	let images = [];
+	let val = "";
+	for (val of req.files) {
+		image = val.filename;
+		//image = `http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` + image;
+		images.push(
+			`http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` + image
+		);
 	}
+	console.log("images", images);
 
 	const {
 		title,
@@ -30,12 +46,14 @@ exports.productpost = async (req, res) => {
 		deadline,
 	} = req.body;
 
-	const file = req.file.path;
-	console.log(req.file.path);
+	const file = req.files;
+	// console.log(req.files);
+	// console.log(file.length);
+	// console.log(file[0].path);
 	try {
 		await Product.create({
 			title,
-			img: image,
+			img: images,
 			nickname,
 			lowBid: lowbid,
 			sucBid: sucbid,
