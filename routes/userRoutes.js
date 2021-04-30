@@ -9,6 +9,7 @@ const {
 	checkId,
 	checkEmail,
 	checkNickname,
+	pick
 } = require("../controllers/userController");
 const userRouter = express.Router();
 
@@ -19,6 +20,6 @@ userRouter.get("/signup/nickname/:nickname", checkNickname);
 userRouter.post("/login", login);
 
 // 내가 찜한것 불러오기
-userRouter.post("/pick", login);
+userRouter.get("/pick", authMiddlesware,pick);
 
 module.exports = { userRouter };
