@@ -75,13 +75,14 @@ exports.productpost = async (req, res, next) => {
 
 exports.popular = async (req, res) => {
 	try {
-		const a = await Product.find({}, { _id: 1, title: 1, img: 1, deadLine: 1 })
-			.sort("-views")
-			.limit(3);
-		console.log(a);
-		res.send({ okay: true, result: a });
+		const popularList = await Product.aggregate([
+			{ $sort: { views: -1 } },
+			{ $limit: 3 },
+		]);
+		console.log(popularList);
+		res.send({ okay: true, result: popularList });
 	} catch (error) {
-		res.send({ okay: false });
+		res.send({ okay: false, error });
 	}
 };
 
