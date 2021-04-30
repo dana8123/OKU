@@ -2,8 +2,12 @@
 //로직 짤 때 필요한 디비 등등 불러서 바로 쓰시면 됩니다.
 const passport = require("passport");
 const User = require("../schema/user");
+const Product = require("../schema/product");
+const Like = require("../schema/like");
+
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const product = require("../schema/product");
 const saltRounds = 10;
 
 exports.signup = async (req, res) => {
@@ -111,3 +115,13 @@ exports.login = async (req, res) => {
 		console.log(error);
 	}
 };
+
+exports.pick = async(req,res)=>{
+	const user = res.locals.user;
+	try {
+		const product = await Like.find({userId:user["_id"]},{_id:0 ,productId:1,productImage:1});
+		res.send({okay:true,reulst:product});
+	} catch (error) {
+		res.send({okay:false})
+	}
+}

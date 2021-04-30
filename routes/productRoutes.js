@@ -8,6 +8,7 @@ const {
 	bigCate,
 	smallCate,
 	search,
+	pick,
 } = require("../controllers/productController");
 const {
 	bidding,
@@ -16,7 +17,6 @@ const {
 	popular,
 	newone,
 	test,
-	pick,
 } = require("../controllers/postController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 

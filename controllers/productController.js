@@ -1,6 +1,8 @@
 // 상품 리스트 관련
 const Product = require("../schema/product");
 const User = require("../schema/user");
+const Like = require("../schema/like");
+const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
 exports.bigCate = async (req, res) => {
 	const { bigCategory } = req.params;
@@ -38,9 +40,19 @@ exports.search = async(req,res)=>{
 };
 
 exports.pick = async(req,res)=>{
+	const user = res.locals.user;
+	const productId = req.params;
+	const product = await Product.find({_id:productId["id"]},{img:1,sellerunique:1});
+
 	try {
-		
+		await Like.create({
+			userId:user["_id"],
+			productId :productId["id"],
+			productImage:product[0]["img"][0],
+			sellerId:product[0]["sellerunique"]
+		});
+		res.send({msg:"찜이 등록되었습니다."});
 	} catch (error) {
-		
+		res.send({msg:"찜에 실패하였습니다."});
 	}
 }
