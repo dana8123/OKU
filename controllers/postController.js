@@ -3,6 +3,7 @@ require("dotenv").config();
 const Product = require("../schema/product");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
 // const user = require("../schema/user");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
@@ -34,6 +35,7 @@ exports.productpost = async (req, res, next) => {
 
 		const {
 			title,
+			nickname,
 			lowbid,
 			sucbid,
 			state,
@@ -69,7 +71,8 @@ exports.productpost = async (req, res, next) => {
 			console.log("multer error", error);
 			res.send({ msg: "multer error" });
 		}
-		res.send({ msg: "상품이 등록에 실패하였습니다.", error });
+		res.send({ msg: "상품 등록에 실패하였습니다." });
+		console.log(error);
 	}
 };
 
@@ -79,7 +82,6 @@ exports.popular = async (req, res) => {
 			{ $sort: { views: -1 } },
 			{ $limit: 3 },
 		]);
-		console.log(popularList);
 		res.send({ okay: true, result: popularList });
 	} catch (error) {
 		res.send({ okay: false, error });
@@ -88,11 +90,15 @@ exports.popular = async (req, res) => {
 
 exports.newone = async (req, res) => {
 	try {
-		const a = await Product.find({}).sort("-createAt").limit(3);
-		console.log(a);
-		res.send({ okay: true, result: a });
+		const newProduct = await Product.find({}).sort("-createAt").limit(9);
+		let newList = [];
+		for (let i = 0; i < newProduct.length; i++) {
+			//TODO: 무한스크롤
+			newList.push(newProduct[i]);
+		}
+		res.send({ okay: true, result: newList });
 	} catch (error) {
-		res.send({ okay: false });
+		res.send({ okay: false, error });
 	}
 };
 
