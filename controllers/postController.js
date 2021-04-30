@@ -24,8 +24,6 @@ exports.test02 = async (req, res) => {
 exports.productpost = async (req, res, next) => {
 	const user = res.locals.user;
 	try {
-		console.log("이미지파일", req.files);
-		console.log("BODY", req.body);
 		let images = [];
 		let image = "";
 		for (let i = 0; i < req.files.length; i++) {
@@ -65,6 +63,7 @@ exports.productpost = async (req, res, next) => {
 			deliveryPrice: deliveryprice,
 			deadLine,
 		});
+
 		res.send({ msg: "상품이 등록되었습니다" });
 	} catch (error) {
 		if (error instanceof multer.MulterError) {
@@ -116,3 +115,17 @@ exports.bidding = async (req, res) => {
 	try {
 	} catch (error) {}
 };
+
+// exports.timer = async (req, res) => {
+// 	const { id } = req.params;
+// 	let dataDifference;
+// 	dataDifference = await Product.aggregate([
+// 		{
+// 			$project: {
+// 				_id: id,
+// 				dataDifference: { $subtract: ["$createAt", "$deadLine"] },
+// 			},
+// 		},
+// 	]);
+// 	res.send({ dataDifference });
+// };
