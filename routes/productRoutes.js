@@ -16,6 +16,7 @@ const {
 	popular,
 	newone,
 	test,
+    pick
 } = require("../controllers/postController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
@@ -42,6 +43,10 @@ productRouter.get("/Category/:bigCategory/:smallCategory", smallCate);
 
 // 검색
 productRouter.get("/search", search);
+
+// 찜하기
+productRouter.post("/pick/:id",authMiddlesware,pick);
+
 
 // 상품 입찰
 productRouter.post("/auction", authMiddlesware, bidding);
