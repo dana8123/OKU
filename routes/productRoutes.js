@@ -5,18 +5,18 @@ const productRouter = express.Router();
 const multer = require("multer");
 const { upload } = require("../middlewares/imageupload.js");
 const {
-	bigCate,
-	smallCate,
-	search,
+    bigCate,
+    smallCate,
+    search,
+    pick
 } = require("../controllers/productController");
 const {
-	bidding,
-	productpost,
-	detail,
-	popular,
-	newone,
-	test,
-    pick
+    bidding,
+    productpost,
+    detail,
+    popular,
+    newone,
+    test
 } = require("../controllers/postController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
@@ -45,7 +45,7 @@ productRouter.get("/Category/:bigCategory/:smallCategory", smallCate);
 productRouter.get("/search", search);
 
 // 찜하기
-productRouter.post("/pick/:id",authMiddlesware,pick);
+productRouter.post("/pick/:id", authMiddlesware, pick);
 
 
 // 상품 입찰

@@ -52,7 +52,7 @@ const product = new Schema({
 		type: Boolean,
 	},
 	deadLine: {
-		type: Date,
+		type: Number,
 		required: true,
 	},
 	views: {
