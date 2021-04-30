@@ -7,26 +7,20 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 exports.signup = async (req, res) => {
-	const {
-		userId,
-		password,
-		password2,
-		number,
-		nickname,
-		email,
-		profileImg,
-	} = req.body;
+	const { password, password2, number, nickname, email, profileImg } = req.body;
 
 	//TODO: validation data
 
 	//javascript dotdotdot 이렇게 검색하면 나와요!
 	try {
-		const checkId = await User.findOne({ userId });
-		//userId 중복 여부 체크
-		if (checkId) {
+		const checkEmail = await User.findOne({ email });
+		const checkNickname = await User.findOne({ nickname });
+
+		//userEmail 중복 여부 체크
+		if (checkEmail) {
 			return res.send({
 				msg: {
-					dupMsg: "IdFalse",
+					dupMsg: "emailFalse",
 				},
 			});
 		}
@@ -39,22 +33,11 @@ exports.signup = async (req, res) => {
 			});
 		}
 
-		const checkNickname = await User.findOne({ nickname });
 		//usernickname 중복 여부 체크
 		if (checkNickname) {
 			return res.send({
 				msg: {
 					dupMsg: "nicknameFalse",
-				},
-			});
-		}
-
-		const checkEmail = await User.findOne({ email });
-		//userEmail 중복 여부 체크
-		if (checkEmail) {
-			return res.send({
-				msg: {
-					dupMsg: "emailFalse",
 				},
 			});
 		}
