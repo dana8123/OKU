@@ -71,13 +71,13 @@ exports.productpost = async (req, res) => {
         });
         res.send({ msg: "상품이 등록되었습니다" });
     } catch (error) {
-        res.send({ msg: "상품이 등록에 실패하였습니다.", error });
+        res.send({ msg: "상품이 등록에 실패하였습니다." });
     }
 };
 
 exports.popular = async (req, res) => {
     try {
-        const a = await Product.find({}).sort("-views").limit(3);
+        const a = await Product.find({},{_id:1,title:1,img:1,deadLine:1}).sort("-views").limit(3);
         console.log(a);
         res.send({ okay:true,result: a });
     } catch (error) {
