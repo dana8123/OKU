@@ -18,4 +18,6 @@ userRouter.get("/signup/email/:email", checkEmail);
 userRouter.get("/signup/nickname/:nickname", checkNickname);
 userRouter.post("/login", login);
 
+// 내가 찜한것 불러오기
+
 module.exports = { userRouter };

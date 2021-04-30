@@ -36,3 +36,11 @@ exports.search = async(req,res)=>{
 		res.send({okay:false});
 	}
 };
+
+exports.pick = async(req,res)=>{
+	try {
+		
+	} catch (error) {
+		
+	}
+}
