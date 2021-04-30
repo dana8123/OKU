@@ -26,9 +26,11 @@ exports.smallCate = async (req, res) => {
 };
 
 exports.search = async(req,res)=>{
-	console.log(req.query["term"]);
+	console.log(req.query);
 	try {
-		const product = await Product.find({});
+		const a = req.query["term"]
+		const product = await Product.find({$or:[{tag:new RegExp(a)},{title:new RegExp(a)}]},{__v:0});
+		console.log(product);
 		res.send({okay:true,result:product});
 	} catch (error) {
 		res.send({okay:false});

@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 // const user = require("../schema/user");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
-const multer = require("multer");
 
 exports.test = async (req, res) => {
 	const user = res.locals.user;
@@ -71,13 +70,14 @@ exports.productpost = async (req, res, next) => {
 			res.send({ msg: "multer error" });
 		}
 		res.send({ msg: "상품이 등록에 실패하였습니다.", error });
-		console.log(error);
 	}
 };
 
 exports.popular = async (req, res) => {
 	try {
-		const a = await Product.find({}).sort("-views").limit(3);
+		const a = await Product.find({}, { _id: 1, title: 1, img: 1, deadLine: 1 })
+			.sort("-views")
+			.limit(3);
 		console.log(a);
 		res.send({ okay: true, result: a });
 	} catch (error) {
@@ -115,17 +115,3 @@ exports.bidding = async (req, res) => {
 	try {
 	} catch (error) {}
 };
-
-// exports.timer = async (req, res) => {
-// 	const { id } = req.params;
-// 	let dataDifference;
-// 	dataDifference = await Product.aggregate([
-// 		{
-// 			$project: {
-// 				_id: id,
-// 				dataDifference: { $subtract: ["$createAt", "$deadLine"] },
-// 			},
-// 		},
-// 	]);
-// 	res.send({ dataDifference });
-// };
