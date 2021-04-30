@@ -63,16 +63,6 @@ exports.signup = async (req, res) => {
 	}
 };
 
-exports.checkId = async (req, res) => {
-	const { params: userId } = req;
-	const user = await User.findOne(userId);
-	if (user) {
-		res.send({ result: false });
-		return;
-	}
-	res.send({ result: true });
-};
-
 exports.checkEmail = async (req, res) => {
 	const { params: email } = req;
 	const user = await User.findOne(email);
@@ -93,47 +83,19 @@ exports.checkNickname = async (req, res) => {
 	res.send({ result: true });
 };
 
-// exports.passportRegister = async (req, res) => {
-// 	const {
-// 		userId,
-// 		password,
-// 		number,
-// 		address,
-// 		nickname,
-// 		email,
-// 		profileImg,
-// 	} = req.body;
-
-// 	User.register(new User({ ...req.body }), (err, user) => {
-// 		if (err) {
-// 			return res.status(400).send({
-// 				msg: "passport error",
-// 			});
-// 			console.log(err);
-// 		}
-// 		passport.authenticate("local")(req, res, () => {
-// 			req.session.save((err) => {
-// 				if (err) {
-// 					return next(err);
-// 				}
-// 				res.send({ msg: "인증에러!" });
-// 			});
-// 		});
-// 	});
-// };
-
+//Login
 exports.login = async (req, res) => {
-	const { userId, password } = req.body;
-	const user = await User.findOne({ userId });
+	const { email, password } = req.body;
+	const user = await User.findOne({ email });
 	try {
 		if (user == null) {
 			return res.status(400).send({
-				msg: "userId False",
+				msg: "eamil False",
 			});
 		}
 		const match = await bcrypt.compare(password, user.password);
 		if (match) {
-			const token = jwt.sign({ userId }, process.env.SECRET_KEY);
+			const token = jwt.sign({ email }, process.env.SECRET_KEY);
 			return res.send({
 				access_token: token,
 				nickname: user.nickname,
