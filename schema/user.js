@@ -14,12 +14,6 @@ const user = new Schema({
 	number: {
 		type: String,
 	},
-	address: {
-		type: String,
-	},
-	detailaddress: {
-		type: String,
-	},
 	nickname: {
 		type: String,
 		required: true,
