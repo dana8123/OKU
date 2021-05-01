@@ -18,6 +18,7 @@ const {
 	newone,
 	test,
 } = require("../controllers/postController");
+const {quest,questget} = require("../controllers/qnaController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
 // 테스트용 api
@@ -48,8 +49,12 @@ productRouter.get("/search", search);
 productRouter.post("/pick/:id", authMiddlesware, pick);
 
 // 문의하기(quest)
+productRouter.post("/pick/:id", authMiddlesware, quest);
+productRouter.get("/pick/:id", questget);
 
-// 문의하기(answer)
+// 문의에 답글남기기(answer)
+// productRouter.post("/pick/:id", authMiddlesware, pick);
+// productRouter.get("/pick/:id", authMiddlesware, pick);
 
 
 // MD추천아이템

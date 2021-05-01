@@ -55,4 +55,4 @@ exports.pick = async(req,res)=>{
 	} catch (error) {
 		res.send({msg:"찜에 실패하였습니다."});
 	}
-}
+};

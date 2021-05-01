@@ -4,8 +4,6 @@ const multer = require("multer");
 const Product = require("../schema/product");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");
-const multer = require("multer");
-// const user = require("../schema/user");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
 
@@ -133,6 +131,7 @@ exports.detail = async (req, res) => {
 };
 
 exports.quest = async (req,res) => {
+	
 	try {
 		
 	} catch (error) {
