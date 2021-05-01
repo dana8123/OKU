@@ -180,3 +180,14 @@ exports.pick = async(req,res)=>{
 		res.send({okay:false})
 	}
 }
+
+exports.pickdelete = async(req,res)=>{
+	const user = res.locals.user;
+	const productId = res.body;
+	try {
+		const product = await Like.deleteOne({userId:user["_id"],productId:productId});
+		res.send({okay:true});
+	} catch (error) {
+		res.sned({okay:false});
+	}
+}

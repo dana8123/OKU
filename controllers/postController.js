@@ -1,5 +1,6 @@
 // 상품등록관련
 require("dotenv").config();
+const multer = require("multer");
 const Product = require("../schema/product");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");
@@ -21,7 +22,8 @@ exports.test02 = async (req, res) => {
 };
 
 exports.productpost = async (req, res, next) => {
-	const user = res.locals.user;
+	const user = res.locals.user
+
 	try {
 		let images = [];
 		let image = "";
@@ -111,6 +113,16 @@ exports.detail = async (req, res) => {
 	}
 };
 
+exports.quest = async (req,res) => {
+	try {
+		
+	} catch (error) {
+		
+	}
+}
+
+
+// 나중으로 미뤄둔 낙찰입찰
 exports.bidding = async (req, res) => {
 	// const user = res.locals.user;
 	try {

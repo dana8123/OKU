@@ -47,6 +47,13 @@ productRouter.get("/search", search);
 // 찜하기
 productRouter.post("/pick/:id", authMiddlesware, pick);
 
+// 문의하기(quest)
+
+// 문의하기(answer)
+
+
+// MD추천아이템
+
 
 // 상품 입찰
 productRouter.post("/auction", authMiddlesware, bidding);

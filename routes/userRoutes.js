@@ -9,7 +9,8 @@ const {
 	checkId,
 	checkEmail,
 	checkNickname,
-	pick
+	pick,
+	pickdelete
 } = require("../controllers/userController");
 const userRouter = express.Router();
 
@@ -21,5 +22,9 @@ userRouter.post("/login", login);
 
 // 내가 찜한것 불러오기
 userRouter.get("/pick", authMiddlesware,pick);
+
+// 내가 찜한것 삭제하기
+userRouter.delete("/pick",authMiddlesware,pickdelete);
+
 
 module.exports = { userRouter };
