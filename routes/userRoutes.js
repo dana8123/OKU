@@ -15,7 +15,6 @@ const {
 const userRouter = express.Router();
 
 userRouter.post("/signup", signup);
-userRouter.get("/signup/id/:userId", checkId);
 userRouter.get("/signup/email/:email", checkEmail);
 userRouter.get("/signup/nickname/:nickname", checkNickname);
 userRouter.post("/login", login);

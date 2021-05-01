@@ -4,6 +4,7 @@ const multer = require("multer");
 const Product = require("../schema/product");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
 // const user = require("../schema/user");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
@@ -29,13 +30,12 @@ exports.productpost = async (req, res, next) => {
 		let image = "";
 		for (let i = 0; i < req.files.length; i++) {
 			image = req.files[i].filename;
-			images.push(
-				`http://${process.env.DB_SERVER}:${process.env.DB_PORT}/` + image
-			);
+			images.push(`http://${process.env.DB_SERVER}/` + image);
 		}
 
 		const {
 			title,
+			nickname,
 			lowbid,
 			sucbid,
 			state,
@@ -71,7 +71,7 @@ exports.productpost = async (req, res, next) => {
 			console.log("multer error", error);
 			res.send({ msg: "multer error" });
 		}
-		res.send({ msg: "상품이 등록에 실패하였습니다.", error });
+		res.send({ msg: "상품 등록에 실패하였습니다." }, error);
 	}
 };
 
@@ -81,7 +81,6 @@ exports.popular = async (req, res) => {
 			{ $sort: { views: -1 } },
 			{ $limit: 3 },
 		]);
-		console.log(popularList);
 		res.send({ okay: true, result: popularList });
 	} catch (error) {
 		res.send({ okay: false, error });
@@ -89,12 +88,32 @@ exports.popular = async (req, res) => {
 };
 
 exports.newone = async (req, res) => {
+	let productList = [];
+	//마지막으로 불러들인 아이템, query문으로 받아옴.
+	let lastId = req.query["lastId"];
+	let products;
+	const print_count = 9;
 	try {
-		const a = await Product.find({}).sort("-createAt").limit(3);
-		console.log(a);
-		res.send({ okay: true, result: a });
+		//무한스크롤
+		if (lastId) {
+			//무한스크롤 도중일 경우
+			products = await Product.find({})
+				.sort({ createAt: -1 })
+				.where("_id")
+				.lt(lastId)
+				.limit(print_count);
+			console.log("lastId", products);
+		} else {
+			//처음 페이지에서 스크롤을 내리기 시작할 때
+			products = await Product.find({})
+				.sort({ createAt: -1 })
+				.limit(print_count);
+		}
+		productList.push(products);
+		res.send({ okay: true, productList });
 	} catch (error) {
-		res.send({ okay: false });
+		res.send({ okay: false, error });
+		console.log(error);
 	}
 };
 

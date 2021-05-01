@@ -5,18 +5,18 @@ const productRouter = express.Router();
 const multer = require("multer");
 const { upload } = require("../middlewares/imageupload.js");
 const {
-    bigCate,
-    smallCate,
-    search,
-    pick
+	bigCate,
+	smallCate,
+	search,
+	pick,
 } = require("../controllers/productController");
 const {
-    bidding,
-    productpost,
-    detail,
-    popular,
-    newone,
-    test
+	bidding,
+	productpost,
+	detail,
+	popular,
+	newone,
+	test,
 } = require("../controllers/postController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
