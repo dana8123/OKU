@@ -19,9 +19,9 @@ app.use(express.static(path.join(__dirname, "uploads")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 
-const { productRouter } = require("./routes/productroutes");
-//const { chatRouter } = require("./routes/chatroutes");
-const { userRouter } = require("./routes/userroutes");
+const { productRouter } = require("./routes/productRoutes");
+//const { chatRouter } = require("./routes/chatRoutes");
+const { userRouter } = require("./routes/userRoutes");
 
 app.use("/product", productRouter);
 //app.use("/", [chatRouter]);
