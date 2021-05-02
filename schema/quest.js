@@ -10,10 +10,6 @@ const quest = new Schema({
         type:String,
         required:true
     },
-    sellerId:{
-        type:String,
-        required:true
-    },
     contents:{
         type:String,
         required:true
