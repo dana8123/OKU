@@ -56,3 +56,11 @@ exports.pick = async(req,res)=>{
 		res.send({msg:"찜에 실패하였습니다."});
 	}
 };
+
+exports.gayeonpick = async(req,res)=>{
+	try {
+		
+	} catch (error) {
+		
+	}
+}
