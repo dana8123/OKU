@@ -4,7 +4,6 @@ const multer = require("multer");
 const Product = require("../schema/product");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");
-const multer = require("multer");
 // const user = require("../schema/user");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
@@ -23,7 +22,7 @@ exports.test02 = async (req, res) => {
 };
 
 exports.productpost = async (req, res, next) => {
-	const user = res.locals.user
+	const user = res.locals.user;
 
 	try {
 		let images = [];
@@ -35,7 +34,7 @@ exports.productpost = async (req, res, next) => {
 
 		const {
 			title,
-			nickname,
+			img,
 			lowbid,
 			sucbid,
 			state,
@@ -46,7 +45,12 @@ exports.productpost = async (req, res, next) => {
 			region,
 			deliveryprice,
 			deadLine,
+			duration,
 		} = req.body;
+
+		const addTime = (date, milliseconds) => {
+			return new Date(date.getTime() + milliseconds + 1);
+		};
 
 		await Product.create({
 			title,
@@ -62,7 +66,7 @@ exports.productpost = async (req, res, next) => {
 			smallCategory: smallCategory,
 			region: region,
 			deliveryPrice: deliveryprice,
-			deadLine,
+			deadLine: addTime(new Date(), duration),
 		});
 
 		res.send({ msg: "상품이 등록되었습니다" });
@@ -71,7 +75,7 @@ exports.productpost = async (req, res, next) => {
 			console.log("multer error", error);
 			res.send({ msg: "multer error" });
 		}
-		res.send({ msg: "상품 등록에 실패하였습니다." }, error);
+		res.send({ msg: "상품 등록에 실패하였습니다.", error });
 	}
 };
 
@@ -132,14 +136,10 @@ exports.detail = async (req, res) => {
 	}
 };
 
-exports.quest = async (req,res) => {
+exports.quest = async (req, res) => {
 	try {
-		
-	} catch (error) {
-		
-	}
-}
-
+	} catch (error) {}
+};
 
 // 나중으로 미뤄둔 낙찰입찰
 exports.bidding = async (req, res) => {
