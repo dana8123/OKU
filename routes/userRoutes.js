@@ -21,9 +21,7 @@ userRouter.post("/login", login);
 
 // 내가 찜한것 불러오기
 userRouter.get("/pick", authMiddlesware,pick);
-
 // 내가 찜한것 삭제하기
-userRouter.delete("/pick",authMiddlesware,pickdelete);
-
+userRouter.delete("/pick/:id",authMiddlesware,pickdelete);
 
 module.exports = { userRouter };
