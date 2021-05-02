@@ -48,7 +48,7 @@ exports.productpost = async (req, res, next) => {
 		} = req.body;
 
 		const addTime = (date, milliseconds) => {
-			return new Date(date.getTime() + milliseconds + 1);
+			return new Date(date.getTime() + milliseconds * 1);
 		};
 
 		await Product.create({
