@@ -135,12 +135,7 @@ exports.detail = async (req, res) => {
 	}
 };
 
-<<<<<<< HEAD
 exports.quest = async (req, res) => {
-=======
-exports.quest = async (req,res) => {
-	
->>>>>>> 090e51e374c54dfbf73cbf68e3149598b218a524
 	try {
 	} catch (error) {}
 };
