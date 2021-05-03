@@ -10,7 +10,8 @@ const {
 	checkEmail,
 	checkNickname,
 	pick,
-	pickdelete
+	pickdelete,
+	myproduct
 } = require("../controllers/userController");
 const userRouter = express.Router();
 
@@ -23,5 +24,8 @@ userRouter.post("/login", login);
 userRouter.get("/pick", authMiddlesware,pick);
 // 내가 찜한것 삭제하기
 userRouter.delete("/pick/:id",authMiddlesware,pickdelete);
+
+// 내 상품목록 불러오기
+userRouter.get("/myproduct",authMiddlesware,myproduct);
 
 module.exports = { userRouter };

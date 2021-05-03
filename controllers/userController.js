@@ -137,3 +137,14 @@ exports.pickdelete = async(req,res)=>{
 		res.send({okay:false});
 	}
 }
+
+exports.myproduct = async(req,res)=>{
+	const user = res.locals.user;
+
+	try {
+		const product = await Product.find({sellerunique:user["_id"]});
+		res.send({okay:true,result:product});
+	} catch (error) {
+		res.send({okay:false});
+	}
+}
