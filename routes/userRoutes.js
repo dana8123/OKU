@@ -11,7 +11,8 @@ const {
 	checkNickname,
 	pick,
 	pickdelete,
-	myproduct
+	myproduct,
+	mypronick
 } = require("../controllers/userController");
 const userRouter = express.Router();
 
@@ -27,5 +28,10 @@ userRouter.delete("/pick/:id",authMiddlesware,pickdelete);
 
 // 내 상품목록 불러오기
 userRouter.get("/myproduct",authMiddlesware,myproduct);
+
+// 프로필 닉네임 이미지
+userRouter.get("/mypronick",authMiddlesware,mypronick);
+userRouter.put("/mypronick",authMiddlesware,mypronickedit);
+
 
 module.exports = { userRouter };

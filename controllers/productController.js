@@ -58,9 +58,28 @@ exports.pick = async(req,res)=>{
 };
 
 exports.gayeonpick = async(req,res)=>{
+	// 추천해주는 사람의 아이디
+	const md = "608d05b23216500f5925b27f"
 	try {
+		// 필요한 정보 제품이름,제품사진,현재입찰가
+		const like = await Like.find({userId:md},{productId:1,_id:0}).limit(3);
 		
+		const product = [];
+
+		like.forEach(function(e){
+			// console.log(e["productId"]);
+			const a = e["productId"];
+			console.log(a);
+			const b = Product.findOne({_id:a});
+			console.log(b);
+			// 현재입찰가를..어떻게넣지......아무튼이건나중에..
+			// product.push(b);
+		});
+
+		// console.log(product);
+
+		res.send({okay:true});
 	} catch (error) {
-		
+		res.send({okay:false});
 	}
 }

@@ -9,6 +9,7 @@ const {
 	smallCate,
 	search,
 	pick,
+	gayeonpick
 } = require("../controllers/productController");
 const {
 	bidding,
@@ -18,7 +19,7 @@ const {
 	newone,
 	test,
 } = require("../controllers/postController");
-const {quest,questget,answer,answerget} = require("../controllers/qnaController");
+const { quest, questget, answer, answerget } = require("../controllers/qnaController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
 // 테스트용 api
@@ -57,7 +58,8 @@ productRouter.post("/answer/:id", authMiddlesware, answer);
 productRouter.get("/answer/:id", answerget);
 
 // MD추천아이템
-
+// 이거 완성 아님 !! 수정해야됨
+productRouter.get("/recommend", gayeonpick);
 
 // 상품 입찰
 productRouter.post("/auction", authMiddlesware, bidding);

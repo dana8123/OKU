@@ -148,3 +148,22 @@ exports.myproduct = async(req,res)=>{
 		res.send({okay:false});
 	}
 }
+
+exports.mypronick = async(req,res)=>{
+	const user = res.locals.user;
+	console.log(user["profileImg"],user["nickname"]);
+	try {
+		res.send({okay:true,nickname:user["nickname"],profile:user["profileImg"]});
+	} catch (error) {
+		res.send({okay:false});
+	}
+}
+
+exports.mypronickedit = async(req,res)=>{
+	const user = res.locals.user;
+	try {
+		
+	} catch (error) {
+		
+	}
+}
