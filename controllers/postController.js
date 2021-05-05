@@ -20,6 +20,7 @@ exports.test02 = async (req, res) => {
 	res.send(req.body);
 };
 
+//상품 등록하기
 exports.productpost = async (req, res, next) => {
 	const user = res.locals.user;
 
@@ -78,6 +79,7 @@ exports.productpost = async (req, res, next) => {
 	}
 };
 
+//상품 목록 조회순으로 불러오기
 exports.popular = async (req, res) => {
 	try {
 		const popularList = await Product.aggregate([
@@ -90,6 +92,7 @@ exports.popular = async (req, res) => {
 	}
 };
 
+//상품 목록 최신순으로 불러오기
 exports.newone = async (req, res) => {
 	let productList = [];
 	//마지막으로 불러들인 아이템, query문으로 받아옴.
@@ -117,6 +120,28 @@ exports.newone = async (req, res) => {
 	} catch (error) {
 		res.send({ okay: false, error });
 		console.log(error);
+	}
+};
+
+//마감임박 상품 목록 뿌려주기
+//수정중
+exports.deadLineList = async (req, res) => {
+	const halfHour = 86400000;
+	const date = Date.now();
+	try {
+		const list = await Product.aggregate([
+			{
+				$project: {
+					deadLine: {
+						$gte: [date, "deadLine"],
+					},
+				},
+			},
+		]);
+		res.send({ list });
+	} catch (error) {
+		res.send({ error });
+		console.error(error);
 	}
 };
 
