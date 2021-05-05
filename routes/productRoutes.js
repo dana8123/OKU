@@ -19,7 +19,7 @@ const {
 	newone,
 	test,
 } = require("../controllers/postController");
-const { quest, questget, answer, answerget } = require("../controllers/qnaController");
+const { quest, questget, answer} = require("../controllers/qnaController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
 // 테스트용 api
@@ -49,13 +49,10 @@ productRouter.get("/search", search);
 // 찜하기
 productRouter.post("/pick/:id", authMiddlesware, pick);
 
-// 문의하기(quest)
+// 문의하기(quest) , 닉네임&프로필이미지 추가
 productRouter.post("/quest/:id", authMiddlesware, quest);
-productRouter.get("/quest/:id", questget);
-
-// 문의에 답글남기기(answer)
 productRouter.post("/answer/:id", authMiddlesware, answer);
-productRouter.get("/answer/:id", answerget);
+productRouter.get("/quest/:id", questget);
 
 // MD추천아이템
 // 이거 완성 아님 !! 수정해야됨

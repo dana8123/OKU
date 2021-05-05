@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema, model, Types } = mongoose;
 
-const quest = new Schema({
+const QuestNanswer = new Schema({
     userId:{
         type:String,
         required:true
@@ -17,7 +17,10 @@ const quest = new Schema({
     date:{
         type:Date,
         default : Date.now
+    },
+    answer:{
+        type:String
     }
 });
 
-module.exports = mongoose.model("Quest",quest)
+module.exports = mongoose.model("QuestNanswer",QuestNanswer)
