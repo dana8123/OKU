@@ -9,7 +9,7 @@ const {
 	smallCate,
 	search,
 	pick,
-	gayeonpick
+	gayeonpick,
 } = require("../controllers/productController");
 const {
 	bidding,
@@ -18,8 +18,14 @@ const {
 	popular,
 	newone,
 	test,
+	deadLineList,
 } = require("../controllers/postController");
-const { quest, questget, answer, answerget } = require("../controllers/qnaController");
+const {
+	quest,
+	questget,
+	answer,
+	answerget,
+} = require("../controllers/qnaController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
 // 테스트용 api
@@ -37,6 +43,9 @@ productRouter.get("/popularlist", popular);
 
 // 최신 등록 상품 리스트
 productRouter.get("/recentlist", newone);
+
+// 마감임박 상품 리스트
+productRouter.get("/deadline", deadLineList);
 
 // 대분류에 따른 상품리스트
 productRouter.get("/Category/:bigCategory", bigCate);
