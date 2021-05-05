@@ -5,6 +5,10 @@ require("dotenv").config();
 const path = require("path");
 const port = process.env.EXPRESS_PORT;
 
+const server = require('http').createServer(app);
+// http server를 socket.io server로 upgrade한다
+const io = require('socket.io')(server);
+
 // DB연결
 const mongoose = require("mongoose");
 const connect = require("./schema/dbConnect");
@@ -27,6 +31,6 @@ app.use("/product", productRouter);
 //app.use("/", [chatRouter]);
 app.use("/user", userRouter);
 
-app.listen(port, () => {
+server.listen(port, () => {
 	console.log(`Server start at http://localhost:${port}`);
 });
