@@ -30,7 +30,7 @@ userRouter.delete("/pick/:id", authMiddlesware, pickdelete);
 userRouter.get("/myproduct", authMiddlesware, myproduct);
 
 // 프로필 닉네임 이미지
-userRouter.get("/mypronick", authMiddlesware, mypronick);
-//userRouter.put("/mypronick",authMiddlesware,mypronickedit);
+// userRouter.get("/mypronick",authMiddlesware,mypronick);
+// userRouter.put("/mypronick",authMiddlesware,mypronickedit);
 
 module.exports = { userRouter };
