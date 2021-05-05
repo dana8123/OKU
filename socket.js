@@ -10,6 +10,7 @@ module.exports = (app) => {
 	const chat = io.of("/okuoku");
 
 	io.on("connection", (socket) => {
+		io.send("Hello!"); //이건 지금 제가 방금 추가한겁니다.
 		console.log("chat 네임스페이스에 접속되었습니다.");
 		socket.on("disconnect", () => {
 			console.log("chat 네임스페이스 접속 해제");
