@@ -27,10 +27,12 @@ app.use(express.json());
 const { productRouter } = require("./routes/productRoutes");
 const { chatRouter } = require("./routes/chatRoutes");
 const { userRouter } = require("./routes/userRoutes");
+// const { socketRouter } = require("./routes/socketRoutes");
 
 app.use("/", chatRouter);
 app.use("/product", productRouter);
 app.use("/user", userRouter);
+// app.use("/socket", socketRouter);
 
 const server = app.listen(port, () => {
 	console.log(`Server start at http://localhost:${port}`);
