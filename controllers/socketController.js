@@ -1,8 +1,8 @@
 // 소켓 리스트 관련
 const Product = require("../schema/product");
 const PriceHistory = require("../schema/pricehistory");
-const User = require("../schema/user");
 const ChatRoom = require("../schema/chatroom");
+const User = require("../schema/user");
 const Like = require("../schema/like");
 const Alert = require("../schema/alert");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
@@ -49,30 +49,35 @@ exports.sucbid = async (req, res) => {
 	const productId = req.params;
 	const { sucbid, sellerunique } = req.body;
 
-	console.log(user["_id"], productId["id"]);
+	// console.log(user["_id"], productId["id"]);
+    // console.log(sucbid,sellerunique);
 
 	try {
 		const one = await Product.findOneAndUpdate(
-			{ _id: productId["id"] },
+			{ _id: productId["id"]},
 			{ onSale: false }
 		);
-		const two = await PriceHistory.create({
-			userId: user["_id"],
-			productId: productId["id"],
-			currentPrice: sucbid,
-		});
+		const two = await PriceHistory.create({productId:productId["id"],userId:user["_id"],bid:sucbid});
 		const three = await ChatRoom.create({
 			productId: productId["id"],
 			buyerId: user["_id"],
 			sellerId: sellerunique,
 		});
 
-		console.log(one, two, three);
+        // 즉시낙찰유저제외 history에있는 모든 유저 불러오기
+		const a = await PriceHistory.find({$and:[{productId:productId["id"]},{userId:{$ne:user["_id"]}}]});
+		console.log(a);
 
-		// const a = await PriceHistory.find({productId:productId["id"]});
-		// console.log(a);
+        // a로 불러온 낙찰 성공 제외 다른 유저들에게 알람 보내기
+		// await Alert.create({alertType:"낙찰실패",productId:productId["id"],userId:"반복문??"});
 
-		// await Alert.create({alertType:"즉시낙찰",productId:productId["id"],userId});
+        // await Alert.insertMany({alertType:"낙찰실패",productId:productId["id"],userId:a["userId"]
+        // });
+
+        // // 상품 낙찰 성공 알람 보내기
+		// await Alert.create({alertType:"낙찰성공",productId:productId["id"],userId:user["_id"]});
+
+
 		res.send({ msg: "메인페이지로 reload합니다" });
 	} catch (error) {
 		res.send({ msg: "즉시낙찰에 실패하였습니다." });
