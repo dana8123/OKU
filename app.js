@@ -15,6 +15,10 @@ const mongoose = require("mongoose");
 const connect = require("./schema/dbConnect");
 connect();
 
+//임시 뷰, 소켓만 끝나면 지워버려야합니다.
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "pug");
+
 // CORS 처리
 const cors = require("cors");
 app.use(cors());
