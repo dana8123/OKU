@@ -1,13 +1,10 @@
 // 소켓관련 API
 const express = require("express");
-const { Router } = require("express");
-const sockerRouter = express.Router();
-const multer = require("multer");
-const { upload } = require("../middlewares/imageupload.js");
+const { bid } = require("../controllers/socketController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
+const socketRouter = express.Router();
 
-const express = require("express");
-const app = express();
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+socketRouter.post("/:id", authMiddlesware, bid);
+
+module.exports = { socketRouter };
