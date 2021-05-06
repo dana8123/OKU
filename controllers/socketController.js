@@ -24,19 +24,29 @@ exports.bid = async (req, res) => {
 
 		//입찰 시 시작가보다 낮거나 같을 때
 		if (lowBid >= bid) {
-			result = false;
+			result = "lowBid";
 			return res.status(403).send({ result });
 		}
 		//경매 기간이 지났을 경우
 		let now = new Date();
 		if (product.deadLine < now) {
-			result = false;
+			result = "time";
 			return res.status(403).send({ result });
 		}
 		//입찰 시 이전 입찰가보다 낮거나 같을 때
 		if (bidList[0] && bidList[bidList.length - 1].bid >= bid) {
-			result = false;
+			result = "before";
 			return res.status(403).send({ result });
+		}
+		//TODO: 입찰하기에서 즉시 입찰가 혹은 그 이상을 입력했을 때
+		console.log(product.sucBid);
+		if (bid >= product.sucBid) {
+			result = await pricehistory.create({
+				userId: user["_id"],
+				bid,
+				productId: id,
+			});
+			return res.send({ result: "마감" });
 		}
 		result = await pricehistory.create({
 			userId: user["_id"],
