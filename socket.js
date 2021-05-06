@@ -7,14 +7,13 @@ module.exports = (server, app) => {
 	const io = SocketIO(server, { path: "/socket.io" });
 	app.set("io", io);
 	//namespace 지정
-	const bid = io.of("/bid");
 
 	//server-side
-	bid.on("connection", (socket) => {
-		socket.on("order:list", () => {
-			console.log("orderlist event");
+	io.on("connection", (socket) => {
+		socket.emit("bid", "500원");
+		socket.on("bidfromClient", (data) => {
+			console.log(data);
 		});
-		socket.emit("hello", "하하하");
-		console.log("order 네임스페이스에 접속!");
+		console.log(socket.id, "접속");
 	});
 };
