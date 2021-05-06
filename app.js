@@ -6,10 +6,6 @@ const path = require("path");
 const port = process.env.EXPRESS_PORT;
 const webSocket = require("./socket");
 
-const server = require("http").createServer(app);
-// http server를 socket.io server로 upgrade한다
-const io = require("socket.io")(server);
-
 // DB연결
 const mongoose = require("mongoose");
 const connect = require("./schema/dbConnect");
@@ -36,8 +32,8 @@ app.use("/", chatRouter);
 app.use("/product", productRouter);
 app.use("/user", userRouter);
 
-server.listen(port, () => {
+const server = app.listen(port, () => {
 	console.log(`Server start at http://localhost:${port}`);
 });
 
-webSocket();
+webSocket(server, app);

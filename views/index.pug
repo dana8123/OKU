@@ -9,6 +9,10 @@ block content
       transports: ['websocket']
     });
 
-        socket.on("connect", () => {
-      console.log(socket.id); // world
+    socket.on("connect", () => {
+      console.log(socket.id); // ojIckSD2jqNzOqIrAGzL
+      socket.on("hello", (arg) => {
+        console.log(arg); // world
+    });
+
     });

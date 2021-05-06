@@ -7,6 +7,7 @@ module.exports = (app) => {
 	const io = SocketIO(app, { path: "/socket.io" });
 	//server-side
 	io.on("connection", (socket) => {
-		socket.emit("hello", socket.id);
+		socket.emit("hello", "하하하");
+		console.log(socket.id);
 	});
 };
