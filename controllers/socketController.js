@@ -35,12 +35,19 @@ exports.sucbid = async(req,res)=>{
     const productId = req.params;
     const {sucbid,sellerunique} = req.body;
 
-    try {
-        await PriceHistory.create({userId:user["_id"],productId:productId["id"],currentPrice:sucbid});
-        await Product.findOneAndUpdate({_id:productId["id"]},{onSale:true});
-        await ChatRoom.create({productId:productId["id"],buyerId:user["_id"],sellerId:sellerunique});
+    console.log(user["_id"],productId["id"]);
 
-        await Alert.create({alertType:"즉시낙찰",productId:productId["id"],userId});
+    try {
+        const one = await Product.findOneAndUpdate({_id:productId["id"]},{onSale:false});
+        const two =await PriceHistory.create({userId:user["_id"],productId:productId["id"],currentPrice:sucbid});
+        const three =await ChatRoom.create({productId:productId["id"],buyerId:user["_id"],sellerId:sellerunique});
+
+        console.log(one,two,three);
+
+        // const a = await PriceHistory.find({productId:productId["id"]});
+        // console.log(a);
+
+        // await Alert.create({alertType:"즉시낙찰",productId:productId["id"],userId});
         res.send({msg:"메인페이지로 reload합니다"});
     } catch (error) {
         res.send({msg:"즉시낙찰에 실패하였습니다."});
