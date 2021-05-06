@@ -59,6 +59,10 @@ const product = new Schema({
 		type: Number,
 		default: 0,
 	},
+	onSale:{
+		type : Boolean,
+		default : true
+	},
 	createAt: {
 		type: Date,
 		default: Date.now,

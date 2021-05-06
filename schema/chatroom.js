@@ -15,10 +15,12 @@ const chatRoom = new Schema({
         required:true
     },
     buyerOkay:{
-        type:Boolean
+        type:Boolean,
+        default:false
     },
     sellerOkay:{
-        type:Boolean
+        type:Boolean,
+        default:false
     }
 });
 
