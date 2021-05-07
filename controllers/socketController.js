@@ -54,7 +54,7 @@ exports.bid = async (req, res) => {
             userId: user["_id"],
             bid,
             productId: id,
-            nickName:nickName
+            nickName: nickName
         });
         res.send({ result });
     } catch (error) {
@@ -62,6 +62,7 @@ exports.bid = async (req, res) => {
         res.send({ error });
     }
 };
+
 
 exports.sucbid = async (req, res) => {
     const user = res.locals.user;
@@ -72,28 +73,48 @@ exports.sucbid = async (req, res) => {
     // console.log(sucbid,sellerunique);
 
     try {
-        const pro = await Product.findOneAndUpdate({ _id: productId["id"] },{ onSale: false });
+        try {
+            const pro = await Product.findOneAndUpdate({ _id: productId["id"] }, { onSale: false });
+        } catch (error) {
+            res.send({ msg: "제품이 존재하지 않습니다." })
+        }
 
-        await PriceHistory.create({ productId: productId["id"], userId: user["_id"], bid:sucbid , nickName:user["nickname"]});
+        try {
+            await PriceHistory.create({ productId: productId["id"], userId: user["_id"], bid: sucbid, nickName: user["nickname"] });
+        } catch (error) {
+            res.send({ msg: "낙찰 기록에 실패했습니다." })
+        }
 
-        await ChatRoom.create({
-            productId: productId["id"],
-            buyerId: user["_id"],
-            sellerId: pro["sellerunique"],
-        });
+        try {
+            await ChatRoom.create({
+                productId: productId["id"],
+                buyerId: user["_id"],
+                sellerId: sellerunique,
+            });
+        } catch (error) {
+            res.send({ msg: "채팅방 생성에 실패했습니다." })
+        }
 
-        // 즉시낙찰유저제외 history에있는 모든 유저 불러오기
-        const a = await PriceHistory.find({ $and: [{ productId: productId["id"] }, { userId: { $ne: user["_id"] } }] },{userId:1,_id:0});
+        try {
+            // 즉시낙찰유저제외 history에있는 모든 유저 불러오기
+            const a = await PriceHistory.find({ $and: [{ productId: productId["id"] }, { userId: { $ne: user["_id"] } }] }, { userId: 1, _id: 0 });
 
-        // a로 불러온 낙찰 성공 제외 다른 유저들에게 알람 보내기
-        await Alert.insertMany(a.map((user) => ({
-            alertType:"낙찰실패",
-            productId:productId["id"],
-            userId: user.userId,
-          })));
+            await Alert.insertMany(a.map((user) => ({
+                alertType: "낙찰실패",
+                productId: productId["id"],
+                userId: user.userId,
+            })));
+        } catch (error) {
+            res.send(error)
+        }
 
-        // 상품 낙찰 성공 알람 보내기
-        await Alert.create({userId:user["_id"],alertType:"낙찰성공",productId:productId["id"]});
+        try {
+            // 상품 낙찰 성공 알람 보내기
+            await Alert.create({ userId: user["_id"], alertType: "낙찰성공", productId: productId["id"] });
+
+        } catch (error) {
+            res.send({ msg: "즉시 낙찰자에게 낙찰실패알림" })
+        }
 
         res.send({ msg: "메인페이지로 reload합니다" });
     } catch (error) {
@@ -101,36 +122,35 @@ exports.sucbid = async (req, res) => {
         res.send({ msg: "즉시낙찰에 실패하였습니다." });
     }
 };
-
 // 바로 알림
 exports.alert = async (req, res) => {
     const user = res.locals.user;
 
     try {
-        const notCheck = await Alert.find({userId:user["_id"],view:false});
-        const alreadyCheck = await Alert.find({userId:user["_id"],view:true});
+        const notCheck = await Alert.find({ userId: user["_id"], view: false });
+        const alreadyCheck = await Alert.find({ userId: user["_id"], view: true });
 
-        await Alert.updateMany({userId:user["_id"],view:false},{$set:{view:true}});
+        await Alert.updateMany({ userId: user["_id"], view: false }, { $set: { view: true } });
 
-        res.send({okay:true,notCheck:notCheck,alreadyCheck:alreadyCheck});
+        res.send({ okay: true, notCheck: notCheck, alreadyCheck: alreadyCheck });
     } catch (error) {
-        res.sned({okay:false})
+        res.sned({ okay: false })
     }
 };
 
 // 이전 입찰정보 불러오기
-exports.bidinfo = async(req,res)=>{
+exports.bidinfo = async (req, res) => {
     const productId = req.params;
 
     try {
-        const info = await PriceHistory.find({productId:productId["id"]},{nickName:1,bid:1,createAt:1,_id:0})
-        
-        if(info.length<1){
-            res.send({okay:true,msg:"현재입찰자가 없습니다."})
-        }else{
-            res.send({okay:true,prebid:info});
+        const info = await PriceHistory.find({ productId: productId["id"] }, { nickName: 1, bid: 1, createAt: 1, _id: 0 })
+
+        if (info.length < 1) {
+            res.send({ okay: true, msg: "현재입찰자가 없습니다." })
+        } else {
+            res.send({ okay: true, prebid: info });
         }
     } catch (error) {
-        res.send({okay:false})
+        res.send({ okay: false })
     }
 }
