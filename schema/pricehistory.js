@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { Schema, model, Types } = mongoose;
-
 const priceHistory = new Schema({
 	productId: Object,
 	userId: Object,
@@ -10,5 +9,4 @@ const priceHistory = new Schema({
 		default: Date.now,
 	},
 });
-
 module.exports = mongoose.model("PrieceHistory", priceHistory);
