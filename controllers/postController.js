@@ -124,21 +124,30 @@ exports.newone = async (req, res) => {
 };
 
 //마감임박 상품 목록 뿌려주기
-//수정중
 exports.deadLineList = async (req, res) => {
-	const halfHour = 86400000;
-	const date = Date.now();
+	const halfHour = 1800000;
+	const today = new Date();
+	const list = [];
 	try {
-		const list = await Product.aggregate([
-			{
-				$project: {
-					deadLine: {
-						$gte: [date, "deadLine"],
-					},
-				},
-			},
-		]);
-		res.send({ list });
+		//주어진 시각에서 30분을 빼는 함수
+		const calTime = (date, milliseconds) => {
+			return new Date(date.getTime() - milliseconds * 1);
+		};
+		const products = await Product.find({});
+		//전체 상품의 deadLine list 중 30분만 남은 제품 불러오기
+		for (let i = 0; i < products.length; i++) {
+			const toDeadLine = calTime(products[i].deadLine, halfHour);
+			//deadLine이 30분 미만으로 남았고,
+			//마감이 되지 않은 경우
+			if (today > toDeadLine && products[i].deadLine > today) {
+				list.push(products[i]);
+			}
+		}
+		//console.log(list);
+		// console.log("현재시간", today);
+		//console.log("현재시간 - halfHour:", calTime(today, halfHour));
+		//if( products.deadLine )
+		res.send({ result: list });
 	} catch (error) {
 		res.send({ error });
 		console.error(error);
