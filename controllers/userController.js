@@ -103,6 +103,7 @@ exports.login = async (req, res) => {
 			return res.send({
 				access_token: token,
 				nickname: user.nickname,
+				userId: user._id,
 			});
 		}
 		res.send({
@@ -116,54 +117,61 @@ exports.login = async (req, res) => {
 	}
 };
 
-exports.pick = async(req,res)=>{
+exports.pick = async (req, res) => {
 	const user = res.locals.user;
 	try {
-		const product = await Like.find({userId:user["_id"]},{_id:0 ,productId:1,productImage:1});
-		res.send({okay:true,result:product});
+		const product = await Like.find(
+			{ userId: user["_id"] },
+			{ _id: 0, productId: 1, productImage: 1 }
+		);
+		res.send({ okay: true, result: product });
 	} catch (error) {
-		res.send({okay:false})
+		res.send({ okay: false });
 	}
-}
+};
 
-exports.pickdelete = async(req,res)=>{
+exports.pickdelete = async (req, res) => {
 	const user = res.locals.user;
 	const productId = req.params;
 	try {
-		const product = await Like.deleteOne({userId:user["_id"],productId:productId["id"]});
+		const product = await Like.deleteOne({
+			userId: user["_id"],
+			productId: productId["id"],
+		});
 		console.log(product);
-		res.send({okay:true});
+		res.send({ okay: true });
 	} catch (error) {
-		res.send({okay:false});
+		res.send({ okay: false });
 	}
-}
+};
 
-exports.myproduct = async(req,res)=>{
+exports.myproduct = async (req, res) => {
 	const user = res.locals.user;
 
 	try {
-		const product = await Product.find({sellerunique:user["_id"]});
-		res.send({okay:true,result:product});
+		const product = await Product.find({ sellerunique: user["_id"] });
+		res.send({ okay: true, result: product });
 	} catch (error) {
-		res.send({okay:false});
+		res.send({ okay: false });
 	}
-}
+};
 
-exports.mypronick = async(req,res)=>{
+exports.mypronick = async (req, res) => {
 	const user = res.locals.user;
-	console.log(user["profileImg"],user["nickname"]);
+	console.log(user["profileImg"], user["nickname"]);
 	try {
-		res.send({okay:true,nickname:user["nickname"],profile:user["profileImg"]});
+		res.send({
+			okay: true,
+			nickname: user["nickname"],
+			profile: user["profileImg"],
+		});
 	} catch (error) {
-		res.send({okay:false});
+		res.send({ okay: false });
 	}
-}
+};
 
-exports.mypronickedit = async(req,res)=>{
+exports.mypronickedit = async (req, res) => {
 	const user = res.locals.user;
 	try {
-		
-	} catch (error) {
-		
-	}
-}
+	} catch (error) {}
+};
