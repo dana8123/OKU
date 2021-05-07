@@ -64,7 +64,6 @@ exports.gayeonpick = async(req,res)=>{
 	try {
 		// 필요한 정보 제품이름,제품사진,현재입찰가
 		const user = await User.findOne({nickname:md});
-		// console.log(user);
 
 		const like = await Like.find({userId:user["_id"]},{productId:1,_id:0}).limit(3);
 		console.log(like[0]);
@@ -75,11 +74,8 @@ exports.gayeonpick = async(req,res)=>{
 			find.push(like[i]["productId"]);
 		}
 
-		// console.log(find);
-
 		const recommend = await Product.find({_id:{$in:find}},{__v:0,});
-		console.log(recommend);
-
+		
 		res.send({okay:true,result:recommend});
 	} catch (error) {
 		res.send({okay:false});
