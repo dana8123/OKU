@@ -7,6 +7,7 @@ const Like = require("../schema/like");
 const Alert = require("../schema/alert");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const pricehistory = require("../schema/pricehistory");
+const product = require("../schema/product");
 
 exports.bid = async (req, res) => {
     const user = res.locals.user;
@@ -16,6 +17,7 @@ exports.bid = async (req, res) => {
         const { bid } = req.body;
         const product = await Product.findById(id);
         const bidList = await PriceHistory.find({ productId: id });
+        const nickName = user["nickname"]
         //console.log(bidList);
         //console.log("===두번째디버깅===", price);
 
@@ -52,6 +54,7 @@ exports.bid = async (req, res) => {
             userId: user["_id"],
             bid,
             productId: id,
+            nickName:nickName
         });
         res.send({ result });
     } catch (error) {
@@ -69,20 +72,18 @@ exports.sucbid = async (req, res) => {
     // console.log(sucbid,sellerunique);
 
     try {
-        await Product.findOneAndUpdate({ _id: productId["id"] },{ onSale: false });
+        const pro = await Product.findOneAndUpdate({ _id: productId["id"] },{ onSale: false });
 
-        await PriceHistory.create({ productId: productId["id"], userId: user["_id"], bid:sucbid});
+        await PriceHistory.create({ productId: productId["id"], userId: user["_id"], bid:sucbid , nickName:user["nickname"]});
 
         await ChatRoom.create({
             productId: productId["id"],
             buyerId: user["_id"],
-            sellerId: sellerunique,
+            sellerId: pro["sellerunique"],
         });
 
         // 즉시낙찰유저제외 history에있는 모든 유저 불러오기
         const a = await PriceHistory.find({ $and: [{ productId: productId["id"] }, { userId: { $ne: user["_id"] } }] },{userId:1,_id:0});
-
-        console.log(a);
 
         // a로 불러온 낙찰 성공 제외 다른 유저들에게 알람 보내기
         await Alert.insertMany(a.map((user) => ({
@@ -116,3 +117,20 @@ exports.alert = async (req, res) => {
         res.sned({okay:false})
     }
 };
+
+// 이전 입찰정보 불러오기
+exports.bidinfo = async(req,res)=>{
+    const productId = req.params;
+
+    try {
+        const info = await PriceHistory.find({productId:productId["id"]},{nickName:1,bid:1,createAt:1,_id:0})
+        
+        if(info.length<1){
+            res.send({okay:true,msg:"현재입찰자가 없습니다."})
+        }else{
+            res.send({okay:true,prebid:info});
+        }
+    } catch (error) {
+        res.send({okay:false})
+    }
+}
