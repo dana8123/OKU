@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const { Schema, model, Types } = mongoose;
-
 const product = new Schema({
 	title: {
 		type: String,
@@ -59,14 +58,13 @@ const product = new Schema({
 		type: Number,
 		default: 0,
 	},
-	onSale:{
-		type : Boolean,
-		default : true
+	onSale: {
+		type: Boolean,
+		default: true,
 	},
 	createAt: {
 		type: Date,
 		default: Date.now,
 	},
 });
-
 module.exports = mongoose.model("Product", product);

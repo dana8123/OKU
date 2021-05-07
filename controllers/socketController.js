@@ -9,83 +9,110 @@ const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const pricehistory = require("../schema/pricehistory");
 
 exports.bid = async (req, res) => {
-	const user = res.locals.user;
-	const { id } = req.params;
-	try {
-		let result = true;
-		const { bid } = req.body;
-		const product = await Product.findById(id);
-		const price = PriceHistory.find().where("productId").equals();
-		//console.log(price);
+    const user = res.locals.user;
+    const { id } = req.params;
+    try {
+        let result = true;
+        const { bid } = req.body;
+        const product = await Product.findById(id);
+        const bidList = await PriceHistory.find({ productId: id });
+        //console.log(bidList);
+        //console.log("===두번째디버깅===", price);
 
-		//입찰 시 시작가보다 낮거나 같을 때
-		const lowBid = await product.lowBid;
-		console.log("최저입찰가", lowBid);
-		if (lowBid >= bid) {
-			result = false;
-			return res.status(403).send({ result });
-		}
-		//TODO:입찰 시 이전 입찰가보다 낮거나 같을 때
-		// if (pricehistory.currentPrice && product.currentPrice) {
-		// 	result = false;
-		// 	return res.status(403).send({ result });
-		// }
-		result = await pricehistory.create({
-			info: {
-				userId: user["nickname"],
-				bid,
-			},
-			productId: id,
-		});
-		res.send({ result });
-	} catch (error) {
-		console.error(error);
-		res.send({ error });
-	}
+        const lowBid = await product.lowBid;
+        console.log("시작가", lowBid);
+
+        //입찰 시 시작가보다 낮거나 같을 때
+        if (lowBid >= bid) {
+            result = "lowBid";
+            return res.status(403).send({ result });
+        }
+        //경매 기간이 지났을 경우
+        let now = new Date();
+        if (product.deadLine < now) {
+            result = "time";
+            return res.status(403).send({ result });
+        }
+        //입찰 시 이전 입찰가보다 낮거나 같을 때
+        if (bidList[0] && bidList[bidList.length - 1].bid >= bid) {
+            result = "before";
+            return res.status(403).send({ result });
+        }
+        //TODO: 입찰하기에서 즉시 입찰가 혹은 그 이상을 입력했을 때
+        console.log(product.sucBid);
+        if (bid >= product.sucBid) {
+            result = await pricehistory.create({
+                userId: user["_id"],
+                bid,
+                productId: id,
+            });
+            return res.send({ result: "마감" });
+        }
+        result = await pricehistory.create({
+            userId: user["_id"],
+            bid,
+            productId: id,
+        });
+        res.send({ result });
+    } catch (error) {
+        console.error(error);
+        res.send({ error });
+    }
 };
 
 exports.sucbid = async (req, res) => {
-	const user = res.locals.user;
-	const productId = req.params;
-	const { sucbid, sellerunique } = req.body;
+    const user = res.locals.user;
+    const productId = req.params;
+    const { sucbid, sellerunique } = req.body;
 
-	// console.log(user["_id"], productId["id"]);
+    // console.log(user["_id"], productId["id"]);
     // console.log(sucbid,sellerunique);
 
-	try {
-		const one = await Product.findOneAndUpdate(
-			{ _id: productId["id"]},
-			{ onSale: false }
-		);
-		const two = await PriceHistory.create({productId:productId["id"],userId:user["_id"],bid:sucbid});
-		const three = await ChatRoom.create({
-			productId: productId["id"],
-			buyerId: user["_id"],
-			sellerId: sellerunique,
-		});
+    try {
+        await Product.findOneAndUpdate({ _id: productId["id"] },{ onSale: false });
+
+        await PriceHistory.create({ productId: productId["id"], userId: user["_id"], bid:sucbid});
+
+        await ChatRoom.create({
+            productId: productId["id"],
+            buyerId: user["_id"],
+            sellerId: sellerunique,
+        });
 
         // 즉시낙찰유저제외 history에있는 모든 유저 불러오기
-		const a = await PriceHistory.find({$and:[{productId:productId["id"]},{userId:{$ne:user["_id"]}}]});
-		console.log(a);
+        const a = await PriceHistory.find({ $and: [{ productId: productId["id"] }, { userId: { $ne: user["_id"] } }] },{userId:1,_id:0});
+
+        console.log(a);
 
         // a로 불러온 낙찰 성공 제외 다른 유저들에게 알람 보내기
-		// await Alert.create({alertType:"낙찰실패",productId:productId["id"],userId:"반복문??"});
+        await Alert.insertMany(a.map((user) => ({
+            alertType:"낙찰실패",
+            productId:productId["id"],
+            userId: user.userId,
+          })));
 
-        // await Alert.insertMany({alertType:"낙찰실패",productId:productId["id"],userId:a["userId"]
-        // });
+        // 상품 낙찰 성공 알람 보내기
+        await Alert.create({userId:user["_id"],alertType:"낙찰성공",productId:productId["id"]});
 
-        // // 상품 낙찰 성공 알람 보내기
-		// await Alert.create({alertType:"낙찰성공",productId:productId["id"],userId:user["_id"]});
-
-
-		res.send({ msg: "메인페이지로 reload합니다" });
-	} catch (error) {
-		res.send({ msg: "즉시낙찰에 실패하였습니다." });
-	}
+        res.send({ msg: "메인페이지로 reload합니다" });
+    } catch (error) {
+        console.log(error);
+        res.send({ msg: "즉시낙찰에 실패하였습니다." });
+    }
 };
 
 // 바로 알림
 exports.alert = async (req, res) => {
-	try {
-	} catch (error) {}
+    const user = res.locals.user;
+
+    try {
+        const notCheck = await Alert.find({userId:user["_id"],view:false});
+        const alreadyCheck = await Alert.find({userId:user["_id"],view:true});
+
+        await Alert.updateMany({userId:user["_id"],view:false},{$set:{view:true}});
+
+        res.send({okay:true,notCheck:notCheck,alreadyCheck:alreadyCheck});
+    } catch (error) {
+        res.sned({okay:false})
+    }
 };

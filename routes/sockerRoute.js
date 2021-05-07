@@ -15,6 +15,6 @@ socketRouter.post("/bidtry/:id", authMiddlesware, bid);
 socketRouter.post("/sucbid/:id", authMiddlesware, sucbid);
 
 // 알림
-socketRouter.post("/alert", authMiddlesware, alert);
+socketRouter.get("/alert", authMiddlesware, alert);
 
 module.exports = { socketRouter };
