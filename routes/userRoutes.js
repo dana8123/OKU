@@ -2,7 +2,7 @@
 const express = require("express");
 const passport = require("passport");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
-
+const { upload } = require("../middlewares/imageupload.js");
 const {
 	login,
 	signup,
@@ -13,6 +13,7 @@ const {
 	pickdelete,
 	myproduct,
 	mypronick,
+	mypronickedit
 } = require("../controllers/userController");
 const userRouter = express.Router();
 
@@ -31,6 +32,7 @@ userRouter.get("/myproduct", authMiddlesware, myproduct);
 
 // 프로필 닉네임 이미지
 userRouter.get("/mypronick",authMiddlesware,mypronick);
-// userRouter.put("/mypronick",authMiddlesware,mypronickedit);
+// 프로필 닉네임 수정
+userRouter.put("/mypronick",upload.array("img", 1),authMiddlesware,mypronickedit);
 
 module.exports = { userRouter };

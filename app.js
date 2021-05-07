@@ -27,7 +27,7 @@ app.use(express.json());
 const { productRouter } = require("./routes/productRoutes");
 const { chatRouter } = require("./routes/chatRoutes");
 const { userRouter } = require("./routes/userRoutes");
-const { socketRouter } = require("./routes/sockerRoute");
+const { socketRouter } = require("./routes/socketRoute");
 
 app.use("/", chatRouter);
 app.use("/product", productRouter);

@@ -172,6 +172,22 @@ exports.mypronick = async (req, res) => {
 
 exports.mypronickedit = async (req, res) => {
 	const user = res.locals.user;
+	const { nick } = req.body;
+
+	let images = [];
+	let image = "";
+	for (let i = 0; i < req.files.length; i++) {
+		image = req.files[i].filename;
+		images.push(`http://${process.env.DB_SERVER}/` + image);
+	}
+
+	console.log(user["_id"],nick,image);
+
 	try {
-	} catch (error) {}
+		await User.findOneAndUpdate({_id:user["_id"]},{nickname:nick,profileImg:images});
+
+		res.send({ okay: true });
+	} catch (error) {
+		res.send({ okay: false });
+	}
 };
