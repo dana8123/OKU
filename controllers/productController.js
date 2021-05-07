@@ -59,26 +59,24 @@ exports.pick = async(req,res)=>{
 
 exports.gayeonpick = async(req,res)=>{
 	// 추천해주는 사람의 아이디
-	const md = "608d05b23216500f5925b27f"
+	const md = "admin"
+
 	try {
 		// 필요한 정보 제품이름,제품사진,현재입찰가
-		const like = await Like.find({userId:md},{productId:1,_id:0}).limit(3);
+		const user = await User.findOne({nickname:md});
+
+		const like = await Like.find({userId:user["_id"]},{productId:1,_id:0}).limit(3);
+		console.log(like[0]);
 		
-		const product = [];
+		const find = [];
 
-		like.forEach(function(e){
-			// console.log(e["productId"]);
-			const a = e["productId"];
-			console.log(a);
-			const b = Product.findOne({_id:a});
-			console.log(b);
-			// 현재입찰가를..어떻게넣지......아무튼이건나중에..
-			// product.push(b);
-		});
+		for(let i=0; i<like.length; i++){
+			find.push(like[i]["productId"]);
+		}
 
-		// console.log(product);
-
-		res.send({okay:true});
+		const recommend = await Product.find({_id:{$in:find}},{__v:0,});
+		
+		res.send({okay:true,result:recommend});
 	} catch (error) {
 		res.send({okay:false});
 	}

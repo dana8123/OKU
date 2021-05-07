@@ -62,9 +62,6 @@ productRouter.get("/quest/:id", questget);
 // 이거 완성 아님 !! 수정해야됨
 productRouter.get("/recommend", gayeonpick);
 
-// 상품 입찰
-productRouter.post("/auction", authMiddlesware, bidding);
-// 상품 즉시 낙찰
-productRouter.post("/auction", authMiddlesware, bidding);
+
 
 module.exports = { productRouter };
