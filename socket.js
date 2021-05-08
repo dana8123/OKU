@@ -17,7 +17,7 @@ module.exports = (server, app) => {
 	//server-side
 	io.of("/chat").on("connection", async (socket) => {
 		//접속 이후 이하의 코드가 실행됨
-		console.log("chat 네임스페이스에 접속");
+		console.log("chat 네임스페이스에 접속", socket.id);
 		socket.on("join", async (data) => {
 			const req = socket.request;
 			const {
@@ -29,17 +29,22 @@ module.exports = (server, app) => {
 			socket.join(room); //특정 방에 접속하는 코드
 			const chats = await Chat.find({ room });
 			// room에 join된 클라이언트들에게 chats을 보낸다.
-			chat.to(room).emit("load", chats);
+			io.of("/chat").to(room).emit("load", chats);
 		});
 
 		socket.on("send", async (data) => {
 			const { room } = data;
 			const content = new Chat({
-				...data,
+				room,
+				msg: data.msg,
+				user: data.username,
 				// createAt은 임의로 생략
 			});
+			console.log("====content====", content);
+			console.log("===data.msg====", data.msg);
+			console.log("===data.username===", data.username);
 			await content.save();
-			chat.to(room).emit("receive", content);
+			io.of("/chat").to(room).emit("receive", content);
 		});
 
 		//접속해제 시 방을 떠나는 코드

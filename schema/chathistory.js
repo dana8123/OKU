@@ -6,11 +6,11 @@ const chatHistory = new Schema({
 		type: String,
 		required: true,
 	},
-	chat: {
+	msg: {
 		type: String,
 		required: true,
 	},
-	userId: {
+	user: {
 		type: String,
 		required: true,
 	},
