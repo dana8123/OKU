@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 const { Schema, model, Types } = mongoose;
 
 const chatHistory = new Schema({
-	chatRoom: {
+	room: {
 		type: String,
 		required: true,
 	},
-	chathistory: {
+	msg: {
 		type: String,
 		required: true,
 	},
-	userId: {
+	user: {
 		type: String,
 		required: true,
 	},
