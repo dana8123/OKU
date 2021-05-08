@@ -69,20 +69,18 @@ exports.sucbid = async (req, res) => {
     const productId = req.params;
     const { sucbid, sellerunique } = req.body;
 
-    // console.log(user["_id"], productId["id"]);
-    // console.log(sucbid,sellerunique);
-
     try {
+        
         try {
-            const pro = await Product.findOneAndUpdate({ _id: productId["id"] }, { onSale: false });
+            const hisinfo = await PriceHistory.create({ productId: productId["id"], userId: user["_id"], bid: sucbid, nickName: user["nickname"] });
         } catch (error) {
-            res.send({ msg: "제품이 존재하지 않습니다." })
+            res.send({ msg: "낙찰 기록에 실패했습니다." })
         }
 
         try {
-            await PriceHistory.create({ productId: productId["id"], userId: user["_id"], bid: sucbid, nickName: user["nickname"] });
+            await Product.findOneAndUpdate({ _id: productId["id"] }, { onSale: false });
         } catch (error) {
-            res.send({ msg: "낙찰 기록에 실패했습니다." })
+            res.send({ msg: "제품이 존재하지 않습니다." })
         }
 
         try {
@@ -122,6 +120,7 @@ exports.sucbid = async (req, res) => {
         res.send({ msg: "즉시낙찰에 실패하였습니다." });
     }
 };
+
 // 바로 알림
 exports.alert = async (req, res) => {
     const user = res.locals.user;
