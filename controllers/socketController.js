@@ -145,7 +145,7 @@ exports.bidinfo = async (req, res) => {
         const info = await PriceHistory.find({ productId: productId["id"] }, { nickName: 1, bid: 1, createAt: 1, _id: 0 })
 
         if (info.length < 1) {
-            res.send({ okay: true, msg: "현재입찰자가 없습니다." })
+            res.send({ okay: false, msg: "현재입찰자가 없습니다." })
         } else {
             res.send({ okay: true, prebid: info });
         }
