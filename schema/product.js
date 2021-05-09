@@ -62,6 +62,12 @@ const product = new Schema({
 		type: Boolean,
 		default: true,
 	},
+	soldBy: {
+		type: String,
+	},
+	soldById: {
+		type: Object,
+	},
 	createAt: {
 		type: Date,
 		default: Date.now,
