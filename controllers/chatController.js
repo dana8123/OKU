@@ -14,7 +14,17 @@ exports.chatList = async (req, res) => {
 	// 	{ _id: 1, sellerunique: 1, onsale: 1, nickname: 1, soldBy: 1, soldById: 1 }
 	// );
 	let targets = [];
-	const product = await Product.find({});
+	const product = await Product.find(
+		{},
+		{
+			_id: 1,
+			sellerunique: 1,
+			onsale: 1,
+			nickname: 1,
+			soldBy: 1,
+			soldById: 1,
+		}
+	);
 	// IF 문을 사용해 고르기...
 	for (let i = 0; i < product.length; i++) {
 		if (product[i].soldById == user._id) {
