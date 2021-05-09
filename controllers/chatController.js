@@ -1,30 +1,23 @@
 const Chat = require("../schema/chathistory");
 const Room = require("../schema/chatroom");
+const PriceHistory = require("../schema/pricehistory");
+const Product = require("../schema/product");
+const User = require("../schema/user");
 
-//이전에 대화했던 내역 불러오기
-//뭔가 이상하니까 수정하자..
-exports.chat = async (req, res) => {
+//채팅목록에서 뿌려줄 채팅 리스트
+exports.chatList = async (req, res) => {
+	let result;
 	const user = res.locals.user;
-	const { params: id } = req;
-	try {
-		const room = await Room.findById(id);
-		const chats = await Chat.find({ chat: room._id }).sort("date");
-		res.send({ room, chats });
-	} catch (error) {
-		res.send({ error });
-	}
+	const product = await Product.find(
+		{
+			sellerunique: user._id,
+		},
+		{ _id: 1, sellerunique: 1, onsale: 1, nickname: 1, soldBy: 1, soldById: 1 }
+	);
+	console.log(user);
+	res.send({ product });
 };
 
-//소켓통신으로 받은 chat 저장하고 뿌려주기
-exports.realTimeChat = async (req, res) => {
-	const { params: id } = req;
-	try {
-		const chat = new Chat({
-			chatRoom: id,
-			userId,
-			chathistory,
-		});
-		await chat.save();
-		req.app.get("io").of("/chat").to(req.params.id).emit("chat", chat);
-	} catch (error) {}
-};
+//구매자, 판매자의 닉네임
+//유저의 objectId
+//

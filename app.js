@@ -29,7 +29,7 @@ const { chatRouter } = require("./routes/chatRoutes");
 const { userRouter } = require("./routes/userRoutes");
 const { socketRouter } = require("./routes/socketRoute");
 
-app.use("/", chatRouter);
+app.use("/member", chatRouter);
 app.use("/product", productRouter);
 app.use("/user", userRouter);
 app.use("/bid", socketRouter);
