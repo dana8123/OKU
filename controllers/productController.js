@@ -66,8 +66,7 @@ exports.gayeonpick = async(req,res)=>{
 		const user = await User.findOne({nickname:md});
 
 		const like = await Like.find({userId:user["_id"]},{productId:1,_id:0}).limit(3);
-		console.log(like[0]);
-		
+
 		const find = [];
 
 		for(let i=0; i<like.length; i++){
@@ -76,7 +75,12 @@ exports.gayeonpick = async(req,res)=>{
 
 		const recommend = await Product.find({_id:{$in:find}},{__v:0,});
 		
-		res.send({okay:true,result:recommend});
+		if(recommend.length<1){
+			res.send({okay:false,result:false});
+		}else{
+			res.send({okay:true,result:recommend});
+		}
+
 	} catch (error) {
 		res.send({okay:false});
 	}
