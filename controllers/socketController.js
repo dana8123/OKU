@@ -55,7 +55,7 @@ exports.bid = async (req, res) => {
 				userId: user["_id"],
 				bid,
 				productId: product._id,
-				soldBy: user["nickname"],
+				nickName: user["nickname"],
 				seller,
 			});
 			//판매종료될 경우, product.onsale항목 변경하기
@@ -70,7 +70,7 @@ exports.bid = async (req, res) => {
 			userId: user["_id"],
 			bid,
 			productId: product._id,
-			nickName: nickName,
+			nickName: user.nickname,
 		});
 		res.send({ result });
 	} catch (error) {
