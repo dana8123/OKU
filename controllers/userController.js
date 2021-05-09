@@ -181,13 +181,20 @@ exports.mypronickedit = async (req, res) => {
 		images.push(`http://${process.env.DB_SERVER}/` + image);
 	}
 
-	console.log(user["_id"],nick,image);
-
 	try {
-		await User.findOneAndUpdate({_id:user["_id"]},{nickname:nick,profileImg:images});
+		const newinfo =await User.findOneAndUpdate({_id:user["_id"]},{nickname:nick,profileImg:images[0]});
 
-		res.send({ okay: true });
+		res.send({ okay: true , profileImg:newinfo["profileImg"],nickname:newinfo["nickname"] });
 	} catch (error) {
 		res.send({ okay: false });
 	}
 };
+
+exports.myinfo = async(req,res) => {
+	const user = res.locals.user;
+	try {
+		res.send({okay:true,user});
+	} catch (error) {
+		res.send({okay:false});
+	}
+}

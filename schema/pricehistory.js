@@ -1,14 +1,21 @@
 const mongoose = require("mongoose");
 const { Schema, model, Types } = mongoose;
 const priceHistory = new Schema({
-	productId: Object,
-	seller: Object,
-	userId: Object,
-	nickName: String,
-	bid: Number,
-	soldBy: {
+	productId: {
 		type: Object,
-		default: undefined,
+		required: true,
+	},
+	userId: {
+		type: Object,
+		required: true,
+	},
+	nickName: {
+		type: String,
+		required: true,
+	},
+	bid: {
+		type: Number,
+		required: true,
 	},
 	createAt: {
 		type: Date,

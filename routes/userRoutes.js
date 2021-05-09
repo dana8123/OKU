@@ -13,7 +13,8 @@ const {
 	pickdelete,
 	myproduct,
 	mypronick,
-	mypronickedit
+	mypronickedit,
+	myinfo
 } = require("../controllers/userController");
 const userRouter = express.Router();
 
@@ -34,5 +35,8 @@ userRouter.get("/myproduct", authMiddlesware, myproduct);
 userRouter.get("/mypronick",authMiddlesware,mypronick);
 // 프로필 닉네임 수정
 userRouter.put("/mypronick",upload.array("img", 1),authMiddlesware,mypronickedit);
+
+// 내 정보 조회
+userRouter.get("/myinfo",authMiddlesware,myinfo);
 
 module.exports = { userRouter };

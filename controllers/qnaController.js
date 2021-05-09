@@ -4,6 +4,7 @@ const multer = require("multer");
 const Product = require("../schema/product");
 const User = require("../schema/user");
 const QuestNanswer = require("../schema/questNanswer");
+const Alert = require("../schema/alert");
 
 //post
 exports.quest = async (req, res) => {
@@ -11,10 +12,12 @@ exports.quest = async (req, res) => {
     const { contents, sellerunique } = req.body;
     const productId = req.params;
 
-    console.log(user["_id"], productId["id"], req.body);
+    console.log(user["_id"], productId["id"], sellerunique);
 
     try {
         await QuestNanswer.create({ sellerId: sellerunique, userId: user["_id"], productId: productId["id"], contents: contents, answer: " " });
+        // 판매자한테 문의 알림띄우기
+        await Alert.create({alertType:"문의",productId:productId["id"],userId:sellerunique});
         res.send({ okay: true });
     } catch (error) {
         res.send({ okay: false });
@@ -27,15 +30,17 @@ exports.answer = async (req, res) => {
     const { sellerunique, contents } = req.body;
     const questId = req.params;
 
-    // console.log(user["_id"],sellerunique,contents,questId["id"]);
-    console.log(contents);
+
+    console.log(questId);
 
     try {
 
         // 주의할점 문의글 get할때 나오는 _id값을 기준으로 불러옴
         if (sellerunique == user["_id"]) {
             const a = await QuestNanswer.findOneAndUpdate({ _id: questId["id"] }, { answer: contents });
-            console.log(a);
+            
+            // 문의글 단 문의자한테 알림보내기
+            await Alert.create({alertType:"문의답글",productId:a["id"],userId:a["userId"]});
             res.send({ okay: true });
         } else {
             res.send({ okay: false });
@@ -45,7 +50,8 @@ exports.answer = async (req, res) => {
     }
 }
 
-//get
+// get
+// for문 안쓰도록 수정
 exports.questget = async (req, res) => {
     const productId = req.params;
     // console.log(productId["id"]);
@@ -55,6 +61,7 @@ exports.questget = async (req, res) => {
         const result = [];
         const a = await QuestNanswer.find({ productId: productId["id"] }, { __v: 0 });
 
+        // 에러난 코드
         // a.forEach(async e => {
         //     const seller = await User.findOne({ _id: e["sellerId"] }, { nickname: 1, _id: 0 });
         //     const buyer = await User.findOne({ _id: e["userId"] }, { nickname: 1, profileImg: 1 });
