@@ -66,7 +66,7 @@ const product = new Schema({
 		type: String,
 	},
 	soldById: {
-		type: Object,
+		type: String,
 	},
 	createAt: {
 		type: Date,
