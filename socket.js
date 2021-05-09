@@ -25,6 +25,9 @@ module.exports = (server, app) => {
 			} = req;
 			console.log(referer); // 현재 웹페이지의 url을 가져올 수 있음, url에서 방 아이디 부분을 추출.
 			const { room, username } = data;
+			console.log("===roomId=====", data.room);
+			console.log("===roomuser===", data.username);
+			console.log("===referer===", referer);
 			// room에 join되어 있는 클라이언트에게 메시지를 전송한다.
 			socket.join(room); //특정 방에 접속하는 코드
 			const chats = await Chat.find({ room });
@@ -45,12 +48,19 @@ module.exports = (server, app) => {
 			console.log("===data.username===", data.username);
 			await content.save();
 			io.of("/chat").to(room).emit("receive", content);
+			//접속해제 시 방을 떠나는 코드
+			socket.on("disconnect", () => {
+				console.log("chat 네임스페이스 접속 해제");
+				socket.leave(room);
+			});
 		});
+	});
 
-		//접속해제 시 방을 떠나는 코드
-		socket.on("disconnect", () => {
-			console.log("chat 네임스페이스 접속 해제");
-			socket.leave(room);
+	//global socket 알림, 채팅 목록
+	io.of("/").on("connection", function (socket) {
+		socket.on("globalSend", async function (data) {
+			console.log("====global====", data);
+			global.emit("globalReceive", data);
 		});
 	});
 };
