@@ -8,7 +8,6 @@ const Alert = require("../schema/alert");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const pricehistory = require("../schema/pricehistory");
 const product = require("../schema/product");
-const Auction = require("../schema/auction");
 
 //입찰하기
 exports.bid = async (req, res) => {
