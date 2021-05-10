@@ -184,7 +184,6 @@ exports.mypronickedit = async (req, res) => {
 		}
 		
 		// 프로필이미지가 넘어오지않을때의 예외처리
-
 		if(images[0]==null){
 			const newinfo =await User.findOneAndUpdate({_id:user["_id"]},{nickname:nick});
 			res.send({ okay: true , profileImg:newinfo["profileImg"],nickname:newinfo["nickname"] });

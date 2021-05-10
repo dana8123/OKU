@@ -143,10 +143,6 @@ exports.deadLineList = async (req, res) => {
 				list.push(products[i]);
 			}
 		}
-		//console.log(list);
-		// console.log("현재시간", today);
-		//console.log("현재시간 - halfHour:", calTime(today, halfHour));
-		//if( products.deadLine )
 		if (list.length == 0) {
 			return res.send({ result: "empty" });
 		}

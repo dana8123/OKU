@@ -11,157 +11,147 @@ const product = require("../schema/product");
 
 //입찰하기
 exports.bid = async (req, res) => {
-    const user = res.locals.user;
-    const { id } = req.params;
-    try {
-        let result = true;
-        const { bid } = req.body;
-        const product = await Product.findById(id);
-        const seller = product.sellerunique;
-        console.log("===판매자이름===", seller);
-        const bidList = await PriceHistory.find({ productId: id });
-        const nickName = user["nickname"];
-        //console.log(bidList);
-        //console.log("===두번째디버깅===", price);
+	const user = res.locals.user;
+	const { id } = req.params;
+	try {
+		let result = true;
+		const { bid } = req.body;
+		const product = await Product.findById(id);
+		const seller = product.sellerunique;
+		const bidList = await PriceHistory.find({ productId: id });
+		const nickName = user["nickname"];
 
-        const lowBid = await product.lowBid;
-        console.log("시작가", lowBid);
+		const lowBid = await product.lowBid;
+		console.log("시작가", lowBid);
 
-        //입찰 시 시작가보다 낮거나 같을 때
-        if (lowBid >= bid) {
-            result = "lowBid";
-            return res.status(403).send({ result });
-        }
-        //경매 기간이 지났을 경우
-        let now = new Date();
-        if (product.deadLine < now) {
-            result = "time";
-            return res.status(403).send({ result });
-        }
-        //입찰 시 이전 입찰가보다 낮거나 같을 때
-        if (bidList[0] && bidList[bidList.length - 1].bid >= bid) {
-            result = "before";
-            return res.status(403).send({ result });
-        }
-        // TODO: onSale항목이 false일 때
-        if ((product.onSale = false)) {
-            result: "already successed Bidding";
-            return res.status(403).send({ result });
-        }
-        //입찰하기에서 즉시 입찰가 혹은 그 이상을 입력했을 때
-        console.log(product.sucBid);
-        if (bid >= product.sucBid) {
-            result = await pricehistory.create({
-                userId: user["_id"],
-                bid,
-                productId: product._id,
-                nickName: user["nickname"],
-                seller,
-            });
-            //판매종료될 경우, product.onsale항목 변경하기
-            await product.updateOne({
-                $set: { onSale: false, soldBy: user.nickname, soldById: user._id },
-            });
+		//입찰 시 시작가보다 낮거나 같을 때
+		if (lowBid >= bid) {
+			result = "lowBid";
+			return res.status(403).send({ result });
+		}
+		//경매 기간이 지났을 경우
+		let now = new Date();
+		if (product.deadLine < now) {
+			result = "time";
+			return res.status(403).send({ result });
+		}
+		//입찰 시 이전 입찰가보다 낮거나 같을 때
+		if (bidList[0] && bidList[bidList.length - 1].bid >= bid) {
+			result = "before";
+			return res.status(403).send({ result });
+		}
+		// TODO: onSale항목이 false일 때
+		if ((product.onSale = false)) {
+			result: "already successed Bidding";
+			return res.status(403).send({ result });
+		}
+		//입찰하기에서 즉시 입찰가 혹은 그 이상을 입력했을 때
+		if (bid >= product.sucBid) {
+			result = await pricehistory.create({
+				userId: user["_id"],
+				bid,
+				productId: product._id,
+				nickName: user["nickname"],
+				seller,
+			});
+			//입찰하기에서 즉시입찰가 입력하여 판매종료될 경우.
+			await product.updateOne({
+				$set: { onSale: false, soldBy: user.nickname, soldById: user._id },
+			});
 
-            return res.send({ result: "마감" });
-        }
-        //이외 낙찰하기가 성공되었을 때
-        result = await pricehistory.create({
-            userId: user["_id"],
-            bid,
-            productId: product._id,
-            nickName: user.nickname,
-        });
-        res.send({ result });
-    } catch (error) {
-        console.error(error);
-        res.send({ error });
-    }
+			return res.send({ result: "마감" });
+		}
+		//이외 입찰하기가 성공되었을 때
+		result = await pricehistory.create({
+			userId: user["_id"],
+			bid,
+			productId: product._id,
+			nickName: user.nickname,
+		});
+		res.send({ result });
+	} catch (error) {
+		console.error(error);
+		res.send({ error });
+	}
 };
 
 //즉시 낙찰하기
 // 판매자가 낙찰 불가능하게 만들기
 exports.sucbid = async (req, res) => {
-    const user = res.locals.user;
-    const productId = req.params;
-    const { sucbid, sellerunique } = req.body;
+	const user = res.locals.user;
+	const productId = req.params;
+	const { sucbid, sellerunique } = req.body;
 
-    try {
-        if (user["id"] == sellerunique) {
-            res.send({ okay: false, result: "판매자는 낙찰이 불가능합니다." })
-        } else {
-            try {
-                const hisinfo = await PriceHistory.create({
-                    productId: productId["id"],
-                    userId: user["_id"],
-                    bid: sucbid,
-                    nickName: user["nickname"],
-                });
-            } catch (error) {
-                res.send({ msg: "낙찰 기록에 실패했습니다." });
-            }
+	try {
+		try {
+			const hisinfo = await PriceHistory.create({
+				productId: productId["id"],
+				userId: user["_id"],
+				bid: sucbid,
+				nickName: user["nickname"],
+			});
+		} catch (error) {
+			res.send({ msg: "낙찰 기록에 실패했습니다." });
+		}
 
-            try {
-                await Product.findOneAndUpdate(
-                    { _id: productId["id"] },
-                    { onSale: false }
-                );
-            } catch (error) {
-                res.send({ msg: "제품이 존재하지 않습니다." });
-            }
+		try {
+			await Product.findOneAndUpdate(
+				{ _id: productId["id"] },
+				{ onSale: false, soldBy: user.nickname, soldById: user._id }
+			);
+		} catch (error) {
+			res.send({ msg: "제품이 존재하지 않습니다." });
+		}
 
-            try {
-                await ChatRoom.create({
-                    productId: productId["id"],
-                    buyerId: user["_id"],
-                    sellerId: sellerunique,
-                });
-            } catch (error) {
-                res.send({ msg: "채팅방 생성에 실패했습니다." });
-            }
+		try {
+			await ChatRoom.create({
+				productId: productId["id"],
+				buyerId: user["_id"],
+				sellerId: sellerunique,
+			});
+		} catch (error) {
+			res.send({ msg: "채팅방 생성에 실패했습니다." });
+		}
 
-            try {
-                // 즉시낙찰유저제외 history에있는 모든 유저 불러오기
-                const a = await PriceHistory.find(
-                    {
-                        $and: [
-                            { productId: productId["id"] },
-                            { userId: { $ne: user["_id"] } },
-                        ],
-                    },
-                    { userId: 1, _id: 0 }
-                );
+		try {
+			// 즉시낙찰유저제외 history에있는 모든 유저 불러오기
+			const a = await PriceHistory.find(
+				{
+					$and: [
+						{ productId: productId["id"] },
+						{ userId: { $ne: user["_id"] } },
+					],
+				},
+				{ userId: 1, _id: 0 }
+			);
 
-                await Alert.insertMany(
-                    a.map((user) => ({
-                        alertType: "낙찰실패",
-                        productId: productId["id"],
-                        userId: user.userId,
-                    }))
-                );
-            } catch (error) {
-                res.send(error);
-            }
+			await Alert.insertMany(
+				a.map((user) => ({
+					alertType: "낙찰실패",
+					productId: productId["id"],
+					userId: user.userId,
+				}))
+			);
+		} catch (error) {
+			res.send(error);
+		}
 
-            try {
-                // 상품 낙찰 성공 알람 보내기
-                await Alert.create({
-                    userId: user["_id"],
-                    alertType: "낙찰성공",
-                    productId: productId["id"],
-                });
-            } catch (error) {
-                res.send({ msg: "즉시 낙찰자에게 낙찰실패알림" });
-            }
+		try {
+			// 상품 낙찰 성공 알람 보내기
+			await Alert.create({
+				userId: user["_id"],
+				alertType: "낙찰성공",
+				productId: productId["id"],
+			});
+		} catch (error) {
+			res.send({ msg: "즉시 낙찰자에게 낙찰실패알림" });
+		}
 
-            res.send({ msg: "메인페이지로 reload합니다" });
-
-        }
-
-    } catch (error) {
-        console.log(error);
-        res.send({ msg: "즉시낙찰에 실패하였습니다." });
-    }
+		res.send({ msg: "메인페이지로 reload합니다" });
+	} catch (error) {
+		console.log(error);
+		res.send({ msg: "즉시낙찰에 실패하였습니다." });
+	}
 };
 
 // 바로 알림
