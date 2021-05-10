@@ -18,11 +18,8 @@ exports.bid = async (req, res) => {
 		const { bid } = req.body;
 		const product = await Product.findById(id);
 		const seller = product.sellerunique;
-		console.log("===판매자이름===", seller);
 		const bidList = await PriceHistory.find({ productId: id });
 		const nickName = user["nickname"];
-		//console.log(bidList);
-		//console.log("===두번째디버깅===", price);
 
 		const lowBid = await product.lowBid;
 		console.log("시작가", lowBid);
@@ -49,7 +46,6 @@ exports.bid = async (req, res) => {
 			return res.status(403).send({ result });
 		}
 		//입찰하기에서 즉시 입찰가 혹은 그 이상을 입력했을 때
-		console.log(product.sucBid);
 		if (bid >= product.sucBid) {
 			result = await pricehistory.create({
 				userId: user["_id"],
@@ -58,7 +54,7 @@ exports.bid = async (req, res) => {
 				nickName: user["nickname"],
 				seller,
 			});
-			//판매종료될 경우, product.onsale항목 변경하기
+			//입찰하기에서 즉시입찰가 입력하여 판매종료될 경우.
 			await product.updateOne({
 				$set: { onSale: false, soldBy: user.nickname, soldById: user._id },
 			});
