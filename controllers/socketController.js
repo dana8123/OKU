@@ -100,7 +100,7 @@ exports.sucbid = async (req, res) => {
 		try {
 			await Product.findOneAndUpdate(
 				{ _id: productId["id"] },
-				{ onSale: false }
+				{ onSale: false, soldBy: user.nickname, soldById: user._id }
 			);
 		} catch (error) {
 			res.send({ msg: "제품이 존재하지 않습니다." });
