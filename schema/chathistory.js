@@ -14,9 +14,8 @@ const chatHistory = new Schema({
 		type: String,
 		required: true,
 	},
-	date: {
+	time: {
 		type: Date,
-		default: Date.now,
 	},
 });
 
