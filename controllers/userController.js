@@ -171,20 +171,29 @@ exports.mypronick = async (req, res) => {
 };
 
 exports.mypronickedit = async (req, res) => {
-	const user = res.locals.user;
-	const { nick } = req.body;
-
-	let images = [];
-	let image = "";
-	for (let i = 0; i < req.files.length; i++) {
-		image = req.files[i].filename;
-		images.push(`http://${process.env.DB_SERVER}/` + image);
-	}
 
 	try {
-		const newinfo =await User.findOneAndUpdate({_id:user["_id"]},{nickname:nick,profileImg:images[0]});
+		const user = res.locals.user;
+		const { nick } = req.body;
+	
+		let images = [];
+		let image = "";
+		for (let i = 0; i < req.files.length; i++) {
+			image = req.files[i].filename;
+			images.push(`http://${process.env.DB_SERVER}/` + image);
+		}
+		
+		// 프로필이미지가 넘어오지않을때의 예외처리
 
-		res.send({ okay: true , profileImg:newinfo["profileImg"],nickname:newinfo["nickname"] });
+		if(images[0]==null){
+			const newinfo =await User.findOneAndUpdate({_id:user["_id"]},{nickname:nick});
+			res.send({ okay: true , profileImg:newinfo["profileImg"],nickname:newinfo["nickname"] });
+		}else{
+			const newinfo =await User.findOneAndUpdate({_id:user["_id"]},{nickname:nick,profileImg:images[0]});
+			res.send({ okay: true , profileImg:newinfo["profileImg"],nickname:newinfo["nickname"] });
+
+		}
+
 	} catch (error) {
 		res.send({ okay: false });
 	}
