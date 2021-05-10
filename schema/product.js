@@ -62,9 +62,11 @@ const product = new Schema({
 		type: Boolean,
 		default: true,
 	},
+	//낙찰자의 닉네임
 	soldBy: {
 		type: String,
 	},
+	//낙찰자의 objectId
 	soldById: {
 		type: String,
 	},

@@ -65,7 +65,7 @@ exports.bid = async (req, res) => {
 
 			return res.send({ result: "마감" });
 		}
-		//이외 낙찰하기가 성공되었을 때
+		//이외 입찰하기가 성공되었을 때
 		result = await pricehistory.create({
 			userId: user["_id"],
 			bid,
