@@ -36,7 +36,7 @@ module.exports = (server, app) => {
 			// room에 join된 클라이언트들에게 chats을 보낸다.
 			chatSpace.to(room).emit("load", chats);
 		});
-
+		//send emit으로 받는 데이터
 		socket.on("send", async (data) => {
 			const { room } = data;
 			const content = new Chat({
@@ -51,6 +51,7 @@ module.exports = (server, app) => {
 			console.log("===data.username===", data.username);
 			console.log("====time", data.time);
 			await content.save();
+			// 저장한 데이터를 클라이언트에게 receive라는 emit으로 전송
 			io.of("/chat").to(room).emit("receive", content);
 			//접속해제 시 방을 떠나는 코드
 			socket.on("disconnect", () => {
