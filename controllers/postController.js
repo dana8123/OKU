@@ -162,7 +162,9 @@ exports.detail = async (req, res) => {
 			{ $inc: { views: 1 } },
 			{ __v: 0 }
 		);
-		res.json({ okay: true, result: product });
+		
+		const user = await User.findOne({_id:product["sellerunique"]},{profileImg:1,nickname:1,_id:1});
+		res.json({ okay: true, result: product , seller: user });
 	} catch (error) {
 		res.send({ okay: false });
 	}
