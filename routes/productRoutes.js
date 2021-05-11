@@ -23,9 +23,6 @@ const {
 const { quest, questget, answer } = require("../controllers/qnaController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
-// 테스트용 api
-productRouter.get("/test", authMiddlesware, test);
-
 // 상품등록
 // 미들웨어 붙이고 로그인처리 필요
 productRouter.post("/", upload.array("img", 3), authMiddlesware, productpost);
@@ -61,7 +58,5 @@ productRouter.get("/quest/:id", questget);
 // MD추천아이템
 // 이거 완성 아님 !! 수정해야됨
 productRouter.get("/recommend", gayeonpick);
-
-
 
 module.exports = { productRouter };
