@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema, model, Types } = mongoose;
 const priceHistory = new Schema({
 	productId: {
-		type: Object,
+		type: String,
 		required: true,
 	},
 	userId: {
