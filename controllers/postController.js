@@ -2,23 +2,12 @@
 require("dotenv").config();
 const multer = require("multer");
 const Product = require("../schema/product");
+const PriceHistory = require("../schema/pricehistory");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
-
-exports.test = async (req, res) => {
-	const user = res.locals.user;
-	console.log(user);
-	res.send({ result: "test" });
-};
-
-exports.test02 = async (req, res) => {
-	const { test } = req.body;
-	console.log(test);
-	console.log(req.body);
-	res.send(req.body);
-};
+const schedule = require("node-schedule");
 
 //상품 등록하기
 exports.productpost = async (req, res, next) => {
@@ -44,7 +33,6 @@ exports.productpost = async (req, res, next) => {
 			smallCategory,
 			region,
 			deliveryprice,
-			deadLine,
 			duration,
 		} = req.body;
 
@@ -52,7 +40,7 @@ exports.productpost = async (req, res, next) => {
 			return new Date(date.getTime() + milliseconds * 1);
 		};
 
-		await Product.create({
+		const newProduct = await Product.create({
 			title,
 			img: images,
 			nickname: user["nickname"],
@@ -68,6 +56,35 @@ exports.productpost = async (req, res, next) => {
 			deliveryPrice: deliveryprice,
 			deadLine: addTime(new Date(), duration),
 		});
+		newProduct.save();
+		console.log("새로등록한 상품의 id", newProduct._id);
+		console.log("새로등록한 상품의 마감일", newProduct.deadLine);
+		schedule.scheduleJob(newProduct.deadLine, async () => {
+			//TODO: 입찰자가 있을 때와 없을 때로 구분
+			const success = [];
+			const pricehistory = await PriceHistory.find({
+				productId: newProduct._id,
+			});
+			// for (let i; i < pricehistory.length; i++) {
+			// 	success.push(pricehistory[i]);
+			// }
+			console.log(newProduct._id);
+			console.log(pricehistory);
+			if (success.length == 0) {
+				//입찰내역이 없을 때
+				await newProduct.updateOne({
+					$set: { onSale: false, soldBy: "낙찰자가 없어요", soldById: null },
+				});
+			}
+			//입찰내역이 1개 이상 있을 때
+			await newProduct.updateOne({
+				$set: {
+					onSale: false,
+					soldBy: pricehistory[0].nickName,
+					soldById: pricehistory[0].userId,
+				},
+			});
+		});
 
 		res.send({ msg: "상품이 등록되었습니다" });
 	} catch (error) {
@@ -76,6 +93,7 @@ exports.productpost = async (req, res, next) => {
 			res.send({ msg: "multer error" });
 		}
 		res.send({ msg: "상품 등록에 실패하였습니다.", error });
+		console.log(error);
 	}
 };
 

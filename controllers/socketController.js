@@ -18,12 +18,13 @@ exports.bid = async (req, res) => {
 		const { bid } = req.body;
 		const product = await Product.findById(id);
 		const seller = product.sellerunique;
-		const bidList = await PriceHistory.find({ productId: id });
-		const nickName = user["nickname"];
+		const bidList = await PriceHistory.find({
+			productId: id,
+		});
 
 		const lowBid = await product.lowBid;
 		console.log("시작가", lowBid);
-
+		//console.log("경매내역", bidList);
 		//입찰 시 시작가보다 낮거나 같을 때
 		if (lowBid >= bid) {
 			result = "lowBid";
@@ -156,39 +157,39 @@ exports.sucbid = async (req, res) => {
 
 // 바로 알림
 exports.alert = async (req, res) => {
-    const user = res.locals.user;
+	const user = res.locals.user;
 
-    try {
-        const notCheck = await Alert.find({ userId: user["_id"], view: false });
-        const alreadyCheck = await Alert.find({ userId: user["_id"], view: true });
+	try {
+		const notCheck = await Alert.find({ userId: user["_id"], view: false });
+		const alreadyCheck = await Alert.find({ userId: user["_id"], view: true });
 
-        await Alert.updateMany(
-            { userId: user["_id"], view: false },
-            { $set: { view: true } }
-        );
+		await Alert.updateMany(
+			{ userId: user["_id"], view: false },
+			{ $set: { view: true } }
+		);
 
-        res.send({ okay: true, notCheck: notCheck, alreadyCheck: alreadyCheck });
-    } catch (error) {
-        res.sned({ okay: false });
-    }
+		res.send({ okay: true, notCheck: notCheck, alreadyCheck: alreadyCheck });
+	} catch (error) {
+		res.sned({ okay: false });
+	}
 };
 
 // 이전 입찰정보 불러오기
 exports.bidinfo = async (req, res) => {
-    const productId = req.params;
+	const productId = req.params;
 
-    try {
-        const info = await PriceHistory.find(
-            { productId: productId["id"] },
-            { nickName: 1, bid: 1, createAt: 1, _id: 0 }
-        );
+	try {
+		const info = await PriceHistory.find(
+			{ productId: productId["id"] },
+			{ nickName: 1, bid: 1, createAt: 1, _id: 0 }
+		);
 
-        if (info.length < 1) {
-            res.send({ okay: false, msg: "현재입찰자가 없습니다." });
-        } else {
-            res.send({ okay: true, prebid: info });
-        }
-    } catch (error) {
-        res.send({ okay: false });
-    }
+		if (info.length < 1) {
+			res.send({ okay: false, msg: "현재입찰자가 없습니다." });
+		} else {
+			res.send({ okay: true, prebid: info });
+		}
+	} catch (error) {
+		res.send({ okay: false });
+	}
 };
