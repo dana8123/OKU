@@ -189,14 +189,17 @@ exports.detail = async (req, res) => {
 };
 
 exports.relate = async (req, res) => {
-	
+	// 소분류 카테고리값 받는게 더 나을것같음
+	const {product,smallCategory,tag} = req.body;
+	console.log(product);
 	try {
-	} catch (error) {}
-};
+		// 첫번째 이미지 + lowbid + title + bid(현재입찰가)
+		// onsale:true만
+		const a = await Product.find({$or:[{tag:new RegExp(tag)},{smallCategory:new RegExp(smallCategory)}]},{img:1,title:1,lowBid:1}).limit(4);
+		console.log(a);
 
-// 나중으로 미뤄둔 낙찰입찰
-exports.bidding = async (req, res) => {
-	// const user = res.locals.user;
-	try {
-	} catch (error) {}
+		res.send({okay:true});
+	} catch (error) {
+		res.send({okay:false});
+	}
 };

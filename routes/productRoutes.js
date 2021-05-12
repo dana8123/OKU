@@ -61,6 +61,6 @@ productRouter.get("/quest/:id", questget);
 productRouter.get("/recommend", gayeonpick);
 
 // 관련상품 조회
-productRouter.get("/relate", relate );
+productRouter.get("/relate", relate);
 
 module.exports = { productRouter };

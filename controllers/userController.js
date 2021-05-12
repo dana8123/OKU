@@ -206,3 +206,12 @@ exports.myinfo = async(req,res) => {
 		res.send({okay:false});
 	}
 }
+
+exports.numberconfirm = async(req,res) => {
+	
+	try {
+		
+	} catch (error) {
+		
+	}
+}
