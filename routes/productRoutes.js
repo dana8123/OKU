@@ -33,6 +33,7 @@ productRouter.post("/", upload.array("img", 3), authMiddlesware, productpost);
 productRouter.get("/detail/:id", detail);
 
 // 실시간 인기상품 리스트
+// onsale 처리완료
 productRouter.get("/popularlist", popular);
 
 // 최신 등록 상품 리스트

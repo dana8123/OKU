@@ -100,10 +100,13 @@ exports.productpost = async (req, res, next) => {
 //상품 목록 조회순으로 불러오기
 exports.popular = async (req, res) => {
 	try {
+		// onSale:true
 		const popularList = await Product.aggregate([
+			{ $match:{onSale:true}},
 			{ $sort: { views: -1 } },
 			{ $limit: 3 },
 		]);
+
 		res.send({ okay: true, result: popularList });
 	} catch (error) {
 		res.send({ okay: false, error });
@@ -190,14 +193,29 @@ exports.detail = async (req, res) => {
 
 exports.relate = async (req, res) => {
 	// 소분류 카테고리값 받는게 더 나을것같음
-	const {product,smallCategory,tag} = req.body;
-	console.log(product);
+	const {smallCategory,tag} = req.body;
+
+	// console.log(product);
 	try {
 		// 첫번째 이미지 + lowbid + title + bid(현재입찰가)
 		// onsale:true만
-		const a = await Product.find({$or:[{tag:new RegExp(tag)},{smallCategory:new RegExp(smallCategory)}]},{img:1,title:1,lowBid:1}).limit(4);
-		console.log(a);
+		const a = await Product.find(
+			{$or:[{tag:new RegExp(tag)},{smallCategory:new RegExp(smallCategory)}]},
+			{img:1,title:1,lowBid:1}).limit(4);
+			
+		
+		console.log(product[0].id);
 
+		// const curbid = await PriceHistory.find(product.map((_id) => ({productId:_id})));
+		// console.log(curbid);
+
+		// const map = await PriceHistory.find(a.map((pro)=>({productId:pro.id})));
+		
+		// map함수 안에
+		// const map1 = a.map((pro)=>(await PriceHistory.find({productId:pro.id})));
+
+		console.log(a);
+		
 		res.send({okay:true});
 	} catch (error) {
 		res.send({okay:false});
