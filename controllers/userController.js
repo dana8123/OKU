@@ -24,7 +24,7 @@ exports.signup = async (req, res) => {
 		if (checkEmail) {
 			return res.send({
 				msg: {
-					dupMsg: "emailFalse",
+					dupMsg: "email False",
 				},
 			});
 		}
@@ -94,7 +94,7 @@ exports.login = async (req, res) => {
 	try {
 		if (user == null) {
 			return res.status(400).send({
-				msg: "eamil False",
+				msg: "email False",
 			});
 		}
 		const match = await bcrypt.compare(password, user.password);

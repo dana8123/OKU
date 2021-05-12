@@ -188,7 +188,8 @@ exports.detail = async (req, res) => {
 	}
 };
 
-exports.quest = async (req, res) => {
+exports.relate = async (req, res) => {
+	
 	try {
 	} catch (error) {}
 };
