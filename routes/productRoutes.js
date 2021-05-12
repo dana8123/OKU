@@ -48,6 +48,7 @@ productRouter.get("/Category/:bigCategory", bigCate);
 productRouter.get("/Category/:bigCategory/:smallCategory", smallCate);
 
 // 검색
+// 얘만 onsale:false도 가능
 productRouter.get("/search", search);
 
 // 찜하기
