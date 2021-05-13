@@ -17,7 +17,7 @@ const {
 } = require("../controllers/userController");
 const passport = require("passport");
 const kakaoStrategy = require("passport-kakao");
-const kakaoLogin = require("../middlewares/kakao_login");
+const kakaoLogin = require("../middlewares/passport");
 const userRouter = express.Router();
 
 //jwt 로그인
@@ -27,7 +27,15 @@ userRouter.get("/signup/nickname/:nickname", checkNickname);
 userRouter.post("/login", login);
 //passport 소셜로그인
 userRouter.get("/kakao", passport.authenticate("kakao"));
-
+userRouter.get(
+	"/kakao/callback",
+	passport.authenticate("kakao", {
+		failureRedirect: "/",
+	}),
+	(res, req) => {
+		res.redirect("/oauth");
+	}
+);
 // 내가 찜한것 불러오기
 userRouter.get("/pick", authMiddlesware, pick);
 // 내가 찜한것 삭제하기

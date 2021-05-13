@@ -1,6 +1,3 @@
-// 유저정보
-//로직 짤 때 필요한 디비 등등 불러서 바로 쓰시면 됩니다.
-const passport = require("passport");
 const User = require("../schema/user");
 const Product = require("../schema/product");
 const Like = require("../schema/like");
@@ -117,6 +114,15 @@ exports.login = async (req, res) => {
 	}
 };
 
+exports.kakaoLoginCallback = async (
+	accessToken,
+	refreshToken,
+	profile,
+	done
+) => {
+	console.log(accessToken, refreshToken, profile, done);
+};
+
 exports.pick = async (req, res) => {
 	const user = res.locals.user;
 	try {
@@ -171,47 +177,54 @@ exports.mypronick = async (req, res) => {
 };
 
 exports.mypronickedit = async (req, res) => {
-
 	try {
 		const user = res.locals.user;
 		const { nick } = req.body;
-	
+
 		let images = [];
 		let image = "";
 		for (let i = 0; i < req.files.length; i++) {
 			image = req.files[i].filename;
 			images.push(`http://${process.env.DB_SERVER}/` + image);
 		}
-		
+
 		// 프로필이미지가 넘어오지않을때의 예외처리
-		if(images[0]==null){
-			const newinfo =await User.findOneAndUpdate({_id:user["_id"]},{nickname:nick});
-			res.send({ okay: true , profileImg:newinfo["profileImg"],nickname:newinfo["nickname"] });
-		}else{
-			const newinfo =await User.findOneAndUpdate({_id:user["_id"]},{nickname:nick,profileImg:images[0]});
-			res.send({ okay: true , profileImg:newinfo["profileImg"],nickname:newinfo["nickname"] });
-
+		if (images[0] == null) {
+			const newinfo = await User.findOneAndUpdate(
+				{ _id: user["_id"] },
+				{ nickname: nick }
+			);
+			res.send({
+				okay: true,
+				profileImg: newinfo["profileImg"],
+				nickname: newinfo["nickname"],
+			});
+		} else {
+			const newinfo = await User.findOneAndUpdate(
+				{ _id: user["_id"] },
+				{ nickname: nick, profileImg: images[0] }
+			);
+			res.send({
+				okay: true,
+				profileImg: newinfo["profileImg"],
+				nickname: newinfo["nickname"],
+			});
 		}
-
 	} catch (error) {
 		res.send({ okay: false });
 	}
 };
 
-exports.myinfo = async(req,res) => {
+exports.myinfo = async (req, res) => {
 	const user = res.locals.user;
 	try {
-		res.send({okay:true,user});
+		res.send({ okay: true, user });
 	} catch (error) {
-		res.send({okay:false});
+		res.send({ okay: false });
 	}
-}
+};
 
-exports.numberconfirm = async(req,res) => {
-	
+exports.numberconfirm = async (req, res) => {
 	try {
-		
-	} catch (error) {
-		
-	}
-}
+	} catch (error) {}
+};
