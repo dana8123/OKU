@@ -1,6 +1,5 @@
 // 유저관련 API
 const express = require("express");
-const passport = require("passport");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const { upload } = require("../middlewares/imageupload.js");
 const {
@@ -19,12 +18,18 @@ const {
 	marketadd,
 	marketshow
 } = require("../controllers/userController");
+const passport = require("passport");
+const kakaoStrategy = require("passport-kakao");
+const kakaoLogin = require("../middlewares/kakao_login");
 const userRouter = express.Router();
 
+//jwt 로그인
 userRouter.post("/signup", signup);
 userRouter.get("/signup/email/:email", checkEmail);
 userRouter.get("/signup/nickname/:nickname", checkNickname);
 userRouter.post("/login", login);
+//passport 소셜로그인
+userRouter.get("/kakao", passport.authenticate("kakao"));
 
 // 내가 찜한것 불러오기
 userRouter.get("/pick", authMiddlesware, pick);
@@ -35,12 +40,17 @@ userRouter.delete("/pick/:id", authMiddlesware, pickdelete);
 userRouter.get("/myproduct", authMiddlesware, myproduct);
 
 // 프로필 닉네임 이미지
-userRouter.get("/mypronick",authMiddlesware,mypronick);
+userRouter.get("/mypronick", authMiddlesware, mypronick);
 // 프로필 닉네임 수정
-userRouter.put("/mypronick",upload.array("img", 1),authMiddlesware,mypronickedit);
+userRouter.put(
+	"/mypronick",
+	upload.array("img", 1),
+	authMiddlesware,
+	mypronickedit
+);
 
 // 내 정보 조회
-userRouter.get("/myinfo",authMiddlesware,myinfo);
+userRouter.get("/myinfo", authMiddlesware, myinfo);
 
 // 전화번호 
 userRouter.post("/numberconfirm",numberconfirm);
