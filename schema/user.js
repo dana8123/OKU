@@ -20,6 +20,10 @@ const user = new Schema({
 		type: String,
 		default: "public/profile.png",
 	},
+	marketdesc:{
+		type: String,
+		default: ""
+	}
 });
 
 module.exports = mongoose.model("User", user);
