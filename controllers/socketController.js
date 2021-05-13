@@ -163,6 +163,8 @@ exports.alert = async (req, res) => {
 		const notCheck = await Alert.find({ userId: user["_id"], view: false });
 		const alreadyCheck = await Alert.find({ userId: user["_id"], view: true });
 
+		console.log(notCheck,alreadyCheck);
+
 		await Alert.updateMany(
 			{ userId: user["_id"], view: false },
 			{ $set: { view: true } }

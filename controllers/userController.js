@@ -13,6 +13,8 @@ const saltRounds = 10;
 const request = require('request');
 require("dotenv").config();
 
+// 연재님 업데이트 안되시나요
+
 exports.signup = async (req, res) => {
 	const { password, password2, number, nickname, email, profileImg } = req.body;
 
