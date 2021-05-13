@@ -18,6 +18,10 @@ const alert = new Schema({
     view:{
         type:Boolean,
         default:false
+    },
+    creatAt:{
+        type:Date,
+		default: Date.now
     }
 });
 
