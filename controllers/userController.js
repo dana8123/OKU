@@ -1,3 +1,6 @@
+// 유저정보
+//로직 짤 때 필요한 디비 등등 불러서 바로 쓰시면 됩니다.
+const passport = require("passport");
 const User = require("../schema/user");
 const Product = require("../schema/product");
 const Like = require("../schema/like");
@@ -7,7 +10,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const product = require("../schema/product");
 const saltRounds = 10;
-const request = require('request');
+const request = require("request");
 require("dotenv").config();
 
 exports.signup = async (req, res) => {
@@ -117,15 +120,6 @@ exports.login = async (req, res) => {
 	}
 };
 
-exports.kakaoLoginCallback = async (
-	accessToken,
-	refreshToken,
-	profile,
-	done
-) => {
-	console.log(accessToken, refreshToken, profile, done);
-};
-
 exports.pick = async (req, res) => {
 	const user = res.locals.user;
 	try {
@@ -193,14 +187,6 @@ exports.mypronickedit = async (req, res) => {
 
 		// 프로필이미지가 넘어오지않을때의 예외처리
 		if (images[0] == null) {
-			const newinfo = await User.findOneAndUpdate({ _id: user["_id"] }, { nickname: nick });
-			res.send({ okay: true, profileImg: newinfo["profileImg"], nickname: newinfo["nickname"] });
-		} else {
-			const newinfo = await User.findOneAndUpdate({ _id: user["_id"] }, { nickname: nick, profileImg: images[0] });
-			res.send({ okay: true, profileImg: newinfo["profileImg"], nickname: newinfo["nickname"] });
-
-		// 프로필이미지가 넘어오지않을때의 예외처리
-		if (images[0] == null) {
 			const newinfo = await User.findOneAndUpdate(
 				{ _id: user["_id"] },
 				{ nickname: nick }
@@ -233,10 +219,9 @@ exports.myinfo = async (req, res) => {
 	} catch (error) {
 		res.send({ okay: false });
 	}
-}
+};
 
 exports.numberconfirm = async (req, res) => {
-
 	const phoneNumber = req.body.phoneNumber;
 	console.log(phoneNumber);
 	const NCP_secretKey = process.env.SMSseceretKey;
@@ -244,16 +229,16 @@ exports.numberconfirm = async (req, res) => {
 	const NCP_serviceID = process.env.SMSserviceId;
 	const myPhoneNumber = process.env.myPhoneNumber;
 
-	const space = " ";          // one space
-	const newLine = "\n";           // new line
-	const method = "POST";          // method
+	const space = " "; // one space
+	const newLine = "\n"; // new line
+	const method = "POST"; // method
 
 	const url = `https://sens.apigw.ntruss.com/sms/v2/services/${NCP_serviceID}/messages`;
 	const url2 = `/sms/v2/services/${NCP_serviceID}/messages`;
 
-	const timestamp = Date.now().toString();         // current timestamp (epoch)
+	const timestamp = Date.now().toString(); // current timestamp (epoch)
 	let message = [];
-	let hmac = crypto.createHmac('sha256', NCP_secretKey);
+	let hmac = crypto.createHmac("sha256", NCP_secretKey);
 
 	message.push(method);
 	message.push(space);
@@ -262,64 +247,60 @@ exports.numberconfirm = async (req, res) => {
 	message.push(timestamp);
 	message.push(newLine);
 	message.push(NCP_accessKey);
-	const signature = hmac.update(message.join('')).digest('base64');
-
+	const signature = hmac.update(message.join("")).digest("base64");
 
 	const number = Math.floor(Math.random() * (999999 - 100000)) + 100000;
 	console.log(number);
 
-	try {	
-		request({
-		method: method,
-		json: true,
-		uri: url,
-		headers: {
-			'Contenc-type': 'application/json; charset=utf-8',
-			'x-ncp-iam-access-key': NCP_accessKey,
-			'x-ncp-apigw-timestamp': timestamp,
-			'x-ncp-apigw-signature-v2': signature.toString()
-		},
-		body: {
-			'type': 'SMS',
-			'countryCode': '82',
-			'from': myPhoneNumber,
-			'content': ` OKU 인증번호 ${number} 입니다.`,
-			'messages': [
-				{
-					'to': `${phoneNumber}`
-				}
-			]
-		}
-	})
-
-		res.send({okay:true});
-	} catch (error) {
-		res.send({okay:false});
-		
-	}
-}
-
-exports.marketadd = async (req,res) => {
-	const content = req.body.content;
-	const user = res.locals.user;
-
 	try {
-		await User.findByIdAndUpdate({_id:user.id},{marketdesc:content});
-		res.send({okay:true});
+		request({
+			method: method,
+			json: true,
+			uri: url,
+			headers: {
+				"Contenc-type": "application/json; charset=utf-8",
+				"x-ncp-iam-access-key": NCP_accessKey,
+				"x-ncp-apigw-timestamp": timestamp,
+				"x-ncp-apigw-signature-v2": signature.toString(),
+			},
+			body: {
+				type: "SMS",
+				countryCode: "82",
+				from: myPhoneNumber,
+				content: ` OKU 인증번호 ${number} 입니다.`,
+				messages: [
+					{
+						to: `${phoneNumber}`,
+					},
+				],
+			},
+		});
+
+		res.send({ okay: true });
 	} catch (error) {
 		res.send({ okay: false });
 	}
 };
 
-exports.marketshow = async(req,res) => {
+exports.marketadd = async (req, res) => {
+	const content = req.body.content;
 	const user = res.locals.user;
 
 	try {
-		const marketdesc = await User.findOne({_id:user.id},{marketdesc:1});
-		res.send({okay:true,marketdesc:marketdesc});
-
+		await User.findByIdAndUpdate({ _id: user.id }, { marketdesc: content });
+		res.send({ okay: true });
 	} catch (error) {
-		res.send({okay:false});
-		
+		res.send({ okay: false });
 	}
-}
+};
+
+exports.marketshow = async (req, res) => {
+	const user = res.locals.user;
+
+	try {
+		const marketdesc = await User.findOne({ _id: user.id }, { marketdesc: 1 });
+		res.send({ okay: true, marketdesc: marketdesc });
+	} catch (error) {
+		res.send({ okay: false });
+	}
+};
