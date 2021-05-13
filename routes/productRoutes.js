@@ -37,9 +37,11 @@ productRouter.get("/detail/:id", detail);
 productRouter.get("/popularlist", popular);
 
 // 최신 등록 상품 리스트
+// onsale 처리완료
 productRouter.get("/recentlist", newone);
 
 // 마감임박 상품 리스트
+// 이건 원래 처리되어있었음
 productRouter.get("/deadline", deadLineList);
 
 // 대분류에 따른 상품리스트

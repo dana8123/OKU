@@ -124,7 +124,7 @@ exports.newone = async (req, res) => {
 		//무한스크롤
 		if (lastId) {
 			//무한스크롤 도중일 경우
-			products = await Product.find({})
+			products = await Product.find({onSale:true})
 				.sort({ createAt: -1 })
 				.where("_id")
 				.lt(lastId)
@@ -132,7 +132,7 @@ exports.newone = async (req, res) => {
 			console.log("lastId", products);
 		} else {
 			//처음 페이지에서 스크롤을 내리기 시작할 때
-			products = await Product.find({})
+			products = await Product.find({onSale:true})
 				.sort({ createAt: -1 })
 				.limit(print_count);
 		}
@@ -201,22 +201,9 @@ exports.relate = async (req, res) => {
 		// onsale:true만
 		const a = await Product.find(
 			{$or:[{tag:new RegExp(tag)},{smallCategory:new RegExp(smallCategory)}]},
-			{img:1,title:1,lowBid:1}).limit(4);
-			
+			{img:1,title:1,lowBid:1,sucBid:1,_id:1}).limit(4);
 		
-		console.log(product[0].id);
-
-		// const curbid = await PriceHistory.find(product.map((_id) => ({productId:_id})));
-		// console.log(curbid);
-
-		// const map = await PriceHistory.find(a.map((pro)=>({productId:pro.id})));
-		
-		// map함수 안에
-		// const map1 = a.map((pro)=>(await PriceHistory.find({productId:pro.id})));
-
-		console.log(a);
-		
-		res.send({okay:true});
+		res.send({okay:true,result:a});
 	} catch (error) {
 		res.send({okay:false});
 	}
