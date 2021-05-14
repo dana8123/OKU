@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const path = require("path");
+const passport = require("passport");
+require("./middlewares/passport");
 const port = process.env.EXPRESS_PORT;
 const webSocket = require("./socket");
 
@@ -30,7 +32,7 @@ const { userRouter } = require("./routes/userRoutes");
 const { socketRouter } = require("./routes/socketRoute");
 const checkAuction = require("./controllers/checkAuction");
 
-checkAuction();
+//checkAuction();
 
 app.use("/chat", chatRouter);
 app.use("/product", productRouter);
