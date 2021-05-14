@@ -120,6 +120,15 @@ exports.login = async (req, res) => {
 	}
 };
 
+exports.kakaoLoginCallback = async (
+	accessToken,
+	refreshToken,
+	profile,
+	done
+) => {
+	console.log(accessToken, refreshToken, profile, done);
+};
+
 exports.pick = async (req, res) => {
 	const user = res.locals.user;
 	try {

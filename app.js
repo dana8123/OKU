@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const path = require("path");
+const passport = require("passport");
+require("./middlewares/passport");
 const port = process.env.EXPRESS_PORT;
 const webSocket = require("./socket");
 

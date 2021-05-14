@@ -1,7 +1,6 @@
 const passport = require("passport");
 const kakaoStrategy = require("passport-kakao").Strategy;
 const kakaoLoginCallback = require("../controllers/userController");
-const User = require("../schema/user");
 
 passport.use(
 	new kakaoStrategy(
