@@ -24,6 +24,12 @@ exports.bid = async (req, res) => {
 
 		const lowBid = await product.lowBid;
 		console.log("시작가", lowBid);
+		
+		// 입찰자와 판매자가 동일한경우
+		if (user["_id"]==seller){
+			result = "seller";
+			return res.status(403).send({ result });
+		}
 		//console.log("경매내역", bidList);
 		//입찰 시 시작가보다 낮거나 같을 때
 		if (lowBid >= bid) {
@@ -132,7 +138,7 @@ exports.sucbid = async (req, res) => {
 				productTitle:product["title"],
 				productId: productId["id"],
 			});
-			
+
 		} catch (error) {
 			res.send({ msg: "제품이 존재하지 않습니다." });
 		}
