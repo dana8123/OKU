@@ -15,9 +15,12 @@ exports.quest = async (req, res) => {
     console.log(user["_id"], productId["id"], sellerunique);
 
     try {
+        const a = await Product.findOne({_id:productId["id"]});
+        console.log(a["title"]);
+
         await QuestNanswer.create({ sellerId: sellerunique, userId: user["_id"], productId: productId["id"], contents: contents, answer: " " });
         // 판매자한테 문의 알림띄우기
-        await Alert.create({alertType:"문의",productId:productId["id"],userId:sellerunique});
+        await Alert.create({alertType:"문의",productTitle:a["title"],productId:productId["id"],userId:sellerunique});
         res.send({ okay: true });
     } catch (error) {
         res.send({ okay: false });
@@ -39,8 +42,11 @@ exports.answer = async (req, res) => {
         if (sellerunique == user["_id"]) {
             const a = await QuestNanswer.findOneAndUpdate({ _id: questId["id"] }, { answer: contents });
             
+            const b = await Product.findOne({_id:a["productId"]});
+            console.log(b["title"]);
+
             // 문의글 단 문의자한테 알림보내기
-            await Alert.create({alertType:"문의답글",productId:a["id"],userId:a["userId"]});
+            await Alert.create({alertType:"문의답글",productTitle:b["title"],productId:a["id"],userId:a["userId"]});
             res.send({ okay: true });
         } else {
             res.send({ okay: false });

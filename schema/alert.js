@@ -7,6 +7,9 @@ const alert = new Schema({
         type:String,
         required:true
     },
+    productTitle:{
+        type:String
+    },
     productId:{
         type:String,
         required:true

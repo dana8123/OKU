@@ -84,6 +84,7 @@ exports.sucbid = async (req, res) => {
 	const { sucbid, sellerunique } = req.body;
 
 	try {
+
 		try {
 			const hisinfo = await PriceHistory.create({
 				productId: productId["id"],
@@ -96,10 +97,42 @@ exports.sucbid = async (req, res) => {
 		}
 
 		try {
-			await Product.findOneAndUpdate(
+
+			// 상품 판매 상태 false로 변경
+			const product = await Product.findOneAndUpdate(
 				{ _id: productId["id"] },
 				{ onSale: false, soldBy: user.nickname, soldById: user._id }
 			);
+
+			// 즉시낙찰유저제외 history에있는 모든 유저 불러오기
+			const a = await PriceHistory.find(
+				{
+					$and: [
+						{ productId: productId["id"] },
+						{ userId: { $ne: user["_id"] } },
+					],
+				},
+				{ userId: 1, _id: 0 }
+			);
+
+			//낙찰 실패자에게 알림
+			await Alert.insertMany(
+				a.map((user) => ({
+					alertType: "낙찰실패",
+					productId: productId["id"],
+					productTitle:product["title"],
+					userId: user.userId,
+				}))
+			);
+
+			//낙찰 성공자에게 알림
+			await Alert.create({
+				userId: user["_id"],
+				alertType: "낙찰성공",
+				productTitle:product["title"],
+				productId: productId["id"],
+			});
+			
 		} catch (error) {
 			res.send({ msg: "제품이 존재하지 않습니다." });
 		}
@@ -114,41 +147,7 @@ exports.sucbid = async (req, res) => {
 			res.send({ msg: "채팅방 생성에 실패했습니다." });
 		}
 
-		try {
-			// 즉시낙찰유저제외 history에있는 모든 유저 불러오기
-			const a = await PriceHistory.find(
-				{
-					$and: [
-						{ productId: productId["id"] },
-						{ userId: { $ne: user["_id"] } },
-					],
-				},
-				{ userId: 1, _id: 0 }
-			);
-
-			await Alert.insertMany(
-				a.map((user) => ({
-					alertType: "낙찰실패",
-					productId: productId["id"],
-					userId: user.userId,
-				}))
-			);
-		} catch (error) {
-			res.send(error);
-		}
-
-		try {
-			// 상품 낙찰 성공 알람 보내기
-			await Alert.create({
-				userId: user["_id"],
-				alertType: "낙찰성공",
-				productId: productId["id"],
-			});
-		} catch (error) {
-			res.send({ msg: "즉시 낙찰자에게 낙찰실패알림" });
-		}
-
-		res.send({ msg: "메인페이지로 reload합니다" });
+		res.send({ msg: "즉시낙찰에 성공하였습니다." });
 	} catch (error) {
 		console.log(error);
 		res.send({ msg: "즉시낙찰에 실패하였습니다." });
