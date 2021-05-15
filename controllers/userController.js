@@ -129,6 +129,8 @@ exports.kakaoLoginCallback = async (
 	done
 ) => {
 	console.log(accessToken, refreshToken, profile, done);
+	console.log("kakao!");
+	res.send({ profile });
 };
 
 exports.pick = async (req, res) => {

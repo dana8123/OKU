@@ -28,15 +28,17 @@ userRouter.get("/signup/nickname/:nickname", checkNickname);
 userRouter.post("/login", login);
 //passport 소셜로그인
 userRouter.get("/kakao", passport.authenticate("kakao"));
+//kakao call back
 userRouter.get(
-	"/kakao/callback",
-	passport.authenticate("kakao", {
-		failureRedirect: "/",
-	}),
-	(res, req) => {
-		res.redirect("/oauth");
+	"/kakao/oauth",
+	//error 발생 시 "/"로 redirect
+	passport.authenticate("kakao", { failureRedirect: "/", session: false }),
+	(req, res) => {
+		console.log("====user====", res);
+		res.redirect("http://13.124.55.186/");
 	}
 );
+
 // 내가 찜한것 불러오기
 userRouter.get("/pick", authMiddlesware, pick);
 // 내가 찜한것 삭제하기
