@@ -12,7 +12,7 @@ passport.use(
 		},
 		async (accessToken, refreshToken, profile, done) => {
 			console.log(profile);
-			console.log("==done==", done);
+			console.log("==token==", accessToken);
 			const {
 				_json: { id, properties },
 			} = profile;

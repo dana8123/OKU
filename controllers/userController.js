@@ -122,6 +122,7 @@ exports.login = async (req, res) => {
 	}
 };
 
+//kakao callback
 exports.kakaoLoginCallback = async (
 	accessToken,
 	refreshToken,
@@ -131,6 +132,12 @@ exports.kakaoLoginCallback = async (
 	console.log(accessToken, refreshToken, profile, done);
 	console.log("kakao!");
 	res.send({ profile });
+};
+
+//임시 카카오 토큰 보내주기
+exports.kakaoLogin = async (req, res) => {
+	console.log(res);
+	res.send({ accessToken });
 };
 
 exports.pick = async (req, res) => {

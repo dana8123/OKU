@@ -8,6 +8,7 @@ const {
 	checkId,
 	checkEmail,
 	checkNickname,
+	kakaoLogin,
 	pick,
 	pickdelete,
 	myproduct,
@@ -38,7 +39,8 @@ userRouter.get(
 		res.redirect("http://13.124.55.186/");
 	}
 );
-
+//kakao accessToken 보내주기
+userRouter.post("/kakao", passport.authenticate("kakao"), kakaoLogin);
 // 내가 찜한것 불러오기
 userRouter.get("/pick", authMiddlesware, pick);
 // 내가 찜한것 삭제하기
