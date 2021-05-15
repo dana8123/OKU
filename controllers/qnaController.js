@@ -12,7 +12,6 @@ exports.quest = async (req, res) => {
     const { contents, sellerunique } = req.body;
     const productId = req.params;
 
-    console.log(user["_id"], productId["id"], sellerunique);
 
     try {
         const a = await Product.findOne({_id:productId["id"]});
@@ -33,8 +32,6 @@ exports.answer = async (req, res) => {
     const { sellerunique, contents } = req.body;
     const questId = req.params;
 
-
-    console.log(questId);
 
     try {
 

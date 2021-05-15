@@ -3,6 +3,7 @@ require("dotenv").config();
 const multer = require("multer");
 const Product = require("../schema/product");
 const PriceHistory = require("../schema/pricehistory");
+const Alert = require("../schema/alert");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
@@ -59,23 +60,30 @@ exports.productpost = async (req, res, next) => {
 		newProduct.save();
 		console.log("새로등록한 상품의 id", newProduct._id);
 		console.log("새로등록한 상품의 마감일", newProduct.deadLine);
+
 		schedule.scheduleJob(newProduct.deadLine, async () => {
 			//TODO: 입찰자가 있을 때와 없을 때로 구분
 			const success = [];
 			const pricehistory = await PriceHistory.find({
 				productId: newProduct._id,
 			});
+
 			// for (let i; i < pricehistory.length; i++) {
 			// 	success.push(pricehistory[i]);
 			// }
 			console.log(newProduct._id);
 			console.log(pricehistory);
+
 			if (success.length == 0) {
 				//입찰내역이 없을 때
 				await newProduct.updateOne({
 					$set: { onSale: false, soldBy: "낙찰자가 없어요", soldById: null },
 				});
+				
+				// 입찰내역이 없을 때 판매자에게 판매실패 알람
+				await Alert.create({alertType:"판매실패",productTitle:newProduct["title"],productId:newProduct["_id"],userId:user.id});
 			}
+
 			//입찰내역이 1개 이상 있을 때
 			await newProduct.updateOne({
 				$set: {
@@ -84,6 +92,38 @@ exports.productpost = async (req, res, next) => {
 					soldById: pricehistory[0].userId,
 				},
 			});
+
+			// 여기서 낙찰 성공자 & 실패자 나눠서 두번 알람을 보내야함
+
+			// 낙찰 성공자에게 알림
+			await Alert.create({
+				userId: pricehistory[0].userId,
+				alertType: "낙찰성공",
+				productTitle:newProduct["title"],
+				productId: newProduct["_id"],
+			});
+
+			// 낙찰성공유저제외 history에 있는 이전 유저들
+			const a = await PriceHistory.find(
+				{
+					$and: [
+						{ productId:  newProduct._id },
+						{ userId: { $ne: pricehistory[0].userId } },
+					],
+				},
+				{ userId: 1, _id: 0 }
+			);
+
+			//낙찰 실패자에게 알림
+			await Alert.insertMany(
+				a.map((user) => ({
+					alertType: "낙찰실패",
+					productId: newProduct["_id"],
+					productTitle:newProduct["title"],
+					userId: user.userId,
+				}))
+			);
+
 		});
 
 		res.send({ msg: "상품이 등록되었습니다" });
