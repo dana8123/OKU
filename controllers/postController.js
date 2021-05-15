@@ -71,59 +71,66 @@ exports.productpost = async (req, res, next) => {
 			// for (let i; i < pricehistory.length; i++) {
 			// 	success.push(pricehistory[i]);
 			// }
+
 			console.log(newProduct._id);
 			console.log(pricehistory);
+			console.log(pricehistory.length);
 
-			if (success.length == 0) {
-				//입찰내역이 없을 때
+			//입찰내역이 없을 때
+			if (pricehistory.length == 0) {
 				await newProduct.updateOne({
-					$set: { onSale: false, soldBy: "낙찰자가 없어요", soldById: null },
+					$set: { onSale: false, soldBy: null, soldById: null },
 				});
-				
 				// 입찰내역이 없을 때 판매자에게 판매실패 알람
-				await Alert.create({alertType:"판매실패",productTitle:newProduct["title"],productId:newProduct["_id"],userId:user.id});
+				await Alert.create({
+					alertType: "판매실패",
+					productTitle: newProduct["title"],
+					productId: newProduct["_id"],
+					userId: user.id,
+				});
 			}
 
 			//입찰내역이 1개 이상 있을 때
-			await newProduct.updateOne({
-				$set: {
-					onSale: false,
-					soldBy: pricehistory[0].nickName,
-					soldById: pricehistory[0].userId,
-				},
-			});
+			else {
+				await newProduct.updateOne({
+					$set: {
+						onSale: false,
+						soldBy: pricehistory[0].nickName,
+						soldById: pricehistory[0].userId,
+					},
+				});
 
-			// 여기서 낙찰 성공자 & 실패자 나눠서 두번 알람을 보내야함
+				// 여기서 낙찰 성공자 & 실패자 나눠서 두번 알람을 보내야함
 
-			// 낙찰 성공자에게 알림
-			await Alert.create({
-				userId: pricehistory[0].userId,
-				alertType: "낙찰성공",
-				productTitle:newProduct["title"],
-				productId: newProduct["_id"],
-			});
-
-			// 낙찰성공유저제외 history에 있는 이전 유저들
-			const a = await PriceHistory.find(
-				{
-					$and: [
-						{ productId:  newProduct._id },
-						{ userId: { $ne: pricehistory[0].userId } },
-					],
-				},
-				{ userId: 1, _id: 0 }
-			);
-
-			//낙찰 실패자에게 알림
-			await Alert.insertMany(
-				a.map((user) => ({
-					alertType: "낙찰실패",
+				// 낙찰 성공자에게 알림
+				await Alert.create({
+					userId: pricehistory[0].userId,
+					alertType: "낙찰성공",
+					productTitle: newProduct["title"],
 					productId: newProduct["_id"],
-					productTitle:newProduct["title"],
-					userId: user.userId,
-				}))
-			);
+				});
 
+				// 낙찰성공유저제외 history에 있는 이전 유저들
+				const a = await PriceHistory.find(
+					{
+						$and: [
+							{ productId: newProduct._id },
+							{ userId: { $ne: pricehistory[0].userId } },
+						],
+					},
+					{ userId: 1, _id: 0 }
+				);
+
+				//낙찰 실패자에게 알림
+				await Alert.insertMany(
+					a.map((user) => ({
+						alertType: "낙찰실패",
+						productId: newProduct["_id"],
+						productTitle: newProduct["title"],
+						userId: user.userId,
+					}))
+				);
+			}
 		});
 
 		res.send({ msg: "상품이 등록되었습니다" });
@@ -142,7 +149,7 @@ exports.popular = async (req, res) => {
 	try {
 		// onSale:true
 		const popularList = await Product.aggregate([
-			{ $match:{onSale:true}},
+			{ $match: { onSale: true } },
 			{ $sort: { views: -1 } },
 			{ $limit: 3 },
 		]);
@@ -164,7 +171,7 @@ exports.newone = async (req, res) => {
 		//무한스크롤
 		if (lastId) {
 			//무한스크롤 도중일 경우
-			products = await Product.find({onSale:true})
+			products = await Product.find({ onSale: true })
 				.sort({ createAt: -1 })
 				.where("_id")
 				.lt(lastId)
@@ -172,7 +179,7 @@ exports.newone = async (req, res) => {
 			console.log("lastId", products);
 		} else {
 			//처음 페이지에서 스크롤을 내리기 시작할 때
-			products = await Product.find({onSale:true})
+			products = await Product.find({ onSale: true })
 				.sort({ createAt: -1 })
 				.limit(print_count);
 		}
@@ -223,9 +230,12 @@ exports.detail = async (req, res) => {
 			{ $inc: { views: 1 } },
 			{ __v: 0 }
 		);
-		
-		const user = await User.findOne({_id:product["sellerunique"]},{profileImg:1,nickname:1,_id:1});
-		res.json({ okay: true, result: product , seller: user });
+
+		const user = await User.findOne(
+			{ _id: product["sellerunique"] },
+			{ profileImg: 1, nickname: 1, _id: 1 }
+		);
+		res.json({ okay: true, result: product, seller: user });
 	} catch (error) {
 		res.send({ okay: false });
 	}
@@ -233,18 +243,24 @@ exports.detail = async (req, res) => {
 
 exports.relate = async (req, res) => {
 	// 소분류 카테고리값 받는게 더 나을것같음
-	const {smallCategory,tag} = req.body;
+	const { smallCategory, tag } = req.body;
 
 	// console.log(product);
 	try {
 		// 첫번째 이미지 + lowbid + title + bid(현재입찰가)
 		// onsale:true만
 		const a = await Product.find(
-			{$or:[{tag:new RegExp(tag)},{smallCategory:new RegExp(smallCategory)}]},
-			{img:1,title:1,lowBid:1,sucBid:1,_id:1}).limit(4);
-		
-		res.send({okay:true,result:a});
+			{
+				$or: [
+					{ tag: new RegExp(tag) },
+					{ smallCategory: new RegExp(smallCategory) },
+				],
+			},
+			{ img: 1, title: 1, lowBid: 1, sucBid: 1, _id: 1 }
+		).limit(4);
+
+		res.send({ okay: true, result: a });
 	} catch (error) {
-		res.send({okay:false});
+		res.send({ okay: false });
 	}
 };

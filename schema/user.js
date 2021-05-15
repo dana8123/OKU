@@ -7,7 +7,6 @@ const user = new Schema({
 	},
 	password: {
 		type: String,
-		required: true,
 	},
 	number: {
 		type: String,
@@ -18,12 +17,11 @@ const user = new Schema({
 	},
 	profileImg: {
 		type: String,
-		default: "public/profile.png",
 	},
-	marketdesc:{
+	marketdesc: {
 		type: String,
-		default: ""
-	}
+		default: "",
+	},
 });
 
 module.exports = mongoose.model("User", user);

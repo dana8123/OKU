@@ -4,7 +4,7 @@ const app = express();
 require("dotenv").config();
 const path = require("path");
 const passport = require("passport");
-require("./middlewares/passport");
+const passportConfig = require("./middlewares/passport");
 const port = process.env.EXPRESS_PORT;
 const webSocket = require("./socket");
 
@@ -25,6 +25,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "uploads")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
+app.use(passport.initialize());
+passportConfig;
+app.use(passport.session());
 
 const { productRouter } = require("./routes/productRoutes");
 const { chatRouter } = require("./routes/chatRoutes");
