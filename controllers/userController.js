@@ -134,10 +134,14 @@ exports.kakaoLoginCallback = async (
 	res.send({ profile });
 };
 
-//임시 카카오 토큰 보내주기
+//카카오 토큰 보내주기
 exports.kakaoLogin = async (req, res) => {
-	console.log(res);
-	res.send({ accessToken });
+	const { id } = req.body;
+	const user = await User.findById(id);
+	const nickname = user.nickname;
+	const token = jwt.sign({ id }, process.env.SECRET_KEY);
+	console.log(id, token, nickname);
+	res.send({ access_token: token, userid: id, nickname });
 };
 
 exports.pick = async (req, res) => {

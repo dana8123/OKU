@@ -11,8 +11,6 @@ passport.use(
 			callbackURL: `http://13.124.55.186/user/kakao/oauth`,
 		},
 		async (accessToken, refreshToken, profile, done) => {
-			console.log(profile);
-			console.log("==token==", accessToken);
 			const {
 				_json: { id, properties },
 			} = profile;
