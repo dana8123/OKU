@@ -30,15 +30,17 @@ userRouter.post("/login", login);
 //passport 소셜로그인
 userRouter.get("/kakao", passport.authenticate("kakao"));
 //kakao call back
-userRouter.get(
-	"/kakao/oauth",
-	//error 발생 시 "/"로 redirect
-	passport.authenticate("kakao", { failureRedirect: "/", session: false }),
-	(req, res) => {
-		console.log("====user====", res);
-		res.redirect("http://13.124.55.186/");
-	}
-);
+//user id 보내주기
+userRouter.get("/kakao/oauth", (req, res) => {
+	passport.authenticate("kakao", { failureRedirect: "/" }, (err, user) => {
+		const { _id, nickname } = user;
+		return res.redirect("http://localhost:3000/social/" + _id);
+	})(req, res);
+});
+
+//kakao 토큰
+userRouter.post("/kakao", kakaoLogin);
+
 //kakao accessToken 보내주기
 userRouter.post("/kakao", passport.authenticate("kakao"), kakaoLogin);
 // 내가 찜한것 불러오기
