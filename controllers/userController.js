@@ -133,11 +133,22 @@ exports.kakaoLoginCallback = async (
 
 exports.pick = async (req, res) => {
 	const user = res.locals.user;
+
+	// 타이틀이랑 현재입찰가까지 넘겨주기
+
 	try {
+
+		const like = [];
+
 		const product = await Like.find(
 			{ userId: user["_id"] },
 			{ _id: 0, productId: 1, productImage: 1 }
 		);
+
+		const title = await Product.find(product.map((user)=>({_id:user["_id"]})));
+			
+		console.log(title);
+
 		res.send({ okay: true, result: product });
 	} catch (error) {
 		res.send({ okay: false });
