@@ -1,8 +1,30 @@
 require("dotenv").config();
 const multer = require("multer");
+const multerS3 = require("multer-s3");
 const path = require("path");
+const aws = require("aws-sdk");
+aws.config.loadFromPath(__dirname + "/../config/s3.json");
 
-const storage = multer.diskStorage({
+const s3 = new aws.S3();
+const upload = multer(
+	{
+		storage: multerS3({
+			s3,
+			bucket: "okuhanghae",
+			acl: "public-read",
+			key: function (req, file, cb) {
+				cb(null, Date.now() + "." + file.originalname.split(".").pop());
+			},
+		}),
+	},
+	"NONE"
+);
+
+module.exports = upload;
+
+//기존 upload folder에 저장할 때 사용하던 코드
+
+/*const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		cb(null, "uploads/");
 	},
@@ -13,7 +35,7 @@ const storage = multer.diskStorage({
 });
 
 exports.upload = multer({ storage });
-
+*/
 // exports.upload = (req, res, next) => {
 //     const storage = multer.diskStorage({
 //         destination: function (req, file, cb) {

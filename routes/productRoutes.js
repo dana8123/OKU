@@ -3,7 +3,7 @@ const express = require("express");
 const { Router } = require("express");
 const productRouter = express.Router();
 const multer = require("multer");
-const { upload } = require("../middlewares/imageupload.js");
+const upload = require("../middlewares/imageupload.js");
 const {
 	bigCate,
 	smallCate,
@@ -19,11 +19,10 @@ const {
 	newone,
 	test,
 	deadLineList,
-	relate
+	relate,
 } = require("../controllers/postController");
 const { quest, questget, answer } = require("../controllers/qnaController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
-
 
 // 상품등록
 // 미들웨어 붙이고 로그인처리 필요

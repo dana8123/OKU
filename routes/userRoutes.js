@@ -1,7 +1,7 @@
 // 유저관련 API
 const express = require("express");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
-const { upload } = require("../middlewares/imageupload.js");
+const upload = require("../middlewares/imageupload.js");
 const {
 	login,
 	signup,

@@ -7,7 +7,7 @@ const Alert = require("../schema/alert");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
-const { upload } = require("../middlewares/imageupload.js");
+const upload = require("../middlewares/imageupload.js");
 const schedule = require("node-schedule");
 
 //상품 등록하기
