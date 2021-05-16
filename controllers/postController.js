@@ -16,10 +16,10 @@ exports.productpost = async (req, res, next) => {
 
 	try {
 		let images = [];
-		let image = "";
 		for (let i = 0; i < req.files.length; i++) {
-			image = req.files[i].filename;
-			images.push(`http://${process.env.DB_SERVER}/` + image);
+			console.log(req.files.originalname);
+			images.push(req.files[i].location);
+			//images.push(`http://${process.env.DB_SERVER}/` + image);
 		}
 
 		const {

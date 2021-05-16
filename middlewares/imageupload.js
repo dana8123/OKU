@@ -11,6 +11,7 @@ const upload = multer(
 		storage: multerS3({
 			s3,
 			bucket: "okuhanghae",
+			contentType: multerS3.AUTO_CONTENT_TYPE,
 			acl: "public-read",
 			key: function (req, file, cb) {
 				cb(null, Date.now() + "." + file.originalname.split(".").pop());

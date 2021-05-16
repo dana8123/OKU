@@ -54,9 +54,10 @@ userRouter.get("/myproduct", authMiddlesware, myproduct);
 // 프로필 닉네임 이미지
 userRouter.get("/mypronick", authMiddlesware, mypronick);
 // 프로필 닉네임 수정
+// INFO: 1장만 받아도 되는 곳이라 array => single로 수정
 userRouter.put(
 	"/mypronick",
-	upload.array("img", 1),
+	upload.single("profileImg"),
 	authMiddlesware,
 	mypronickedit
 );

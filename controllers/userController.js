@@ -20,7 +20,6 @@ exports.signup = async (req, res) => {
 
 	//TODO: validation data
 
-	//javascript dotdotdot 이렇게 검색하면 나와요!
 	try {
 		const checkEmail = await User.findOne({ email });
 		const checkNickname = await User.findOne({ nickname });
@@ -201,16 +200,12 @@ exports.mypronickedit = async (req, res) => {
 	try {
 		const user = res.locals.user;
 		const { nick } = req.body;
-
-		let images = [];
-		let image = "";
-		for (let i = 0; i < req.files.length; i++) {
-			image = req.files[i].filename;
-			images.push(`http://${process.env.DB_SERVER}/` + image);
-		}
+		// INFO : profile img = 1 ea 라서 array -> string 으로 수정
+		const image = req.file.location;
+		console.log(req.file);
 
 		// 프로필이미지가 넘어오지않을때의 예외처리
-		if (images[0] == null) {
+		if (image == null) {
 			const newinfo = await User.findOneAndUpdate(
 				{ _id: user["_id"] },
 				{ nickname: nick }
@@ -223,7 +218,7 @@ exports.mypronickedit = async (req, res) => {
 		} else {
 			const newinfo = await User.findOneAndUpdate(
 				{ _id: user["_id"] },
-				{ nickname: nick, profileImg: images[0] }
+				{ nickname: nick, profileImg: image }
 			);
 			res.send({
 				okay: true,
