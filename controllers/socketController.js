@@ -32,7 +32,7 @@ exports.bid = async (req, res) => {
 		}
 		//console.log("경매내역", bidList);
 		//입찰 시 시작가보다 낮거나 같을 때
-		if (lowBid >= bid) {
+		if (lowBid > bid) {
 			result = "lowBid";
 			return res.status(403).send({ result });
 		}
@@ -90,9 +90,8 @@ exports.sucbid = async (req, res) => {
 	const { sucbid, sellerunique } = req.body;
 
 	try {
-
 		if (sellerunique == user.id) {
-			res.send({ msg: "판매자는 낙찰하지 못합니다." })
+			res.send({ msg: "판매자는 낙찰하지 못합니다." });
 		} else {
 			try {
 				const hisinfo = await PriceHistory.create({
@@ -106,7 +105,6 @@ exports.sucbid = async (req, res) => {
 			}
 
 			try {
-
 				// 상품 판매 상태 false로 변경
 				const product = await Product.findOneAndUpdate(
 					{ _id: productId["id"] },
@@ -141,7 +139,6 @@ exports.sucbid = async (req, res) => {
 					productTitle: product["title"],
 					productId: productId["id"],
 				});
-
 			} catch (error) {
 				res.send({ msg: "제품이 존재하지 않습니다." });
 			}
@@ -157,10 +154,7 @@ exports.sucbid = async (req, res) => {
 			}
 
 			res.send({ msg: "즉시낙찰에 성공하였습니다." });
-
-
 		}
-
 	} catch (error) {
 		console.log(error);
 		res.send({ msg: "즉시낙찰에 실패하였습니다." });
