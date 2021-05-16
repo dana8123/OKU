@@ -65,6 +65,7 @@ const product = new Schema({
 	//낙찰자의 닉네임
 	soldBy: {
 		type: String,
+		default: null,
 	},
 	//낙찰자의 objectId
 	soldById: {

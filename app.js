@@ -35,7 +35,7 @@ const { userRouter } = require("./routes/userRoutes");
 const { socketRouter } = require("./routes/socketRoute");
 const checkAuction = require("./controllers/checkAuction");
 
-//checkAuction();
+checkAuction();
 
 app.use("/chat", chatRouter);
 app.use("/product", productRouter);
