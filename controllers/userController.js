@@ -20,7 +20,6 @@ exports.signup = async (req, res) => {
 
 	//TODO: validation data
 
-	//javascript dotdotdot 이렇게 검색하면 나와요!
 	try {
 		const checkEmail = await User.findOne({ email });
 		const checkNickname = await User.findOne({ nickname });
@@ -122,6 +121,7 @@ exports.login = async (req, res) => {
 	}
 };
 
+//kakao callback
 exports.kakaoLoginCallback = async (
 	accessToken,
 	refreshToken,
@@ -131,6 +131,16 @@ exports.kakaoLoginCallback = async (
 	console.log(accessToken, refreshToken, profile, done);
 	console.log("kakao!");
 	res.send({ profile });
+};
+
+//카카오 토큰 보내주기
+exports.kakaoLogin = async (req, res) => {
+	const { id } = req.body;
+	const user = await User.findById(id);
+	const nickname = user.nickname;
+	const token = jwt.sign({ id }, process.env.SECRET_KEY);
+	console.log(id, token, nickname);
+	res.send({ access_token: token, userid: id, nickname });
 };
 
 exports.pick = async (req, res) => {
@@ -198,19 +208,13 @@ exports.mypronick = async (req, res) => {
 };
 
 exports.mypronickedit = async (req, res) => {
+	const user = res.locals.user;
+	const { nick } = req.body;
+	const image = req.file;
+	console.log("===image===", req.file);
 	try {
-		const user = res.locals.user;
-		const { nick } = req.body;
-
-		let images = [];
-		let image = "";
-		for (let i = 0; i < req.files.length; i++) {
-			image = req.files[i].filename;
-			images.push(`http://${process.env.DB_SERVER}/` + image);
-		}
-
 		// 프로필이미지가 넘어오지않을때의 예외처리
-		if (images[0] == null) {
+		if (image == undefined) {
 			const newinfo = await User.findOneAndUpdate(
 				{ _id: user["_id"] },
 				{ nickname: nick }
@@ -223,7 +227,7 @@ exports.mypronickedit = async (req, res) => {
 		} else {
 			const newinfo = await User.findOneAndUpdate(
 				{ _id: user["_id"] },
-				{ nickname: nick, profileImg: images[0] }
+				{ nickname: nick, profileImg: image.location }
 			);
 			res.send({
 				okay: true,

@@ -53,15 +53,23 @@ exports.pick = async (req, res) => {
 		{ img: 1, sellerunique: 1 }
 	);
 
-	console.log(product);
+	
 	try {
-		await Like.create({
-			userId: user["_id"],
-			productId: productId["id"],
-			productImage: product[0]["img"][0],
-			sellerId: product[0]["sellerunique"],
-		});
-		res.send({ msg: "찜이 등록되었습니다." });
+		// 찜 두번하는 것 막아두기
+		const likeExiest = await Like.findOne({userId: user["_id"],productId: productId["id"]})
+
+		if(likeExiest!==null){
+			res.send({msg: "이미 찜한 상품입니다."})
+		}else{
+			await Like.create({
+				userId: user["_id"],
+				productId: productId["id"],
+				productImage: product[0]["img"][0],
+				sellerId: product[0]["sellerunique"],
+			});
+			res.send({ msg: "찜이 등록되었습니다." });
+
+		}
 	} catch (error) {
 		res.send({ msg: "찜에 실패하였습니다." });
 		console.log(error);
