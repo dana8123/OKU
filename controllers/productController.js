@@ -9,7 +9,7 @@ exports.bigCate = async (req, res) => {
 	console.log(bigCategory);
 
 	try {
-		const product = await Product.find({ bigCategory: bigCategory });
+		const product = await Product.find({ bigCategory: bigCategory }).sort("-createAt");
 		res.send({ okay: true, result: product });
 	} catch (error) {
 		res.send({ okay: false });
@@ -23,7 +23,7 @@ exports.smallCate = async (req, res) => {
 		const product = await Product.find({
 			bigCategory: bigCategory,
 			smallCategory: smallCategory,
-		});
+		}).sort("-createAt");
 		res.send({ okay: true, result: product });
 	} catch (error) {
 		res.send({ okay: false });

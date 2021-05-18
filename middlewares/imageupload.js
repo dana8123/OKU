@@ -6,8 +6,16 @@ const aws = require("aws-sdk");
 aws.config.loadFromPath(__dirname + "/../config/s3.json");
 
 const s3 = new aws.S3();
-const upload = multer(
-	{
+
+const fileFilter = function(req,file,cb){
+	const name = path.extname(file.originalname);
+	if(name !=='.png'&& name !=='.jpg'&& name !=='.jpeg'&& name !=='.gif'){
+		cb(null,false);
+	}
+	cb(null,true);
+}
+
+const upload = multer({
 		storage: multerS3({
 			s3,
 			bucket: "okuhanghae",
@@ -15,11 +23,10 @@ const upload = multer(
 			acl: "public-read",
 			key: function (req, file, cb) {
 				cb(null, Date.now() + "." + file.originalname.split(".").pop());
-			},
+			}
 		}),
-	},
-	"NONE"
-);
+		fileFilter:fileFilter,
+	});
 
 module.exports = upload;
 

@@ -164,6 +164,7 @@ exports.sucbid = async (req, res) => {
 // 바로 알림
 exports.alert = async (req, res) => {
 	const user = res.locals.user;
+	console.log(user);
 
 	try {
 		const notCheck = await Alert.find({ userId: user["_id"], view: false });
