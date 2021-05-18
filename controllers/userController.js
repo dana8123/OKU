@@ -150,7 +150,6 @@ exports.pick = async (req, res) => {
 	// 타이틀이랑 현재입찰가까지 넘겨주기
 
 	try {
-
 		const like = [];
 
 		const product = await Like.find(
@@ -158,13 +157,15 @@ exports.pick = async (req, res) => {
 			{ _id: 0, productId: 1, productImage: 1 }
 		);
 
-		const title = await Product.find(product.map((user)=>({_id:user["_id"]})));
-			
-		console.log(title);
+		const title = await Product.find(
+			{ _id: user._id }
+			//product.map((user) => ({ _id: user["_id"] }))
+		);
 
 		res.send({ okay: true, result: product });
 	} catch (error) {
-		res.send({ okay: false });
+		res.send({ okay: false, error });
+		console.log(error);
 	}
 };
 
