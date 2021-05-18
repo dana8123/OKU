@@ -15,11 +15,14 @@ exports.productpost = async (req, res, next) => {
 	const user = res.locals.user;
 
 	try {
-		let images = [];
+		let images;
 		if (req.files.length != 0) {
+			images = [];
 			for (let i = 0; i < req.files.length; i++) {
 				images.push(req.files[i].location);
 			}
+		} else {
+			res.send({ image: false });
 		}
 		console.log("없는사진을왜올려", images);
 
