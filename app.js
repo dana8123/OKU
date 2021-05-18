@@ -40,7 +40,6 @@ const checkAuction = require("./controllers/checkAuction");
 
 // second minute hour day-of-month month day-of-week
 cron.schedule("1* * * * *", function () {
-	console.log("checkAuction 실행(매 1분)");
 	checkAuction();
 });
 

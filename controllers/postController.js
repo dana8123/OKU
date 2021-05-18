@@ -16,15 +16,15 @@ exports.productpost = async (req, res, next) => {
 
 	try {
 		let images = [];
-		for (let i = 0; i < req.files.length; i++) {
-			console.log(req.files.originalname);
-			images.push(req.files[i].location);
-			//images.push(`http://${process.env.DB_SERVER}/` + image);
+		if (req.files.length != 0) {
+			for (let i = 0; i < req.files.length; i++) {
+				images.push(req.files[i].location);
+			}
 		}
+		console.log("없는사진을왜올려", images);
 
 		const {
 			title,
-			img,
 			lowbid,
 			sucbid,
 			state,
@@ -154,7 +154,7 @@ exports.popular = async (req, res) => {
 		// onSale:true
 		const popularList = await Product.aggregate([
 			{ $match: { onSale: true } },
-			{ $sort: { views: -1 ,date:-1}},
+			{ $sort: { views: -1, date: -1 } },
 			{ $limit: 3 },
 		]);
 
