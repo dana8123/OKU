@@ -12,10 +12,10 @@ module.exports = async () => {
 			soldBy: null,
 			deadLine: { $lte: today },
 		});
-		console.log(
-			"====서버가 꺼지면서 낙찰자가 안정해진 것들====",
-			targets.length
-		);
+		// console.log(
+		// 	"====서버가 꺼지면서 낙찰자가 안정해진 것들====",
+		// 	targets.length
+		// );
 
 		targets.forEach(async (target) => {
 			const success = await PriceHistory.find({
@@ -31,7 +31,7 @@ module.exports = async () => {
 						sodById: success[0].userId,
 					},
 				});
-				console.log("====서버가 켜지면서 낙찰자가 지정됨===", success.length);
+				//console.log("====서버가 켜지면서 낙찰자가 지정됨===", success.length);
 			} else {
 				// 입찰자가 없을 경우
 				await target.updateOne({
@@ -43,7 +43,7 @@ module.exports = async () => {
 				});
 			}
 		});
-		console.log("====서버가 켜질 때 낙찰자 없음===", targets.length);
+		//console.log("====서버가 켜질 때 낙찰자 없음===", targets.length);
 	} catch (error) {
 		console.error(error);
 	}
