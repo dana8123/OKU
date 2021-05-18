@@ -15,12 +15,11 @@ passport.use(
 				_json: { id, properties },
 			} = profile;
 			try {
-				// const user = await User.findOne({ email });
+				const user = await User.findOne({ id });
 				// if (user) {
-				// 	//추가예정
 				// }
 				const newUser = await User.create({
-					email: id,
+					kakaoId: id,
 					nickname: properties.nickname,
 				});
 				await newUser.save();

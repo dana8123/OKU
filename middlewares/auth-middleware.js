@@ -12,16 +12,24 @@ exports.authMiddlesware = (req, res, next) => {
 		const { id } = jwt.verify(access_token, process.env.SECRET_KEY);
 		console.log("====email====", email);
 		console.log("====id====", id);
+
+		/*User.findOne({ email }).then((user) => {
+			res.locals.user = user;
+			next();
+		});
+*/
+
 		if (email != undefined) {
 			User.findOne({ email }).then((user) => {
 				res.locals.user = user;
 				next();
 			});
+		} else {
+			User.findOne({ kakaoId: id }).then((user) => {
+				res.locals.user = user;
+				next();
+			});
 		}
-		User.findOne({ _id: id }).then((user) => {
-			res.locals.user = user;
-			next();
-		});
 	} catch (error) {
 		res.json({
 			msg: "not_login",
