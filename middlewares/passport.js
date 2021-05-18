@@ -15,9 +15,10 @@ passport.use(
 				_json: { id, properties },
 			} = profile;
 			try {
-				const user = await User.findOne({ id });
-				// if (user) {
-				// }
+				const user = await User.findOne({ kakaoId: id });
+				if (user) {
+					return done(null, user);
+				}
 				const newUser = await User.create({
 					kakaoId: id,
 					nickname: properties.nickname,
