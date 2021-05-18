@@ -21,6 +21,7 @@ passport.use(
 				}
 				const newUser = await User.create({
 					kakaoId: id,
+					email: properties.email,
 					nickname: properties.nickname,
 				});
 				await newUser.save();
