@@ -22,6 +22,7 @@ const user = new Schema({
 		type: String,
 		default: "",
 	},
+	kakaoId: String,
 });
 
 module.exports = mongoose.model("User", user);

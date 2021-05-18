@@ -79,7 +79,11 @@ exports.productpost = async (req, res, next) => {
 			//입찰내역이 없을 때
 			if (pricehistory.length == 0) {
 				await newProduct.updateOne({
-					$set: { onSale: false, soldBy: null, soldById: null },
+					$set: {
+						onSale: false,
+						soldBy: "낙찰자가 없음",
+						soldById: "낙찰자가 없음",
+					},
 				});
 				// 입찰내역이 없을 때 판매자에게 판매실패 알람
 				await Alert.create({

@@ -135,12 +135,13 @@ exports.kakaoLoginCallback = async (
 
 //카카오 토큰 보내주기
 exports.kakaoLogin = async (req, res) => {
+	//id = kakaoId, TODO: kakao ID로 바꾸자고 성목님한테 말하기(반응형 끝나고)
 	const { id } = req.body;
-	const user = await User.findById(id);
+	const user = await User.findOne({ kakaoId: id });
 	const nickname = user.nickname;
 	const token = jwt.sign({ id }, process.env.SECRET_KEY);
-	console.log(id, token, nickname);
-	res.send({ access_token: token, userid: id, nickname });
+	//userid -> kakao id로 바꾸기(프론트와 협의 필요 )
+	res.send({ access_token: token, userid: user._id, nickname });
 };
 
 exports.pick = async (req, res) => {

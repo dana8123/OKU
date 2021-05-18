@@ -33,10 +33,10 @@ userRouter.get("/kakao", passport.authenticate("kakao"));
 //user id 보내주기
 userRouter.get("/kakao/oauth", (req, res) => {
 	passport.authenticate("kakao", { failureRedirect: "/" }, (err, user) => {
-		const { _id, nickname } = user;
+		const { kakaoId, nickname } = user;
 		return res.redirect(
 			"http://okuauctiontest1st.s3-website.ap-northeast-2.amazonaws.com/social/" +
-				_id
+				kakaoId
 		);
 	})(req, res);
 });
