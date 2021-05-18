@@ -17,10 +17,10 @@ exports.quest = async (req, res) => {
         const a = await Product.findOne({_id:productId["id"]});
         console.log(a["title"]);
 
-        await QuestNanswer.create({ sellerId: sellerunique, userId: user["_id"], productId: productId["id"], contents: contents});
+        const questId = await QuestNanswer.create({ sellerId: sellerunique, userId: user["_id"], productId: productId["id"], contents: contents});
         // 판매자한테 문의 알림띄우기
         await Alert.create({alertType:"문의",productTitle:a["title"],productId:productId["id"],userId:sellerunique});
-        res.send({ okay: true });
+        res.send({ okay: true , questId : questId["_id"]});
     } catch (error) {
         res.send({ okay: false });
     }

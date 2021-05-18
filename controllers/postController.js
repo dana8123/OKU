@@ -154,7 +154,7 @@ exports.popular = async (req, res) => {
 		// onSale:true
 		const popularList = await Product.aggregate([
 			{ $match: { onSale: true } },
-			{ $sort: { views: -1 } },
+			{ $sort: { views: -1 ,date:-1}},
 			{ $limit: 3 },
 		]);
 
