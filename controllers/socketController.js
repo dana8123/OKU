@@ -178,7 +178,7 @@ exports.alert = async (req, res) => {
 
 		res.send({ okay: true, notCheck: notCheck, alreadyCheck: alreadyCheck });
 	} catch (error) {
-		res.sned({ okay: false });
+		res.send({ okay: false });
 	}
 };
 

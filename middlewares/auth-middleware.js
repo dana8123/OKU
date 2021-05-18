@@ -8,15 +8,17 @@ require("dotenv").config();
 exports.authMiddlesware = (req, res, next) => {
 	try {
 		const { access_token } = req.headers;
-		// const [tokenType, tokenValue] = access_token.split(" ");
-		// if (tokenType !== "Bearer") {
-		// 	res.status(400).send({
-		// 		err: "로그인 후 이용 가능한 기능입니다.",
-		// 	});
-		// 	return;
-		// }
 		const { email } = jwt.verify(access_token, process.env.SECRET_KEY);
-		User.findOne({ email }).then((user) => {
+		const { id } = jwt.verify(access_token, process.env.SECRET_KEY);
+		console.log("====email====", email);
+		console.log("====id====", id);
+		if (email != undefined) {
+			User.findOne({ email }).then((user) => {
+				res.locals.user = user;
+				next();
+			});
+		}
+		User.findOne({ _id: id }).then((user) => {
 			res.locals.user = user;
 			next();
 		});
