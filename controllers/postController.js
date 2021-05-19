@@ -158,7 +158,7 @@ exports.popular = async (req, res) => {
 		const popularList = await Product.aggregate([
 			{ $match: { onSale: true } },
 			{ $sort: { views: -1, date: -1 } },
-			{ $limit: 3 },
+			{ $limit: 5 },
 		]);
 
 		res.send({ okay: true, result: popularList });
@@ -173,7 +173,7 @@ exports.newone = async (req, res) => {
 	//마지막으로 불러들인 아이템, query문으로 받아옴.
 	let lastId = req.query["lastId"];
 	let products;
-	const print_count = 9;
+	const print_count = 12;
 	try {
 		//무한스크롤
 		if (lastId) {
