@@ -198,6 +198,15 @@ exports.newone = async (req, res) => {
 	}
 };
 
+exports.allProducts = async (req, res) => {
+	const result = await Product.find({}).sort({ createAt: -1 });
+	try {
+		res.send({ result });
+	} catch (error) {
+		res.send({ result: false, error });
+	}
+};
+
 //마감임박 상품 목록 뿌려주기
 exports.deadLineList = async (req, res) => {
 	const halfHour = 1800000;
