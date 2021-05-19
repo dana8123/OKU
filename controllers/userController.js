@@ -16,7 +16,7 @@ require("dotenv").config();
 // 연재님 업데이트 안되시나요
 
 exports.signup = async (req, res) => {
-	const { password, password2, number, nickname, email, profileImg } = req.body;
+	const { password, password2, nickname, email } = req.body;
 
 	//TODO: validation data
 
