@@ -2,7 +2,6 @@ const Product = require("../schema/product");
 const PriceHistory = require("../schema/pricehistory");
 
 module.exports = async () => {
-	console.log("checkAuction");
 	try {
 		const today = new Date();
 		today.setDate(today.getDate());
