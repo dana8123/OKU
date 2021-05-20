@@ -158,9 +158,9 @@ exports.pick = async (req, res) => {
 			{ _id: 0, productId: 1, productImage: 1 }
 		);
 
-		const title = await Product.find(product.map((user)=>({_id:user["_id"]})));
+		// const title = await Product.find(product.map((user)=>({_id:user["_id"]})));
 			
-		console.log(title);
+		// console.log(title);
 
 		res.send({ okay: true, result: product });
 	} catch (error) {
