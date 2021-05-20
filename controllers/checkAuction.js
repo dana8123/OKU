@@ -17,7 +17,6 @@ module.exports = async () => {
 			const success = await PriceHistory.find({
 				productId: target._id,
 			});
-			console.log("==success==", success);
 			// 입찰자가 1명 이상인 경우
 			if (success.length !== 0) {
 				await target.updateOne({
@@ -66,6 +65,7 @@ module.exports = async () => {
 					},
 				});
 				// 판매자에게 알림
+				// TODO: newproduct 수정필요
 				await Alert.create({
 					alertType: "판매실패",
 					productTitle: newProduct["title"],
@@ -74,6 +74,7 @@ module.exports = async () => {
 				});
 			}
 		});
+
 		//console.log("====서버가 켜질 때 낙찰자 없음===", targets.length);
 	} catch (error) {
 		console.error(error);
