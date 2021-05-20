@@ -9,15 +9,7 @@ exports.authMiddlesware = (req, res, next) => {
 	try {
 		const { access_token } = req.headers;
 		const { email } = jwt.verify(access_token, process.env.SECRET_KEY);
-		const { id } = jwt.verify(access_token, process.env.SECRET_KEY);
-		console.log("====email====", email);
-		console.log("====id====", id);
-
-		/*User.findOne({ email }).then((user) => {
-			res.locals.user = user;
-			next();
-		});
-*/
+		const { kakaoId } = jwt.verify(access_token, process.env.SECRET_KEY);
 
 		if (email != undefined) {
 			User.findOne({ email }).then((user) => {
@@ -25,7 +17,7 @@ exports.authMiddlesware = (req, res, next) => {
 				next();
 			});
 		} else {
-			User.findOne({ kakaoId: id }).then((user) => {
+			User.findOne({ kakaoId }).then((user) => {
 				res.locals.user = user;
 				next();
 			});

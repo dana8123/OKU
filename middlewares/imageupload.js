@@ -7,26 +7,31 @@ aws.config.loadFromPath(__dirname + "/../config/s3.json");
 
 const s3 = new aws.S3();
 
-const fileFilter = function(req,file,cb){
+const fileFilter = function (req, file, cb) {
 	const name = path.extname(file.originalname);
-	if(name !=='.png'&& name !=='.jpg'&& name !=='.jpeg'&& name !=='.gif'){
-		cb(null,false);
+	if (
+		name !== ".png" &&
+		name !== ".jpg" &&
+		name !== ".jpeg" &&
+		name !== ".gif"
+	) {
+		cb(null, false);
 	}
-	cb(null,true);
-}
+	//cb(new Error("multer file ext error"));
+};
 
 const upload = multer({
-		storage: multerS3({
-			s3,
-			bucket: "okuhanghae",
-			contentType: multerS3.AUTO_CONTENT_TYPE,
-			acl: "public-read",
-			key: function (req, file, cb) {
-				cb(null, Date.now() + "." + file.originalname.split(".").pop());
-			}
-		}),
-		fileFilter:fileFilter,
-	});
+	storage: multerS3({
+		s3,
+		bucket: "okuhanghae",
+		contentType: multerS3.AUTO_CONTENT_TYPE,
+		acl: "public-read",
+		key: function (req, file, cb) {
+			cb(null, Date.now() + "." + file.originalname.split(".").pop());
+		},
+	}),
+	//fileFilter: fileFilter,
+});
 
 module.exports = upload;
 

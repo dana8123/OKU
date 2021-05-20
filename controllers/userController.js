@@ -16,7 +16,7 @@ require("dotenv").config();
 // 연재님 업데이트 안되시나요
 
 exports.signup = async (req, res) => {
-	const { password, password2, number, nickname, email, profileImg } = req.body;
+	const { password, password2, nickname, email } = req.body;
 
 	//TODO: validation data
 
@@ -136,10 +136,11 @@ exports.kakaoLoginCallback = async (
 //카카오 토큰 보내주기
 exports.kakaoLogin = async (req, res) => {
 	//id = kakaoId, TODO: kakao ID로 바꾸자고 성목님한테 말하기(반응형 끝나고)
-	const { id } = req.body;
-	const user = await User.findOne({ kakaoId: id });
+	const { kakaoId } = req.body;
+	const user = await User.findOne({ kakaoId });
 	const nickname = user.nickname;
-	const token = jwt.sign({ id }, process.env.SECRET_KEY);
+	const token = jwt.sign({ kakaoId }, process.env.SECRET_KEY);
+	console.log("postkakao", kakaoId);
 	//userid -> kakao id로 바꾸기(프론트와 협의 필요 )
 	res.send({ access_token: token, userid: user._id, nickname });
 };
@@ -150,7 +151,6 @@ exports.pick = async (req, res) => {
 	// 타이틀이랑 현재입찰가까지 넘겨주기
 
 	try {
-
 		const like = [];
 
 		const product = await Like.find(
@@ -158,13 +158,15 @@ exports.pick = async (req, res) => {
 			{ _id: 0, productId: 1, productImage: 1 }
 		);
 
-		// const title = await Product.find(product.map((user)=>({_id:user["_id"]})));
-			
-		// console.log(title);
+		const title = await Product.find(
+			{ _id: user._id }
+			//product.map((user) => ({ _id: user["_id"] }))
+		);
 
 		res.send({ okay: true, result: product });
 	} catch (error) {
-		res.send({ okay: false });
+		res.send({ okay: false, error });
+		console.log(error);
 	}
 };
 

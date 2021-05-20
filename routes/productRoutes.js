@@ -20,6 +20,7 @@ const {
 	test,
 	deadLineList,
 	relate,
+	allProducts,
 } = require("../controllers/postController");
 const { quest, questget, answer } = require("../controllers/qnaController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
@@ -34,6 +35,9 @@ productRouter.get("/detail/:id", detail);
 // 실시간 인기상품 리스트
 // onsale 처리완료
 productRouter.get("/popularlist", popular);
+
+// 모든상품 리스트
+productRouter.get("/all", allProducts);
 
 // 최신 등록 상품 리스트
 // onsale 처리완료
