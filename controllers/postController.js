@@ -21,7 +21,10 @@ exports.productpost = async (req, res, next) => {
 				images.push(req.files[i].location);
 			}
 		} else {
-			res.send({ image: false });
+			images = [
+				"https://okuhanghae.s3.ap-northeast-2.amazonaws.com/public/logo512.png",
+			];
+			//res.send({ image: false });
 		}
 		console.log("없는사진을왜올려", images);
 
