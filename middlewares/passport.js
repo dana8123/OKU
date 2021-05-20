@@ -8,7 +8,7 @@ passport.use(
 		{
 			//kakao에서 제공하는 restAPI
 			clientID: process.env.kakao,
-			callbackURL: `http://${DB_SERVER}/user/kakao/oauth`,
+			callbackURL: "http://" + process.env.DB_SERVER + "/user/kakao/oauth",
 		},
 		async (accessToken, refreshToken, profile, done) => {
 			const {
