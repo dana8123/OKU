@@ -54,10 +54,9 @@ exports.bid = async (req, res) => {
 		}
 		//입찰하기에서 즉시 입찰가 혹은 그 이상을 입력했을 때, 입찰불가
 		if (bid >= product.sucBid) {
+			result: "입찰가 오류";
 			return res.status(403).send({ result });
 		}
-
-		return res.send({ result: "마감" });
 
 		//이외 입찰하기가 성공되었을 때
 		result = await pricehistory.create({
