@@ -20,18 +20,11 @@ passport.use(
 					console.log("유저프로퍼티", profile);
 					return done(null, user);
 				}
-				if (properties.nickname == "조상균") {
-					console.log("불량회원", properties.nickname);
-					return done(error);
-				}
-				if (kakaoId == "1735851486") {
-					console.log("불량회원", kakaoId);
-					return done(error);
-				}
+				console.log("passport======>", id);
 				const newUser = await User.create({
 					kakaoId: id,
 					email: kakao_account.email,
-					nickname: id,
+					nickname: properties.nickname,
 				});
 				await newUser.save();
 				return done(null, newUser);
