@@ -82,8 +82,8 @@ exports.bid = async (req, res) => {
 	}
 };
 
+
 //즉시 낙찰하기
-// 판매자가 낙찰 불가능하게 만들기
 exports.sucbid = async (req, res) => {
 	const user = res.locals.user;
 	const productId = req.params;
@@ -161,16 +161,149 @@ exports.sucbid = async (req, res) => {
 	}
 };
 
+//즉시 낙찰하기
+// 변경된 즉시낙찰로직
+exports.newsucbid = async (req, res) => {
+	const user = res.locals.user;
+	const productId = req.params;
+	const { sucbid, sellerunique } = req.body;
+
+	console.log(productId["id"]);
+
+	// 판매 종료된것도 즉시낙찰 못하게 막아야함
+	try {
+
+		// 판매자가 상품을 산다면
+		if (sellerunique == user.id) {
+			res.send({ okay: false , msg: "판매자는 낙찰하지 못합니다." });
+		} else {
+
+			// 이미 즉시 낙찰된 기록이 있을 경우 onSale:true , history가 이미 있는경우
+			const prehistory = await Alert.findOne({ alertType: "판매성공", productId: productId["id"] });
+
+
+			if (prehistory) {
+				res.send({ okay: false, msg: "이미 거래중인 물건입니다." });
+			} else {
+
+				try {
+					const hisinfo = await PriceHistory.create({
+						productId: productId["id"],
+						userId: user["_id"],
+						bid: sucbid,
+						nickName: user["nickname"],
+					});
+				} catch (error) {
+					res.send({ okay: false , msg: "낙찰 기록에 실패했습니다." });
+				}
+
+				// 판매자한테 상품판매알람보내기
+				const product = await Product.findOne({ _id: productId["id"] });
+				const seller = await Alert.create({ alertType: "판매성공", buyerId:user["_id"] ,productTitle: product["title"], productId: productId["id"], userId: sellerunique });
+				
+				res.send({ okay:true , msg: "즉시낙찰에 성공하였습니다." });
+			}
+		}
+	} catch (error) {
+		console.log(error);
+		res.send({ msg: "즉시낙찰에 실패하였습니다." });
+	}
+};
+
+// 유저정보 조회
+// 알림안에있는 buyerId값으로 불러옴
+exports.buyerCheck = async(req,res) =>{
+	const {id} = req.params;
+	
+	try {
+		const buyer = await User.findOne({_id:id},{nickname:1,profileImg:1,_id:0});
+		res.send({okay:true,user:buyer});
+	} catch (error) {
+		res.send({okay:false, msg:"유저가 존재하지 않습니다."});
+	}
+}
+
+// 거래진행 yes or no로 나누어야함
+exports.sellerSelct = async(req,res) => {
+	// 1. true false값 , 2. 판매성공 알람 objectId값이 필요함
+
+	const {decision} = req.body;
+	// 알람 objectId값임
+	const {id} = req.params;
+
+	console.log(decision,id);
+
+	try {
+		// 판매자인지 아닌지도 걸려줘야함
+
+		if(decision==true){
+			// 거래 진행에 동의한 경우
+			// 1. 판매상품 내리기 2. 채팅방 생기기 3. 구매자들에게 성공알림, 구매실패자들에게 실패알림
+
+			const info = await Alert.findOne({_id:id});
+			const buyer = await User.findOne({_id:info["buyerId"]});
+
+			console.log("info:",info,"buyer:",buyer);
+
+			// 판매상품 상태 변경
+			const a = await Product.findOneAndUpdate({_id:info["productId"]},{onSale:false,soldBy:buyer["nickname"],soldById:buyer["_id"]});
+
+			// 채팅방 생성
+			const b = await ChatRoom.create({productId:info["productId"],buyerId:info["buyerId"],sellerId:info["userId"]});
+
+
+			// 낙찰성공유저제외 history에있는 모든 유저 불러오기
+			const failUser = await PriceHistory.find({$and:[{productId:info["productId"]},{userId:{$ne:info["buyerId"]}}]},{ userId: 1, _id: 0 });
+
+
+			//낙찰 실패자에게 알림
+			const tt = await Alert.insertMany(
+				failUser.map((user) => ({
+					alertType: "낙찰실패",
+					productId: info["id"],
+					productTitle: info["title"],
+					userId: user.userId,
+				}))
+			);
+
+			//낙찰 성공자에게 알림
+			const tt2 = await Alert.create({
+				userId: info["buyerId"],
+				alertType: "낙찰성공",
+				productTitle: info["productTitle"],
+				productId: info["productId"],
+			});
+
+			res.send({okay:true,msg:"상품이 판매 완료 됐습니다."})
+
+		}else{
+
+			// 거래 진행에 거절한 경우
+			// alert하나 삭제하기
+			
+			const info = await Alert.findOne({_id:id});
+
+			const a = await Product.findOneAndUpdate({_id:info["productId"]},{onSale:true,soldBy:null,soldById:null});
+			await Alert.deleteOne({_id:id});
+			
+			console.log(a);
+
+			res.send({okay:true,msg:"거래가 취소되었습니다."})
+		}
+
+		res.send({okay:true});
+	} catch (error) {
+		res.send({okay:false, msg:"없는 거래입니다."});
+	}
+}
+
+
 // 바로 알림
 exports.alert = async (req, res) => {
 	const user = res.locals.user;
-	console.log(user);
-
 	try {
 		const notCheck = await Alert.find({ userId: user["_id"], view: false });
 		const alreadyCheck = await Alert.find({ userId: user["_id"], view: true });
-
-		console.log(notCheck, alreadyCheck);
 
 		await Alert.updateMany(
 			{ userId: user["_id"], view: false },
