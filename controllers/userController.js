@@ -103,7 +103,10 @@ exports.login = async (req, res) => {
 		}
 		const match = await bcrypt.compare(password, user.password);
 		if (match) {
-			const token = jwt.sign({ email }, process.env.SECRET_KEY);
+			const token = jwt.sign(
+				{ email, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 },
+				process.env.SECRET_KEY
+			);
 			return res.send({
 				access_token: token,
 				nickname: user.nickname,
