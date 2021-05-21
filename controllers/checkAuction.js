@@ -28,7 +28,7 @@ module.exports = async () => {
 				});
 				// 낙찰 성공자에게 알림
 				await Alert.create({
-					userId: pricehistory[0].userId,
+					userId: success[0].userId,
 					alertType: "낙찰성공",
 					productTitle: newProduct["title"],
 					productId: newProduct["_id"],
