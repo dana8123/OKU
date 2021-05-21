@@ -19,17 +19,14 @@ module.exports = (server, app) => {
 	//server-side
 	chatSpace.on("connection", async (socket) => {
 		// 접속 이후 이하의 코드가 실행됨
-		console.log("chat 네임스페이스에 접속", socket.id);
+		//클라이언트에게서 join이라는 emit을 받으면
 		socket.on("join", async (data) => {
 			const req = socket.request;
 			const {
 				headers: { referer },
 			} = req;
-			console.log(referer); // 현재 웹페이지의 url을 가져올 수 있음, url에서 방 아이디 부분을 추출.
-			const { room, username } = data;
-			console.log("===roomId=====", data.room);
-			console.log("===roomuser===", data.username);
-			console.log("===referer===", referer);
+			//console.log("===join====", data); //
+			const { room, user } = data;
 			// room에 join되어 있는 클라이언트에게 메시지를 전송한다.
 			socket.join(room); //특정 방에 접속하는 코드
 			const chats = await Chat.find({ room });
@@ -44,12 +41,8 @@ module.exports = (server, app) => {
 				msg: data.msg,
 				user: data.username,
 				time: data.time,
-				// createAt은 임의로 생략
+				// TODO: url에 닉네임이 꼭 들어가야하는건지 프론트에 확인하기. 다른방식으로 줄 수 있는 방법 찾기
 			});
-			console.log("====content====", content);
-			console.log("===data.msg====", data.msg);
-			console.log("===data.username===", data.username);
-			console.log("====time", data.time);
 			await content.save();
 			// 저장한 데이터를 클라이언트에게 receive라는 emit으로 전송
 			io.of("/chat").to(room).emit("receive", content);

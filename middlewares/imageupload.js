@@ -9,15 +9,16 @@ const s3 = new aws.S3();
 
 const fileFilter = function (req, file, cb) {
 	const name = path.extname(file.originalname);
-	if (
-		name !== ".png" &&
-		name !== ".jpg" &&
-		name !== ".jpeg" &&
-		name !== ".gif"
-	) {
-		cb(null, false);
+	try {
+		if (file.mimetype.includes("image")) {
+			cb(null, true);
+		} else {
+			cb(null, false);
+			console.log("=====이미지없음=======");
+		}
+	} catch (error) {
+		cb(new Error("multer file ext error"));
 	}
-	//cb(new Error("multer file ext error"));
 };
 
 const upload = multer({
@@ -28,9 +29,10 @@ const upload = multer({
 		acl: "public-read",
 		key: function (req, file, cb) {
 			cb(null, Date.now() + "." + file.originalname.split(".").pop());
+			//console.log(file);
 		},
 	}),
-	//fileFilter: fileFilter,
+	fileFilter,
 });
 
 module.exports = upload;

@@ -14,7 +14,7 @@ exports.bid = async (req, res) => {
 	const user = res.locals.user;
 	const { id } = req.params;
 	try {
-		let result = true;
+		let result = false;
 		const { bid } = req.body;
 		const product = await Product.findById(id);
 		const seller = product.sellerunique;
@@ -52,22 +52,12 @@ exports.bid = async (req, res) => {
 			result: "already successed Bidding";
 			return res.status(403).send({ result });
 		}
-		//입찰하기에서 즉시 입찰가 혹은 그 이상을 입력했을 때
+		//입찰하기에서 즉시 입찰가 혹은 그 이상을 입력했을 때, 입찰불가
 		if (bid >= product.sucBid) {
-			result = await pricehistory.create({
-				userId: user["_id"],
-				bid,
-				productId: product._id,
-				nickName: user["nickname"],
-				seller,
-			});
-			//입찰하기에서 즉시입찰가 입력하여 판매종료될 경우.
-			await product.updateOne({
-				$set: { onSale: false, soldBy: user.nickname, soldById: user._id },
-			});
-
-			return res.send({ result: "마감" });
+			result: "입찰가 오류";
+			return res.status(403).send({ result });
 		}
+
 		//이외 입찰하기가 성공되었을 때
 		result = await pricehistory.create({
 			userId: user["_id"],
