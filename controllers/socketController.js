@@ -151,7 +151,6 @@ exports.sucbid = async (req, res) => {
 	}
 };
 
-//즉시 낙찰하기
 // 변경된 즉시낙찰로직
 exports.newsucbid = async (req, res) => {
 	const user = res.locals.user;
@@ -188,7 +187,8 @@ exports.newsucbid = async (req, res) => {
 				}
 
 				// 판매자한테 상품판매알람보내기
-				const product = await Product.findOne({ _id: productId["id"] });
+				// 즉시낙찰을 시도한사람이 있을경우 detail페이지에서 데이터는 내려가지않고 거래대기중으로 띄워줘야함
+				const product = await Product.findOneAndUpdate({ _id: productId["id"]},{soldBy:"거래대기중"});
 				const seller = await Alert.create({ alertType: "판매성공", buyerId:user["_id"] ,productTitle: product["title"], productId: productId["id"], userId: sellerunique });
 				
 				res.send({ okay:true , msg: "즉시낙찰에 성공하였습니다." });
@@ -251,7 +251,7 @@ exports.sellerSelct = async(req,res) => {
 				failUser.map((user) => ({
 					alertType: "낙찰실패",
 					productId: info["id"],
-					productTitle: info["title"],
+					productTitle: info["productTitle"],
 					userId: user.userId,
 				}))
 			);
