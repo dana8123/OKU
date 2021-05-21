@@ -13,6 +13,9 @@ const priceHistory = new Schema({
 		type: String,
 		required: true,
 	},
+	userEmail: {
+		type: String,
+	},
 	bid: {
 		type: Number,
 		required: true,
