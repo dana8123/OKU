@@ -34,3 +34,14 @@ exports.chatList = async (req, res) => {
 	}
 	res.send({ targets });
 };
+
+// 채팅방 삭제
+exports.chatDelete = async (req, res) => {
+	const { params: id } = req;
+	try {
+		await Chat.deleteOne({ room: id });
+	} catch (error) {
+		console.log(error);
+		res.send({ result: true });
+	}
+};
