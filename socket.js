@@ -46,7 +46,6 @@ module.exports = (server, app) => {
 			});
 			await content.save();
 			// 저장한 데이터를 클라이언트에게 receive라는 emit으로 전송
-			console.log(content);
 			io.of("/chat").to(room).emit("receive", content);
 			//접속해제 시 방을 떠나는 코드
 			socket.on("disconnect", () => {
