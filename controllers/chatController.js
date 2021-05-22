@@ -8,10 +8,12 @@ const User = require("../schema/user");
 exports.chatList = async (req, res) => {
 	let targets = [];
 	const user = res.locals.user;
+	// 낙찰 완료된 상품
 	const product = await Product.find(
 		{ onSale: false },
 		{
 			_id: 1,
+			title: 1,
 			sellerunique: 1,
 			onsale: 1,
 			nickname: 1,
@@ -21,10 +23,12 @@ exports.chatList = async (req, res) => {
 	);
 	// 판매자인경우와 구매자인 경우 모두 채팅리스트(targets)로 응답
 	for (let i = 0; i < product.length; i++) {
+		// 현재 로그인 한 유저가 낙찰자일 경우
 		if (product[i].soldById == user._id) {
 			targets.push(product[i]);
 		}
 		if (product[i].sellerunique == user._id) {
+			//현재 로그인 한 유저가 판매자일 경우
 			targets.push(product[i]);
 		}
 	}
