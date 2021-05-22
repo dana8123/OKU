@@ -1,7 +1,8 @@
 //socketIo 모듈을 불러오기
 const SocketIO = require("socket.io");
 const Chat = require("./schema/chathistory");
-const moment = require("moment");
+
+//TODO: productID 보내주기
 
 //app.js와 websocket을 연결하는 작업
 module.exports = (server, app) => {
@@ -40,11 +41,12 @@ module.exports = (server, app) => {
 				room,
 				msg: data.msg,
 				user: data.username,
-				time: data.time,
+				time: Date.now(),
 				// TODO: url에 닉네임이 꼭 들어가야하는건지 프론트에 확인하기. 다른방식으로 줄 수 있는 방법 찾기
 			});
 			await content.save();
 			// 저장한 데이터를 클라이언트에게 receive라는 emit으로 전송
+			console.log(content);
 			io.of("/chat").to(room).emit("receive", content);
 			//접속해제 시 방을 떠나는 코드
 			socket.on("disconnect", () => {
@@ -57,7 +59,6 @@ module.exports = (server, app) => {
 	//global socket 알림, 채팅 목록
 	globalSpace.on("connection", function (socket) {
 		socket.on("globalSend", async function (data) {
-			console.log("====global====", data);
 			globalSpace.emit("globalReceive", data);
 		});
 	});
