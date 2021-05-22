@@ -2,6 +2,7 @@ const Chat = require("../schema/chathistory");
 const Room = require("../schema/chatroom");
 const PriceHistory = require("../schema/pricehistory");
 const Product = require("../schema/product");
+const nodemailer = require("../nodemailer");
 const User = require("../schema/user");
 
 //채팅 리스트
@@ -37,9 +38,12 @@ exports.chatList = async (req, res) => {
 
 // 채팅방 삭제
 exports.chatDelete = async (req, res) => {
-	const { params: id } = req;
+	const { params: productId, firstUser, secondUser } = req;
 	try {
-		await Chat.deleteOne({ room: id });
+		await Chat.deleteOne({ room: productId });
+		const subject = "채팅방이 삭제되었습니다.";
+		nodemailer(firstUser, subject);
+		nodemailer(secondUser, subject);
 	} catch (error) {
 		console.log(error);
 		res.send({ result: true });
