@@ -2,16 +2,19 @@ const Chat = require("../schema/chathistory");
 const Room = require("../schema/chatroom");
 const PriceHistory = require("../schema/pricehistory");
 const Product = require("../schema/product");
+const nodemailer = require("../nodemailer");
 const User = require("../schema/user");
 
 //채팅 리스트
 exports.chatList = async (req, res) => {
 	let targets = [];
 	const user = res.locals.user;
+	// 낙찰 완료된 상품
 	const product = await Product.find(
 		{ onSale: false },
 		{
 			_id: 1,
+			title: 1,
 			sellerunique: 1,
 			onsale: 1,
 			nickname: 1,
@@ -21,12 +24,35 @@ exports.chatList = async (req, res) => {
 	);
 	// 판매자인경우와 구매자인 경우 모두 채팅리스트(targets)로 응답
 	for (let i = 0; i < product.length; i++) {
+		// 현재 로그인 한 유저가 낙찰자일 경우
 		if (product[i].soldById == user._id) {
 			targets.push(product[i]);
 		}
 		if (product[i].sellerunique == user._id) {
+			//현재 로그인 한 유저가 판매자일 경우
 			targets.push(product[i]);
 		}
 	}
 	res.send({ targets });
+};
+
+// 채팅방 삭제
+exports.chatDelete = async (req, res) => {
+	const { params: productId, firstUser, secondUser } = req;
+	try {
+		await Chat.deleteMany({ productId: productId });
+		const subject = "채팅방이 삭제되었습니다.";
+		// 채팅방 삭제 시 메일 보내주기
+		const first = await User.findOne({ _id: firstUser });
+		const second = await User.findOne({ _id: secondUser });
+
+		nodemailer(first.email, subject);
+		nodemailer(second.email, subject);
+
+		console.log(first, second);
+		res.send({ result: true });
+	} catch (error) {
+		console.log(error);
+		res.send({ result: false });
+	}
 };

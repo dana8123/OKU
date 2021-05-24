@@ -9,6 +9,7 @@ const passport = require("passport");
 const passportConfig = require("./middlewares/passport");
 const port = process.env.EXPRESS_PORT;
 const webSocket = require("./socket");
+const nodemailer = require("./nodemailer");
 
 // DB연결
 const mongoose = require("mongoose");
@@ -42,6 +43,8 @@ const checkAuction = require("./controllers/checkAuction");
 cron.schedule("1* * * * *", function () {
 	checkAuction();
 });
+
+//nodemailer();
 
 app.use("/chat", chatRouter);
 app.use("/product", productRouter);

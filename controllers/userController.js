@@ -142,7 +142,10 @@ exports.kakaoLogin = async (req, res) => {
 	const { kakaoId } = req.body;
 	const user = await User.findOne({ kakaoId });
 	const nickname = user.nickname;
-	const token = jwt.sign({ kakaoId }, process.env.SECRET_KEY);
+	const token = jwt.sign(
+		{ kakaoId, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 },
+		process.env.SECRET_KEY
+	);
 	console.log("postkakao", kakaoId);
 	//userid -> kakao id로 바꾸기(프론트와 협의 필요 )
 	res.send({ access_token: token, userid: user._id, nickname });
