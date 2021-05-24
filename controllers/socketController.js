@@ -289,20 +289,30 @@ exports.sellerSelct = async (req, res) => {
 				productId: info["productId"],
 			});
 
-			res.send({ okay: true, msg: "상품이 판매 완료 됐습니다." });
-		} else {
+			//
+
+			res.send({okay:true,msg:"상품이 판매 완료 됐습니다."})
+
+		}else{
+
 			// 거래 진행에 거절한 경우
 			// alert하나 삭제하기
+			
+			const info = await Alert.findOne({_id:id});
+			const buyer = await User.findOne({_id:info["buyerId"]});
 
-			const info = await Alert.findOne({ _id: id });
+			//낙찰 시도자에게 실패 알림
+			await Alert.create({
+				userId: info["buyerId"],
+				alertType: "낙찰실패",
+				productTitle: info["productTitle"],
+				productId: info["productId"],
+			});
 
-			const a = await Product.findOneAndUpdate(
-				{ _id: info["productId"] },
-				{ onSale: true, soldBy: null, soldById: null }
-			);
-			await Alert.deleteOne({ _id: id });
-
-			console.log(a);
+			const a = await Product.findOneAndUpdate({_id:info["productId"]},{onSale:true,soldBy:null,soldById:null});
+			await PriceHistory.deleteOne({productId:info["productId"],userId:info["buyerId"]});
+			
+			await Alert.deleteOne({_id:id});
 
 			res.send({ okay: true, msg: "거래가 취소되었습니다." });
 		}
