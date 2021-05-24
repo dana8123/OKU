@@ -45,13 +45,13 @@ exports.chatDelete = async (req, res) => {
 		console.log("채팅방 삭제,product", product.product);
 		const subject = "채팅방이 삭제되었습니다.";
 		// 채팅방 삭제 시 메일 보내주기
-		const first = await User.findOne({ _id: firstUser });
-		const second = await User.findOne({ _id: secondUser });
+		const first = await User.findOne({ _id: product.firstUser });
+		const second = await User.findOne({ _id: product.secondUser });
 
 		nodemailer(first.email, subject);
 		nodemailer(second.email, subject);
 
-		console.log(first, second);
+		console.log(first.email, second.email);
 		res.send({ result: true });
 	} catch (error) {
 		console.log(error);
