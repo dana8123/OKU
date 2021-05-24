@@ -153,6 +153,9 @@ exports.sucbid = async (req, res) => {
 				res.send({ msg: "채팅방 생성에 실패했습니다." });
 			}
 
+			// 판매완료
+			
+
 			res.send({ msg: "즉시낙찰에 성공하였습니다." });
 		}
 	} catch (error) {

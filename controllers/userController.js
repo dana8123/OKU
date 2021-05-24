@@ -197,12 +197,15 @@ exports.mypronick = async (req, res) => {
 };
 
 exports.mypronickedit = async (req, res) => {
+	
+	const user = res.locals.user;
+	const { nick } = req.body;
+	// INFO : profile img = 1 ea 라서 array -> string 으로 수정
+	const image = req.file.location;
+	console.log(req.file);
+	console.log(image);
+	
 	try {
-		const user = res.locals.user;
-		const { nick } = req.body;
-		// INFO : profile img = 1 ea 라서 array -> string 으로 수정
-		const image = req.file.location;
-		console.log(req.file);
 
 		// 프로필이미지가 넘어오지않을때의 예외처리
 		if (image == null) {
