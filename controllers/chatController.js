@@ -40,12 +40,19 @@ exports.chatList = async (req, res) => {
 exports.chatDelete = async (req, res) => {
 	const { params: productId, firstUser, secondUser } = req;
 	try {
-		await Chat.deleteOne({ room: productId });
+		await Chat.deleteMany({ productId: productId });
 		const subject = "채팅방이 삭제되었습니다.";
-		nodemailer(firstUser, subject);
-		nodemailer(secondUser, subject);
+		// 채팅방 삭제 시 메일 보내주기
+		const first = await User.findOne({ _id: firstUser });
+		const second = await User.findOne({ _id: secondUser });
+
+		nodemailer(first.email, subject);
+		nodemailer(second.email, subject);
+
+		console.log(first, second);
+		res.send({ result: true });
 	} catch (error) {
 		console.log(error);
-		res.send({ result: true });
+		res.send({ result: false });
 	}
 };

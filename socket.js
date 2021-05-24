@@ -39,6 +39,7 @@ module.exports = (server, app) => {
 			const { room } = data;
 			const content = new Chat({
 				room,
+				productId: data.product,
 				msg: data.msg,
 				user: data.username,
 				time: Date.now(),

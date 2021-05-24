@@ -3,8 +3,10 @@ const { Schema, model, Types } = mongoose;
 
 const chatHistory = new Schema({
 	room: {
-		type: String,
-		required: true,
+		type: Object,
+	},
+	productId: {
+		type: Object,
 	},
 	msg: {
 		type: String,
