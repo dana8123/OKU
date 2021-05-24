@@ -40,6 +40,7 @@ exports.chatList = async (req, res) => {
 exports.chatDelete = async (req, res) => {
 	const { params: product, firstUser, secondUser } = req;
 	try {
+		await Product.deleteOne({ _id: product.product });
 		await Chat.deleteMany({ productId: product.product });
 		console.log("채팅방 삭제,product", product.product);
 		const subject = "채팅방이 삭제되었습니다.";

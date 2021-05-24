@@ -61,9 +61,5 @@ module.exports = (server, app) => {
 		socket.on("globalSend", async function (data) {
 			globalSpace.emit("globalReceive", data);
 		});
-		// 채팅방 삭제
-		socket.on("room", async function (room) {
-			console.log(`socket has delete room ${room}`);
-		});
 	});
 };
