@@ -17,10 +17,10 @@ exports.quest = async (req, res) => {
         const a = await Product.findOne({_id:productId["id"]});
         console.log(a["title"]);
 
-        await QuestNanswer.create({ sellerId: sellerunique, userId: user["_id"], productId: productId["id"], contents: contents});
+        const questId = await QuestNanswer.create({ sellerId: sellerunique, userId: user["_id"], productId: productId["id"], contents: contents});
         // 판매자한테 문의 알림띄우기
         await Alert.create({alertType:"문의",productTitle:a["title"],productId:productId["id"],userId:sellerunique});
-        res.send({ okay: true });
+        res.send({ okay: true , questId : questId["_id"]});
     } catch (error) {
         res.send({ okay: false });
     }
@@ -64,32 +64,19 @@ exports.questget = async (req, res) => {
         const result = [];
         const a = await QuestNanswer.find({ productId: productId["id"] }, { __v: 0 });
 
-        // 에러난 코드
-        // a.forEach(async e => {
-        //     const seller = await User.findOne({ _id: e["sellerId"] }, { nickname: 1, _id: 0 });
-        //     const buyer = await User.findOne({ _id: e["userId"] }, { nickname: 1, profileImg: 1 });
-        //     const sellernickname = seller["nickname"]
-        //     const buyernickname = buyer["nickname"];
-        //     const buyerprofile = buyer["profileImg"];
-
-        //     result.push(e, { sellernickname: sellernickname, buyernickname: buyernickname, buyerprofile: buyerprofile });
-
-        //     console.log(result);
-        // });
-
         for(let i=0; i < a.length; i++){
-            // console.log(a[i]);
 
-            const seller = await User.findOne({ _id: a[i]["sellerId"] }, { nickname: 1, _id: 0 });
-            const buyer = await User.findOne({ _id: a[i]["userId"] }, { nickname: 1, profileImg: 1 });
+
+            const seller = await User.findOne({ _id: a[i]["sellerId"] });
+            const buyer = await User.findOne({ _id: a[i]["userId"] });
             const sellernickname = seller["nickname"];
             const buyernickname = buyer["nickname"];
             const buyerprofile = buyer["profileImg"];
 
-            // console.log(sellernickname,buyernickname,buyerprofile);
-
             result.push({QnA:a[i],sellernickname: sellernickname, buyernickname: buyernickname, buyerprofile: buyerprofile });
         }
+
+        console.log(result);
 
         res.send({ okay: true , result:result});
     } catch (error) {

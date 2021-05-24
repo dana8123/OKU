@@ -16,7 +16,7 @@ require("dotenv").config();
 // 연재님 업데이트 안되시나요
 
 exports.signup = async (req, res) => {
-	const { password, password2, number, nickname, email, profileImg } = req.body;
+	const { password, password2, nickname, email } = req.body;
 
 	//TODO: validation data
 
@@ -103,7 +103,10 @@ exports.login = async (req, res) => {
 		}
 		const match = await bcrypt.compare(password, user.password);
 		if (match) {
-			const token = jwt.sign({ email }, process.env.SECRET_KEY);
+			const token = jwt.sign(
+				{ email, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 },
+				process.env.SECRET_KEY
+			);
 			return res.send({
 				access_token: token,
 				nickname: user.nickname,
@@ -135,24 +138,41 @@ exports.kakaoLoginCallback = async (
 
 //카카오 토큰 보내주기
 exports.kakaoLogin = async (req, res) => {
-	const { id } = req.body;
-	const user = await User.findById(id);
+	//id = kakaoId, TODO: kakao ID로 바꾸자고 성목님한테 말하기(반응형 끝나고)
+	const { kakaoId } = req.body;
+	const user = await User.findOne({ kakaoId });
 	const nickname = user.nickname;
-	const token = jwt.sign({ id }, process.env.SECRET_KEY);
-	console.log(id, token, nickname);
-	res.send({ access_token: token, userid: id, nickname });
+	const token = jwt.sign(
+		{ kakaoId, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 },
+		process.env.SECRET_KEY
+	);
+	console.log("postkakao", kakaoId);
+	//userid -> kakao id로 바꾸기(프론트와 협의 필요 )
+	res.send({ access_token: token, userid: user._id, nickname });
 };
 
 exports.pick = async (req, res) => {
 	const user = res.locals.user;
+
+	// 타이틀이랑 현재입찰가까지 넘겨주기
+
 	try {
+		const like = [];
+
 		const product = await Like.find(
 			{ userId: user["_id"] },
 			{ _id: 0, productId: 1, productImage: 1 }
 		);
+
+		const title = await Product.find(
+			{ _id: user._id }
+			//product.map((user) => ({ _id: user["_id"] }))
+		);
+
 		res.send({ okay: true, result: product });
 	} catch (error) {
-		res.send({ okay: false });
+		res.send({ okay: false, error });
+		console.log(error);
 	}
 };
 
@@ -208,7 +228,7 @@ exports.mypronickedit = async (req, res) => {
 	try {
 
 		// 프로필이미지가 넘어오지않을때의 예외처리
-		if (image == null) {
+		if (image == undefined) {
 			const newinfo = await User.findOneAndUpdate(
 				{ _id: user["_id"] },
 				{ nickname: nick }
@@ -221,7 +241,7 @@ exports.mypronickedit = async (req, res) => {
 		} else {
 			const newinfo = await User.findOneAndUpdate(
 				{ _id: user["_id"] },
-				{ nickname: nick, profileImg: image }
+				{ nickname: nick, profileImg: image.location }
 			);
 			res.send({
 				okay: true,

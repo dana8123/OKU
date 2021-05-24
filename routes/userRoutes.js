@@ -33,12 +33,12 @@ userRouter.get("/kakao", passport.authenticate("kakao"));
 //user id 보내주기
 userRouter.get("/kakao/oauth", (req, res) => {
 	passport.authenticate("kakao", { failureRedirect: "/" }, (err, user) => {
-		const { _id, nickname } = user;
-		return res.redirect("http://localhost:3000/social/" + _id);
+		const { kakaoId } = user;
+		return res.redirect("http://myoku.co.kr/social/" + kakaoId);
 	})(req, res);
 });
 
-//kakao 토큰
+//kakao 토큰 생성
 userRouter.post("/kakao", kakaoLogin);
 
 //kakao accessToken 보내주기

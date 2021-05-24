@@ -9,7 +9,9 @@ exports.bigCate = async (req, res) => {
 	console.log(bigCategory);
 
 	try {
-		const product = await Product.find({ bigCategory: bigCategory });
+		const product = await Product.find({ bigCategory: bigCategory }).sort(
+			"-createAt"
+		);
 		res.send({ okay: true, result: product });
 	} catch (error) {
 		res.send({ okay: false });
@@ -23,7 +25,7 @@ exports.smallCate = async (req, res) => {
 		const product = await Product.find({
 			bigCategory: bigCategory,
 			smallCategory: smallCategory,
-		});
+		}).sort("-createAt");
 		res.send({ okay: true, result: product });
 	} catch (error) {
 		res.send({ okay: false });
@@ -53,14 +55,16 @@ exports.pick = async (req, res) => {
 		{ img: 1, sellerunique: 1 }
 	);
 
-	
 	try {
 		// 찜 두번하는 것 막아두기
-		const likeExiest = await Like.findOne({userId: user["_id"],productId: productId["id"]})
+		const likeExiest = await Like.findOne({
+			userId: user["_id"],
+			productId: productId["id"],
+		});
 
-		if(likeExiest!==null){
-			res.send({msg: "이미 찜한 상품입니다."})
-		}else{
+		if (likeExiest !== null) {
+			res.send({ msg: "이미 찜한 상품입니다." });
+		} else {
 			await Like.create({
 				userId: user["_id"],
 				productId: productId["id"],
@@ -68,7 +72,6 @@ exports.pick = async (req, res) => {
 				sellerId: product[0]["sellerunique"],
 			});
 			res.send({ msg: "찜이 등록되었습니다." });
-
 		}
 	} catch (error) {
 		res.send({ msg: "찜에 실패하였습니다." });
@@ -87,7 +90,7 @@ exports.gayeonpick = async (req, res) => {
 		const like = await Like.find(
 			{ userId: user["_id"] },
 			{ productId: 1, _id: 0 }
-		).limit(3);
+		).limit(4);
 
 		const find = [];
 

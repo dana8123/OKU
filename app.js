@@ -2,11 +2,14 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
+const cron = require("node-cron");
+const helmet = require("helmet");
 const path = require("path");
 const passport = require("passport");
 const passportConfig = require("./middlewares/passport");
 const port = process.env.EXPRESS_PORT;
 const webSocket = require("./socket");
+const nodemailer = require("./nodemailer");
 
 // DB연결
 const mongoose = require("mongoose");
@@ -22,6 +25,7 @@ const cors = require("cors");
 app.use(cors());
 
 app.use(express.urlencoded({ extended: false }));
+app.use(helmet());
 app.use(express.static(path.join(__dirname, "uploads")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
@@ -35,7 +39,12 @@ const { userRouter } = require("./routes/userRoutes");
 const { socketRouter } = require("./routes/socketRoute");
 const checkAuction = require("./controllers/checkAuction");
 
-//checkAuction();
+// second minute hour day-of-month month day-of-week
+cron.schedule("1* * * * *", function () {
+	checkAuction();
+});
+
+//nodemailer();
 
 app.use("/chat", chatRouter);
 app.use("/product", productRouter);
