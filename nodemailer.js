@@ -21,7 +21,7 @@ module.exports = async function main(users, subject) {
 		to: users,
 		subject: "<OKU> 안내메일 :" + subject,
 		html:
-			'<a href="http://myoku.co.kr"><img src="https://okuhanghae.s3.ap-northeast-2.amazonaws.com/public/logo512.png" ></a>' +
+			'<a href="http://myoku.co.kr"><img src="https://okuhanghae.s3.ap-northeast-2.amazonaws.com/public/%E1%84%8B%E1%85%A9%E1%84%8F%E1%85%AE%E1%84%85%E1%85%A9%E1%84%80%E1%85%A9-10___.png" ></a>' +
 			"<br><br>" +
 			"<p>오쿠를 이용해주셔서 감사합니다! 지금바로 오쿠에 접속해서 확인해보세요!</p>" +
 			"<h3>오쿠 로고를 클릭하면 오쿠로 이동합니다!</h3>" +
