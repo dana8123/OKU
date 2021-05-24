@@ -22,7 +22,8 @@ exports.chatList = async (req, res) => {
 			soldById: 1,
 		}
 	);
-	const subject = product.title + "거래가 성사되었습니다.";
+	const titleOfProduct = product[product.length - 1].title;
+	const subject = titleOfProduct + "거래가 성사되었습니다.";
 	// 판매자인경우와 구매자인 경우 모두 채팅리스트(targets)로 응답
 	for (let i = 0; i < product.length; i++) {
 		// 현재 로그인 한 유저가 낙찰자일 경우
