@@ -38,9 +38,10 @@ exports.chatList = async (req, res) => {
 
 // 채팅방 삭제
 exports.chatDelete = async (req, res) => {
-	const { params: productId, firstUser, secondUser } = req;
+	const { params: product, firstUser, secondUser } = req;
 	try {
-		await Chat.deleteMany({ productId: productId });
+		await Chat.deleteMany({ productId: product.product });
+		console.log("채팅방 삭제,product", product.product);
 		const subject = "채팅방이 삭제되었습니다.";
 		// 채팅방 삭제 시 메일 보내주기
 		const first = await User.findOne({ _id: firstUser });
