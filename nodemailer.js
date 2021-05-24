@@ -26,7 +26,7 @@ module.exports = async function main(users, subject) {
 			"<p>오쿠를 이용해주셔서 감사합니다! 지금바로 오쿠에 접속해서 확인해보세요!</p>" +
 			"<h3>오쿠 로고를 클릭하면 오쿠로 이동합니다!</h3>" +
 			"<br>" +
-			"<h3>채팅하기<h3><p>에서 판매자와 대화하실 수 있습니다.</p>",
+			"<a href=`http://myoku.co.kr/chat`><h3>채팅하기</h3></a><p>에서 판매자와 대화하실 수 있습니다.</p>",
 	});
 
 	console.log("message sent: %s", info.messageId);
