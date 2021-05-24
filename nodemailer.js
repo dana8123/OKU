@@ -1,31 +1,35 @@
 const nodemailer = require("nodemailer");
-const { getMaxListeners } = require("./schema/user");
 
-module.exports = async function main() {
+module.exports = async function main(users, subject) {
 	let testAccount = await nodemailer.createTestAccount();
 
+	const serverEmail = process.env.emailId;
+	const serverNum = process.env.emailPw;
 	let transporter = nodemailer.createTransport({
 		service: "naver",
 		host: "smtp.naver.com",
 		port: 587,
 		secure: false,
 		auth: {
-			user: "sample02@naver.com",
-			pass: "Iamaboss2021!",
+			user: serverEmail,
+			pass: serverNum,
 		},
 	});
 
 	let info = await transporter.sendMail({
-		from: '"Fred Foo"<yjk9313@gmail.com>',
-		to: "yjk9313@gmail.com",
-		subject: "hello nodemailer",
-		text: "hello World",
-		html: "<b>Hello world?<b>",
+		from: `"OKU"<${serverEmail}>`,
+		to: users,
+		subject: "<OKU> 안내메일 :" + subject,
+		html:
+			'<a href="http://myoku.co.kr"><img src="https://okuhanghae.s3.ap-northeast-2.amazonaws.com/public/logo512.png" ></a>' +
+			"<br><br>" +
+			"<p>오쿠를 이용해주셔서 감사합니다! 지금바로 오쿠에 접속해서 확인해보세요!</p>" +
+			"<h3>오쿠 로고를 클릭하면 오쿠로 이동합니다!</h3>" +
+			"<br>" +
+			"<h3>채팅하기<h3><p>에서 판매자와 대화하실 수 있습니다.</p>",
 	});
 
 	console.log("message sent: %s", info.messageId);
-
-	console.log("preview URL: %S", nodemailer.getTestMessageUrl(info));
 };
 
 //main().catch(console.error);

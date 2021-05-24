@@ -20,6 +20,14 @@ const priceHistory = new Schema({
 		type: Number,
 		required: true,
 	},
+	mailing: {
+		type: Boolean,
+		default: false,
+	},
+	checkOrder: {
+		type: Boolean,
+		default: false,
+	},
 	createAt: {
 		type: Date,
 		default: Date.now,
