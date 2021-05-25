@@ -8,7 +8,7 @@ module.exports = async function main(users, subject) {
 	let transporter = nodemailer.createTransport({
 		service: "naver",
 		host: "smtp.naver.com",
-		port: 587,
+		port: 465,
 		secure: false,
 		auth: {
 			user: serverEmail,
