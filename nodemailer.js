@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 
 module.exports = async function main(users, subject) {
 	let testAccount = await nodemailer.createTestAccount();
-	
+
 	const serverEmail = process.env.emailId;
 	const serverNum = process.env.emailPw;
 	let transporter = nodemailer.createTransport({
@@ -15,7 +15,7 @@ module.exports = async function main(users, subject) {
 			pass: serverNum,
 		},
 	});
-	try{
+	try {
 		let info = await transporter.sendMail({
 			from: `"OKU"<${serverEmail}>`,
 			to: users,
@@ -30,9 +30,8 @@ module.exports = async function main(users, subject) {
 		});
 
 		console.log("message sent: %s", info.messageId);
-		console.log("message sent:" + users + "에게" + subject + "안내함")
+		console.log("message sent:" + users + "에게" + subject + "안내함");
 	} catch (error) {
-		console.log(error)
-}
-
-//main().catch(console.error);
+		console.log(error);
+	}
+};
