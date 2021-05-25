@@ -11,16 +11,23 @@ const crypto = require("crypto");
 const product = require("../schema/product");
 const saltRounds = 10;
 const request = require("request");
+const Joi = require("@hapi/joi");
 require("dotenv").config();
 
 // 연재님 업데이트 안되시나요
 
 exports.signup = async (req, res) => {
-	const { password, password2, nickname, email } = req.body;
-
-	//TODO: validation data
 
 	try {
+		// 유효성 검사
+		// 닉네임 10자 이하 , email @ 무조건 포함
+		const userSchema = Joi.object({
+			nickname: Joi.string().min(1).max(10),
+			email: Joi.string().pattern(new RegExp('/^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i'))
+		});
+
+		const { password, password2, nickname, email } = await userSchema.validateAsync(req.body);
+
 		const checkEmail = await User.findOne({ email });
 		const checkNickname = await User.findOne({ nickname });
 
@@ -216,6 +223,7 @@ exports.mypronick = async (req, res) => {
 	}
 };
 
+
 exports.mypronickedit = async (req, res) => {
 	
 	const user = res.locals.user;
@@ -253,6 +261,7 @@ exports.mypronickedit = async (req, res) => {
 		res.send({ okay: false });
 	}
 };
+
 
 exports.myinfo = async (req, res) => {
 	const user = res.locals.user;

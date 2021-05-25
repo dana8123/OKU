@@ -6,8 +6,10 @@ const PriceHistory = require("../schema/pricehistory");
 const Alert = require("../schema/alert");
 const User = require("../schema/user");
 const jwt = require("jsonwebtoken");
+const Joi = require("@hapi/joi");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const upload = require("../middlewares/imageupload.js");
+const { ValidationError } = require("@hapi/joi");
 
 //상품 등록하기
 exports.productpost = async (req, res, next) => {
@@ -28,6 +30,14 @@ exports.productpost = async (req, res, next) => {
 		}
 		console.log("없는사진을왜올려", images);
 
+		// 유효성 검사
+		// title 글자수 , sucBid 5000만 이하 , descript 300자 이하
+		const postSchema = Joi.object({
+			title : Joi.string().min(2).max(25),
+			sucbid : Joi.number().min(10).max(50000000),
+			description : Joi.string().max(300)
+		});
+
 		const {
 			title,
 			lowbid,
@@ -40,11 +50,12 @@ exports.productpost = async (req, res, next) => {
 			region,
 			deliveryprice,
 			duration,
-		} = req.body;
+		} = await postSchema.validateAsync(req.body);
 
 		const addTime = (date, milliseconds) => {
 			return new Date(date.getTime() + milliseconds * 1);
 		};
+
 
 		const newProduct = await Product.create({
 			title,
@@ -62,6 +73,7 @@ exports.productpost = async (req, res, next) => {
 			deliveryPrice: deliveryprice,
 			deadLine: addTime(new Date(), duration),
 		});
+
 		newProduct.save();
 		console.log("새로등록한 상품의 id", newProduct._id);
 		console.log("새로등록한 상품의 마감일", newProduct.deadLine);
@@ -72,6 +84,7 @@ exports.productpost = async (req, res, next) => {
 			console.log("multer error", error);
 			res.send({ msg: "multer error" });
 		}
+		
 		res.send({ msg: "상품 등록에 실패하였습니다.", error });
 		console.log(error);
 	}
