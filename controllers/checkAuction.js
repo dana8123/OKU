@@ -2,7 +2,6 @@ const Product = require("../schema/product");
 const PriceHistory = require("../schema/pricehistory");
 const Alert = require("../schema/alert");
 const User = require("../schema/user");
-const mailController = require("../controllers/mailController");
 
 module.exports = async () => {
 	try {
@@ -31,13 +30,6 @@ module.exports = async () => {
 						soldById: success[0].userId,
 					},
 				});
-
-				// await success.update({
-				// 	checkOrder: true,
-				// });
-
-				// 낙찰자에게 이메일
-				//mailController();
 
 				// 낙찰 성공자에게 알림
 				await Alert.create({
