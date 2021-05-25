@@ -1,5 +1,3 @@
-const nodemailer = require("nodemailer");
-
 module.exports = async function main(users, subject) {
 	let testAccount = await nodemailer.createTestAccount();
 
