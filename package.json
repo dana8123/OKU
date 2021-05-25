@@ -34,6 +34,7 @@
     "multer-s3": "^2.9.0",
     "node-cron": "^3.0.0",
     "node-schedule": "^2.0.0",
+    "nodemailer": "^6.6.1",
     "passport": "^0.4.1",
     "passport-kakao": "^1.0.1",
     "pug": "^3.0.2",

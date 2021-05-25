@@ -144,9 +144,6 @@ exports.sucbid = async (req, res) => {
 				res.send({ msg: "채팅방 생성에 실패했습니다." });
 			}
 
-			// 판매완료
-			
-
 			res.send({ msg: "즉시낙찰에 성공하였습니다." });
 		}
 	} catch (error) {
@@ -292,7 +289,8 @@ exports.sellerSelct = async (req, res) => {
 				productId: info["productId"],
 			});
 
-			//
+			// 판매완료(거래진행중) > 거래완료
+			await Alert.findOneAndUpdate({_id:id},{alertType:"거래완료"});
 
 			res.send({okay:true,msg:"상품이 판매 완료 됐습니다."})
 
@@ -330,8 +328,8 @@ exports.sellerSelct = async (req, res) => {
 exports.alert = async (req, res) => {
 	const user = res.locals.user;
 	try {
-		const notCheck = await Alert.find({ userId: user["_id"], view: false });
-		const alreadyCheck = await Alert.find({ userId: user["_id"], view: true });
+		const notCheck = await Alert.find({ userId: user["_id"], view: false }).sort("-creatAt");
+		const alreadyCheck = await Alert.find({ userId: user["_id"], view: true }).sort("-creatAt");
 
 		await Alert.updateMany(
 			{ userId: user["_id"], view: false },
