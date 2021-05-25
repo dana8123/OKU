@@ -8,6 +8,7 @@ const Alert = require("../schema/alert");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 const pricehistory = require("../schema/pricehistory");
 const product = require("../schema/product");
+const Joi = require("@hapi/joi");
 
 //입찰하기
 exports.bid = async (req, res) => {
@@ -15,12 +16,17 @@ exports.bid = async (req, res) => {
 	const { id } = req.params;
 	try {
 		let result = false;
-		const { bid } = req.body;
 		const product = await Product.findById(id);
 		const seller = product.sellerunique;
 		const bidList = await PriceHistory.find({
 			productId: id,
 		});
+
+		// bid의 유효성 검사
+		console.log(product["sucBid"]);
+		
+		const bidSchema = Joi.object({bid: Joi.number().max(product["sucBid"])});
+		const { bid } = await bidSchema.validateAsync(req.body);
 
 		const lowBid = await product.lowBid;
 		console.log("시작가", lowBid);
