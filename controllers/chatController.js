@@ -29,23 +29,23 @@ exports.chatList = async (req, res) => {
 		// 현재 로그인 한 유저가 낙찰자일 경우
 		if (product[i].soldById == user._id) {
 			targets.push(product[i]);
-			//nodemailer(user.email, subject);
 		}
 		if (product[i].sellerunique == user._id) {
 			//현재 로그인 한 유저가 판매자일 경우
 			targets.push(product[i]);
-			//nodemailer(user.email, subject);
 		}
-
-		// 판매자 찾기
-		const sellerId = product[product.length - 1].sellerunique;
-		const buyerId = product[product.length - 1].soldById;
-		const sellerEmail = User.findOne({ _id: sellerId }).email;
-		const buyerEmail = User.findOne({ _id: buyerId }).email;
-		// 판매자와 구매자에게 메일보내주기
-		nodemailer(sellerEmail, subject);
-		nodemailer(buyerEmail, subject);
 	}
+
+	// // 판매자 찾기
+	// const sellerId = product[product.length - 1].sellerunique;
+	// const buyerId = product[product.length - 1].soldById;
+	// console.log("챗컨트롤러", sellerId, buyerId);
+	// const sellerEmail = await User.findOne({ _id: sellerId });
+	// const buyerEmail = await User.findOne({ _id: buyerId });
+	// console.log("chatController-mail", sellerEmail.email, buyerEmail.email);
+	// // 판매자와 구매자에게 메일보내주기
+	// nodemailer(sellerEmail.email, subject);
+	// nodemailer(buyerEmail.email, subject);
 	res.send({ targets });
 };
 
