@@ -175,16 +175,13 @@ exports.newsucbid = async (req, res) => {
 			if (prehistory) {
 				res.send({ okay: false, msg: "이미 거래중인 물건입니다." });
 			} else {
-				try {
-					const hisinfo = await PriceHistory.create({
-						productId: productId["id"],
-						userId: user["_id"],
-						bid: sucbid,
-						nickName: user["nickname"],
-					});
-				} catch (error) {
-					res.send({ okay: false, msg: "낙찰 기록에 실패했습니다." });
-				}
+
+				await PriceHistory.create({
+					productId: productId["id"],
+					userId: user["_id"],
+					bid: sucbid,
+					nickName: user["nickname"],
+				});
 
 				// 판매자한테 상품판매알람보내기
 				// 즉시낙찰을 시도한사람이 있을경우 detail페이지에서 데이터는 내려가지않고 거래대기중으로 띄워줘야함
@@ -192,6 +189,7 @@ exports.newsucbid = async (req, res) => {
 					{ _id: productId["id"] },
 					{ soldBy: "거래대기중" }
 				);
+				
 				const seller = await Alert.create({
 					alertType: "판매성공",
 					buyerId: user["_id"],
