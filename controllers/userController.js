@@ -215,7 +215,6 @@ exports.myproduct = async (req, res) => {
 
 exports.mypronick = async (req, res) => {
 	const user = res.locals.user;
-	console.log(user["profileImg"], user["nickname"]);
 	try {
 		res.send({
 			okay: true,

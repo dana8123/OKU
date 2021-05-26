@@ -28,14 +28,13 @@ exports.productpost = async (req, res, next) => {
 			];
 			//res.send({ image: false });
 		}
-		console.log("없는사진을왜올려", images);
 
 		// 유효성 검사
 		// title 글자수 , sucBid 5000만 이하 , descript 300자 이하
 		const postSchema = Joi.object({
-			title : Joi.string().min(2).max(25),
-			sucbid : Joi.number().min(10).max(50000000),
-			description : Joi.string().max(300)
+			title: Joi.string().min(2).max(25),
+			sucbid: Joi.number().min(10).max(50000000),
+			description: Joi.string().max(300),
 		});
 
 		const {
@@ -56,7 +55,6 @@ exports.productpost = async (req, res, next) => {
 			return new Date(date.getTime() + milliseconds * 1);
 		};
 
-
 		const newProduct = await Product.create({
 			title,
 			img: images,
@@ -75,8 +73,6 @@ exports.productpost = async (req, res, next) => {
 		});
 
 		newProduct.save();
-		console.log("새로등록한 상품의 id", newProduct._id);
-		console.log("새로등록한 상품의 마감일", newProduct.deadLine);
 
 		res.send({ msg: "상품이 등록되었습니다" });
 	} catch (error) {
@@ -84,7 +80,7 @@ exports.productpost = async (req, res, next) => {
 			console.log("multer error", error);
 			res.send({ msg: "multer error" });
 		}
-		
+
 		res.send({ msg: "상품 등록에 실패하였습니다.", error });
 		console.log(error);
 	}
