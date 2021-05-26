@@ -24,8 +24,8 @@ exports.bid = async (req, res) => {
 
 		// bid의 유효성 검사
 		console.log(product["sucBid"]);
-		
-		const bidSchema = Joi.object({bid: Joi.number().max(product["sucBid"])});
+
+		const bidSchema = Joi.object({ bid: Joi.number().max(product["sucBid"]) });
 		const { bid } = await bidSchema.validateAsync(req.body);
 
 		const lowBid = await product.lowBid;
@@ -163,55 +163,55 @@ exports.newsucbid = async (req, res) => {
 	const user = res.locals.user;
 	const productId = req.params;
 	const { sucbid, sellerunique } = req.body;
-
-	console.log(productId["id"]);
+	// 이미 즉시 낙찰된 기록이 있을 경우 onSale:true , history가 이미 있는경우
+	const prehistory = await Alert.findOne({
+		alertType: "판매성공",
+		productId: productId["id"],
+	});
 
 	// 판매 종료된것도 즉시낙찰 못하게 막아야함
 	try {
 		// 판매자가 상품을 산다면
 		if (sellerunique == user.id) {
-			res.send({ okay: false, msg: "판매자는 낙찰하지 못합니다." });
+			console.log("여기서걸리는거야?1");
+			return res.send({ okay: false, msg: "판매자는 낙찰하지 못합니다." });
+			// 판매자 이외의 구매자가 즉시낙찰을 시도함
 		} else {
-			// 이미 즉시 낙찰된 기록이 있을 경우 onSale:true , history가 이미 있는경우
-			const prehistory = await Alert.findOne({
+			// 이미 누군가 즉시낙찰을 했다면
+			if (prehistory) {
+				console.log("여깁니다.", prehistory);
+				return res.send({ okay: false, msg: "이미 거래중인 물건입니다." });
+				// 즉시낙찰 내역이 없는 경우
+			} else {
+				console.log("sucbid===> db create", sucbid);
+				await PriceHistory.create({
+					productId: productId["id"],
+					userId: user["_id"],
+					bid: sucbid,
+					nickName: user["nickname"],
+				});
+			}
+
+			// 판매자한테 상품판매알람보내기
+			// 즉시낙찰을 시도한사람이 있을경우 detail페이지에서 데이터는 내려가지않고 거래대기중으로 띄워줘야함
+			const product = await Product.findOneAndUpdate(
+				{ _id: productId["id"] },
+				{ soldBy: "거래대기중" }
+			);
+			console.log("socketController ==>", product);
+			await Alert.create({
 				alertType: "판매성공",
+				buyerId: user["_id"],
+				productTitle: product["title"],
 				productId: productId["id"],
+				userId: sellerunique,
 			});
 
-			if (prehistory) {
-				res.send({ okay: false, msg: "이미 거래중인 물건입니다." });
-			} else {
-				try {
-					const hisinfo = await PriceHistory.create({
-						productId: productId["id"],
-						userId: user["_id"],
-						bid: sucbid,
-						nickName: user["nickname"],
-					});
-				} catch (error) {
-					res.send({ okay: false, msg: "낙찰 기록에 실패했습니다." });
-				}
-
-				// 판매자한테 상품판매알람보내기
-				// 즉시낙찰을 시도한사람이 있을경우 detail페이지에서 데이터는 내려가지않고 거래대기중으로 띄워줘야함
-				const product = await Product.findOneAndUpdate(
-					{ _id: productId["id"] },
-					{ soldBy: "거래대기중" }
-				);
-				const seller = await Alert.create({
-					alertType: "판매성공",
-					buyerId: user["_id"],
-					productTitle: product["title"],
-					productId: productId["id"],
-					userId: sellerunique,
-				});
-
-				res.send({ okay: true, msg: "즉시낙찰에 성공하였습니다." });
-			}
+			res.send({ okay: true, msg: "즉시낙찰에 성공하였습니다." });
 		}
 	} catch (error) {
 		console.log(error);
-		res.send({ msg: "즉시낙찰에 실패하였습니다." });
+		res.send({ msg: "즉시낙찰에 실패하였습니다.", error });
 	}
 };
 
@@ -296,17 +296,15 @@ exports.sellerSelct = async (req, res) => {
 			});
 
 			// 판매완료(거래진행중) > 거래완료
-			await Alert.findOneAndUpdate({_id:id},{alertType:"거래완료"});
+			await Alert.findOneAndUpdate({ _id: id }, { alertType: "거래완료" });
 
-			res.send({okay:true,msg:"상품이 판매 완료 됐습니다."})
-
-		}else{
-
+			res.send({ okay: true, msg: "상품이 판매 완료 됐습니다." });
+		} else {
 			// 거래 진행에 거절한 경우
 			// alert하나 삭제하기
-			
-			const info = await Alert.findOne({_id:id});
-			const buyer = await User.findOne({_id:info["buyerId"]});
+
+			const info = await Alert.findOne({ _id: id });
+			const buyer = await User.findOne({ _id: info["buyerId"] });
 
 			//낙찰 시도자에게 실패 알림
 			await Alert.create({
@@ -316,10 +314,16 @@ exports.sellerSelct = async (req, res) => {
 				productId: info["productId"],
 			});
 
-			const a = await Product.findOneAndUpdate({_id:info["productId"]},{onSale:true,soldBy:null,soldById:null});
-			await PriceHistory.deleteOne({productId:info["productId"],userId:info["buyerId"]});
-			
-			await Alert.deleteOne({_id:id});
+			const a = await Product.findOneAndUpdate(
+				{ _id: info["productId"] },
+				{ onSale: true, soldBy: null, soldById: null }
+			);
+			await PriceHistory.deleteOne({
+				productId: info["productId"],
+				userId: info["buyerId"],
+			});
+
+			await Alert.deleteOne({ _id: id });
 
 			res.send({ okay: true, msg: "거래가 취소되었습니다." });
 		}
@@ -334,8 +338,14 @@ exports.sellerSelct = async (req, res) => {
 exports.alert = async (req, res) => {
 	const user = res.locals.user;
 	try {
-		const notCheck = await Alert.find({ userId: user["_id"], view: false }).sort("-creatAt");
-		const alreadyCheck = await Alert.find({ userId: user["_id"], view: true }).sort("-creatAt");
+		const notCheck = await Alert.find({
+			userId: user["_id"],
+			view: false,
+		}).sort("-creatAt");
+		const alreadyCheck = await Alert.find({
+			userId: user["_id"],
+			view: true,
+		}).sort("-creatAt");
 
 		await Alert.updateMany(
 			{ userId: user["_id"], view: false },
