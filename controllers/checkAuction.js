@@ -65,8 +65,8 @@ module.exports = async () => {
 				await target.updateOne({
 					$set: {
 						onSale: false,
-						soldBy: "-",
-						soldById: "-",
+						soldBy: undefined,
+						soldById: undefined,
 					},
 				});
 				// 판매자에게 알림
