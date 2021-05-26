@@ -16,7 +16,7 @@ exports.quest = async (req, res) => {
 	try {
 		//문의글이 올라온 상품
 		const product = await Product.findOne({ _id: productId["id"] });
-		console.log(product["title"]);
+		console.log("문의글", product["title"]);
 
 		const questId = await QuestNanswer.create({
 			sellerId: sellerunique,
@@ -51,21 +51,28 @@ exports.answer = async (req, res) => {
 	try {
 		// 주의할점 문의글 get할때 나오는 _id값을 기준으로 불러옴
 		if (sellerunique == user["_id"]) {
-			const a = await QuestNanswer.findOneAndUpdate(
-				{ _id: questId["id"] },
-				{ answer: contents }
-			);
+			const answerOfproduct = await QuestNanswer.findOne({
+				_id: questId["id"],
+			});
+			// 답변 작성 시 answer 항목 업데이트
+			await answerOfproduct.updateOne({ answer: contents });
 
-			const b = await Product.findOne({ _id: a["productId"] });
-			console.log(b["title"]);
+			const product = await Product.findOne({
+				_id: answerOfproduct["productId"],
+			});
 
 			// 문의글 단 문의자한테 알림보내기
-			await Alert.create({
+			const alert = await Alert.create({
 				alertType: "문의답글",
-				productTitle: b["title"],
-				productId: a["id"],
-				userId: a["userId"],
+				productTitle: product.title,
+				productId: product._id,
+				userId: answerOfproduct.userId,
 			});
+			// 문의자에게 답글에 대한 이메일 알림
+			const subject = product.title + "문의글에 답변이 도착했습니다.";
+			const userOfAnswer = await User.findOne({ _id: alert.userId });
+			console.log("문의자에게 메일을 보내라!", userOfAnswer.email);
+			nodemailer(userOfAnswer.email, subject);
 			res.send({ okay: true });
 		} else {
 			res.send({ okay: false });
