@@ -5,7 +5,7 @@ const chatRouter = express.Router();
 
 chatRouter.get("/member", authMiddlesware, chatList);
 chatRouter.delete(
-	"/exit/:productId/:firstUser/:secondUser",
+	"/exit/:product?/:firstUser?/:secondUser?",
 	authMiddlesware,
 	chatDelete
 );

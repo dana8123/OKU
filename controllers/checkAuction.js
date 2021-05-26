@@ -1,45 +1,50 @@
 const Product = require("../schema/product");
 const PriceHistory = require("../schema/pricehistory");
 const Alert = require("../schema/alert");
+const User = require("../schema/user");
 
 module.exports = async () => {
 	try {
+		// 오늘날짜
 		const today = new Date();
 		today.setDate(today.getDate());
 
-		//낙찰자가 정해지지않은 제품들, 마감기한이 지난 제품
+		// 낙찰자가 정해지지않은 제품들(targets), 마감기한이 지난 제품
 		const targets = await Product.find({
-			soldBy: null,
+			soldById: null,
 			deadLine: { $lte: today },
 		});
-
+		// pricehistory에서 낙찰자가 정해지지않은 제품의 productId(success)
 		targets.forEach(async (target) => {
 			const success = await PriceHistory.find({
 				productId: target._id,
 			});
+
 			// 입찰자가 1명 이상인 경우
 			if (success.length !== 0) {
+				// product 업데이트
 				await target.updateOne({
 					$set: {
 						onSale: false,
 						soldBy: success[0].nickName,
-						sodById: success[0].userId,
+						soldById: success[0].userId,
 					},
 				});
+
 				// 낙찰 성공자에게 알림
 				await Alert.create({
 					userId: success[0].userId,
 					alertType: "낙찰성공",
-					productTitle: newProduct["title"],
-					productId: newProduct["_id"],
+					productTitle: target["title"],
+					productId: target["_id"],
 				});
 
 				// 낙찰성공유저제외 history에 있는 이전 유저들
-				const a = await PriceHistory.find(
+				const pricehistory = await PriceHistory.find(
 					{
 						$and: [
-							{ productId: newProduct._id },
-							{ userId: { $ne: pricehistory[0].userId } },
+							{ productId: target._id },
+							{ userId: { $ne: targets[0].userId } },
 						],
 					},
 					{ userId: 1, _id: 0 }
@@ -47,7 +52,7 @@ module.exports = async () => {
 
 				//낙찰 실패자에게 알림
 				await Alert.insertMany(
-					a.map((user) => ({
+					pricehistory.map((user) => ({
 						alertType: "낙찰실패",
 						productId: newProduct["_id"],
 						productTitle: newProduct["title"],
@@ -60,16 +65,16 @@ module.exports = async () => {
 				await target.updateOne({
 					$set: {
 						onSale: false,
-						soldBy: "-",
-						soldById: "-",
+						soldBy: undefined,
+						soldById: undefined,
 					},
 				});
 				// 판매자에게 알림
 				// TODO: newproduct 수정필요
 				await Alert.create({
 					alertType: "판매실패",
-					productTitle: newProduct["title"],
-					productId: newProduct["_id"],
+					productTitle: target["title"],
+					productId: target["_id"],
 					userId: user.id,
 				});
 			}

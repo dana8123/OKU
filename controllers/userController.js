@@ -11,16 +11,27 @@ const crypto = require("crypto");
 const product = require("../schema/product");
 const saltRounds = 10;
 const request = require("request");
+const Joi = require("@hapi/joi");
 require("dotenv").config();
 
 // 연재님 업데이트 안되시나요
 
 exports.signup = async (req, res) => {
-	const { password, password2, nickname, email } = req.body;
-
-	//TODO: validation data
-
 	try {
+		// 유효성 검사
+		// 닉네임 10자 이하 , email @ 무조건 포함
+		const userSchema = Joi.object({
+			nickname: Joi.string().min(1).max(10),
+			email: Joi.string().pattern(
+				new RegExp(
+					"/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i"
+				)
+			),
+		});
+
+		const { password, password2, nickname, email } =
+			await userSchema.validateAsync(req.body);
+
 		const checkEmail = await User.findOne({ email });
 		const checkNickname = await User.findOne({ nickname });
 
@@ -204,7 +215,6 @@ exports.myproduct = async (req, res) => {
 
 exports.mypronick = async (req, res) => {
 	const user = res.locals.user;
-	console.log(user["profileImg"], user["nickname"]);
 	try {
 		res.send({
 			okay: true,
@@ -219,29 +229,33 @@ exports.mypronick = async (req, res) => {
 exports.mypronickedit = async (req, res) => {
 	const user = res.locals.user;
 	const { nick } = req.body;
-	const image = req.file;
-	console.log("===image===", req.file);
+	// INFO : profile img = 1 ea 라서 array -> string 으로 수정
+	const image = req.file.location;
+
 	try {
 		// 프로필이미지가 넘어오지않을때의 예외처리
 		if (image == undefined) {
-			const newinfo = await User.findOneAndUpdate(
-				{ _id: user["_id"] },
+			const newinfo = await User.updateOne(
+				{ _id: user._id },
 				{ nickname: nick }
 			);
-			res.send({
+			return res.send({
 				okay: true,
 				profileImg: newinfo["profileImg"],
 				nickname: newinfo["nickname"],
 			});
+			// 프로필 이미지를 넘겨줄 때의 처리
 		} else {
-			const newinfo = await User.findOneAndUpdate(
-				{ _id: user["_id"] },
-				{ nickname: nick, profileImg: image.location }
+			console.log("프로필이미지수정", image);
+			console.log("프로필이미지수정", nick);
+			const newinfo = await User.updateOne(
+				{ _id: user._id },
+				{ nickname: nick, profileImg: image }
 			);
-			res.send({
+			return res.send({
 				okay: true,
-				profileImg: newinfo["profileImg"],
-				nickname: newinfo["nickname"],
+				profileImg: newinfo.procileImg,
+				nickname: newinfo.nickname,
 			});
 		}
 	} catch (error) {
