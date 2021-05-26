@@ -21,6 +21,7 @@ exports.bid = async (req, res) => {
 		const bidList = await PriceHistory.find({
 			productId: id,
 		});
+		const nodemailer = require("../nodemailer");
 
 		// bid의 유효성 검사
 		console.log(product["sucBid"]);
@@ -72,6 +73,11 @@ exports.bid = async (req, res) => {
 			nickName: user.nickname,
 			userEmail: user.email,
 		});
+		// 판매자에게 입찰정보 메일링
+		const sellerInfo = await User.findOne({ _id: seller });
+		const subject = product.title + "입찰되었습니다!";
+		nodemailer(sellerInfo.email, subject);
+
 		res.send({ result });
 	} catch (error) {
 		console.error(error);
@@ -239,7 +245,7 @@ exports.sellerSelct = async (req, res) => {
 	// 알람 objectId값임
 	const { id } = req.params;
 
-	console.log(decision, id);
+	//console.log(decision, id);
 
 	try {
 		// 판매자인지 아닌지도 걸려줘야함
@@ -298,7 +304,7 @@ exports.sellerSelct = async (req, res) => {
 			// 판매완료(거래진행중) > 거래완료
 			await Alert.findOneAndUpdate({ _id: id }, { alertType: "거래완료" });
 
-			res.send({ okay: true, msg: "상품이 판매 완료 됐습니다." });
+			return res.send({ okay: true, msg: "상품이 판매 완료 됐습니다." });
 		} else {
 			// 거래 진행에 거절한 경우
 			// alert하나 삭제하기
@@ -325,10 +331,10 @@ exports.sellerSelct = async (req, res) => {
 
 			await Alert.deleteOne({ _id: id });
 
-			res.send({ okay: true, msg: "거래가 취소되었습니다." });
+			return res.send({ okay: true, msg: "거래가 취소되었습니다." });
 		}
 
-		res.send({ okay: true });
+		return res.send({ okay: true });
 	} catch (error) {
 		res.send({ okay: false, msg: "없는 거래입니다." });
 	}
