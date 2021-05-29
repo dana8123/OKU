@@ -37,10 +37,14 @@ const { chatRouter } = require("./routes/chatRoutes");
 const { userRouter } = require("./routes/userRoutes");
 const { socketRouter } = require("./routes/socketRoute");
 const checkAuction = require("./controllers/checkAuction");
+const checkChatting = require("./controllers/chekChatting");
 
 // second minute hour day-of-month month day-of-week
 cron.schedule("1* * * * *", function () {
 	checkAuction();
+});
+cron.schedule("00 8 * * 0", function () {
+	checkChatting();
 });
 
 app.use("/chat", chatRouter);
