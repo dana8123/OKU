@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../schema/user");
+const { User } = require("../schema/user");
 require("dotenv").config();
 
 // module.exports < 이렇게 export했다가 오지게 에러나서

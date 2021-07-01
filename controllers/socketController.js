@@ -2,7 +2,7 @@
 const Product = require("../schema/product");
 const PriceHistory = require("../schema/pricehistory");
 const ChatRoom = require("../schema/chatroom");
-const User = require("../schema/user");
+const { User } = require("../schema/user");
 const Like = require("../schema/like");
 const Alert = require("../schema/alert");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");

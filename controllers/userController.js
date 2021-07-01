@@ -1,7 +1,5 @@
-// 유저정보
-//로직 짤 때 필요한 디비 등등 불러서 바로 쓰시면 됩니다.
 const passport = require("passport");
-const User = require("../schema/user");
+const { User } = require("../schema/user");
 const Product = require("../schema/product");
 const Like = require("../schema/like");
 
@@ -11,27 +9,12 @@ const crypto = require("crypto");
 const product = require("../schema/product");
 const saltRounds = 10;
 const request = require("request");
-const Joi = require("@hapi/joi");
 require("dotenv").config();
 
-// 연재님 업데이트 안되시나요
 
 exports.signup = async (req, res) => {
 	try {
-		// 유효성 검사
-		// 닉네임 10자 이하 , email @ 무조건 포함
-		const userSchema = Joi.object({
-			nickname: Joi.string().min(1).max(10),
-			email: Joi.string().pattern(
-				new RegExp(
-					"/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i"
-				)
-			),
-		});
-
-		const { password, password2, nickname, email } =
-			await userSchema.validateAsync(req.body);
-
+		const { password, password2, nickname, email } = req.body;
 		const checkEmail = await User.findOne({ email });
 		const checkNickname = await User.findOne({ nickname });
 

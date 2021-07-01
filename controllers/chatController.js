@@ -3,7 +3,7 @@ const Room = require("../schema/chatroom");
 const PriceHistory = require("../schema/pricehistory");
 const Product = require("../schema/product");
 const nodemailer = require("../nodemailer");
-const User = require("../schema/user");
+const { User } = require("../schema/user");
 
 //채팅 리스트
 exports.chatList = async (req, res) => {

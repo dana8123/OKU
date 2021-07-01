@@ -4,6 +4,7 @@ const product = new Schema({
 	title: {
 		type: String,
 		required: true,
+		max: 25
 	},
 	img: {
 		type: Array,
@@ -32,6 +33,7 @@ const product = new Schema({
 	description: {
 		type: String,
 		required: true,
+		max: 200
 	},
 	tag: {
 		type: Array,

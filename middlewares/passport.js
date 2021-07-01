@@ -1,4 +1,4 @@
-const User = require("../schema/user");
+const { User } = require("../schema/user");
 const passport = require("passport");
 const kakaoStrategy = require("passport-kakao").Strategy;
 const { kakaoLoginCallback } = require("../controllers/userController");

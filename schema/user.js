@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Joi = require('joi');
 const { Schema, model, Types } = mongoose;
 
 const user = new Schema({
@@ -25,4 +26,17 @@ const user = new Schema({
 	kakaoId: String,
 });
 
-module.exports = mongoose.model("User", user);
+const User = mongoose.model('User',user)
+
+const validateUser = (user) => {
+	const schema = Joi.object({
+		email: Joi.string().email(),
+		password: Joi.string().pattern(new RegExp('^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,15}$')),
+		password2: Joi.ref('password'),
+		nickname: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{2,10}$'))
+	})
+	
+	return schema.validate(user)
+}
+
+module.exports = { User, validateUser };

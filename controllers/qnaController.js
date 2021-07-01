@@ -2,7 +2,7 @@
 require("dotenv").config();
 const multer = require("multer");
 const Product = require("../schema/product");
-const User = require("../schema/user");
+const { User } = require("../schema/user");
 const QuestNanswer = require("../schema/questNanswer");
 const Alert = require("../schema/alert");
 const nodemailer = require("../nodemailer");

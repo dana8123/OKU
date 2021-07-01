@@ -1,7 +1,7 @@
 const Product = require("../schema/product");
 const PriceHistory = require("../schema/pricehistory");
 const Alert = require("../schema/alert");
-const User = require("../schema/user");
+const { User } = require("../schema/user");
 
 module.exports = async () => {
 	try {

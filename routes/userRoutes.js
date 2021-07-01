@@ -20,10 +20,12 @@ const {
 	marketshow,
 } = require("../controllers/userController");
 const passport = require("passport");
+const { validateUser } = require("../schema/user");
+const validateMiddleware = require("../middlewares/validateMiddleware"); 
 const userRouter = express.Router();
 
 //jwt 로그인
-userRouter.post("/signup", signup);
+userRouter.post("/signup", [validateMiddleware(validateUser)] ,signup);
 userRouter.get("/signup/email/:email", checkEmail);
 userRouter.get("/signup/nickname/:nickname", checkNickname);
 userRouter.post("/login", login);
