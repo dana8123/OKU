@@ -2,14 +2,7 @@
 require("dotenv").config();
 const multer = require("multer");
 const Product = require("../schema/product");
-const PriceHistory = require("../schema/pricehistory");
-const Alert = require("../schema/alert");
 const { User } = require("../schema/user");
-const jwt = require("jsonwebtoken");
-const Joi = require("@hapi/joi");
-const { authMiddlesware } = require("../middlewares/auth-middleware.js");
-const upload = require("../middlewares/imageupload.js");
-const { ValidationError } = require("@hapi/joi");
 
 //상품 등록하기
 exports.productpost = async (req, res, next) => {
@@ -31,12 +24,6 @@ exports.productpost = async (req, res, next) => {
 
 		// 유효성 검사
 		// title 글자수 , sucBid 5000만 이하 , descript 300자 이하
-		const postSchema = Joi.object({
-			title: Joi.string().min(2).max(25),
-			sucbid: Joi.number().min(10).max(50000000),
-			description: Joi.string().max(300),
-		});
-
 		const {
 			title,
 			lowbid,
@@ -49,7 +36,7 @@ exports.productpost = async (req, res, next) => {
 			region,
 			deliveryprice,
 			duration,
-		} = await postSchema.validateAsync(req.body);
+		} = req.body;
 
 		const addTime = (date, milliseconds) => {
 			return new Date(date.getTime() + milliseconds * 1);
