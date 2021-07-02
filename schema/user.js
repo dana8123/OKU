@@ -33,7 +33,7 @@ const validateUser = (user) => {
 		email: Joi.string().email(),
 		password: Joi.string().pattern(new RegExp('^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,15}$')),
 		password2: Joi.ref('password'),
-		nickname: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{2,10}$'))
+		nickname: Joi.string().pattern(new RegExp('^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣a-zA-Z0-9]{1,10}$'))
 	})
 	
 	return schema.validate(user)
