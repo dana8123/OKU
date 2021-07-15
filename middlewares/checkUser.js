@@ -5,10 +5,10 @@ exports.checkEmail = async (req, res) => {
 	const { User } = require("../schema/user");
 	const user = await User.findOne(email);
 	if (user) {
-		res.send(false);
+		res.send({ result: false });
 		return;
 	}
-	res.send(true);
+	res.send({ result: true });
 };
 
 exports.checkNickname = async (req, res) => {
@@ -16,8 +16,8 @@ exports.checkNickname = async (req, res) => {
 	const { User } = require("../schema/user");
 	const user = await User.findOne(nickname);
 	if (user) {
-		res.send(false);
+		res.send({ result: false });
 		return;
 	}
-	res.send(true);
+	res.send({ result: true });
 };
