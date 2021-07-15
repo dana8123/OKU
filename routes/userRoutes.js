@@ -66,9 +66,6 @@ userRouter.put(
 // 내 정보 조회
 userRouter.get("/myinfo", authMiddlesware, myinfo);
 
-// 전화번호
-userRouter.post("/numberconfirm", numberconfirm);
-
 // 상점소개 수정
 userRouter.put("/marketdesc", authMiddlesware, marketadd);
 // 상점소개 조회

@@ -3,36 +3,28 @@ const Product = require("../schema/product");
 const Like = require("../schema/like");
 require("dotenv").config();
 
+// 회원가입
 exports.signup = async (req, res) => {
 	const bcrypt = require("bcrypt");
-	const { checkEmail, checkNickname } = require("../middlewares/checkUser");
 	const { password, password2, nickname, email } = req.body;
 	const saltRounds = 10;
+	const checkEmail = await User.findOne({ email });
+	const checkNickname = await User.findOne({ nickname });
+	let result = { msg: { dupMsg: false } };
 	try {
 		//userEmail 중복 여부 체크
-		if (checkEmail == false) {
-			return res.send({
-				msg: {
-					dupMsg: "email False",
-				},
-			});
+
+		if (checkEmail) {
+			throw (result.msg.dupMsg = "eamil False");
 		}
 
 		if (password != password2) {
-			return res.send({
-				msg: {
-					dupMsg: "pwFalse",
-				},
-			});
+			throw (result.msg.dupMsg = "pwFalse");
 		}
 
 		//usernickname 중복 여부 체크
-		if (checkNickname == false) {
-			return res.send({
-				msg: {
-					dupMsg: "nicknameFalse",
-				},
-			});
+		if (checkNickname) {
+			throw (result.msg.dupMsg = "nicknameFalse");
 		}
 
 		const NewUser = new User({ ...req.body });
@@ -43,16 +35,11 @@ exports.signup = async (req, res) => {
 				NewUser.save();
 			});
 		});
-		res.send({
-			msg: {
-				dupMsg: true,
-			},
-		});
-	} catch (err) {
-		res.status(400).send({
-			msg: "회원가입에 실패했습니다.",
-		});
-		console.log(err);
+		result.msg.dupMsg = true;
+		res.send(result);
+	} catch (error) {
+		res.status(400).send(result);
+		console.log(error);
 	}
 };
 
@@ -98,14 +85,30 @@ exports.kakaoLoginCallback = async (
 	profile,
 	done
 ) => {
-	console.log(accessToken, refreshToken, profile, done);
-	console.log("kakao!");
-	res.send({ profile });
+	const {
+		_json: { id, properties, kakao_account },
+	} = profile;
+	try {
+		const user = await User.findOne({ kakaoId: id });
+		if (user) {
+			console.log("유저프로퍼티", profile);
+			return done(null, user);
+		}
+		console.log("passport======>", id);
+		const newUser = await User.create({
+			kakaoId: id,
+			email: kakao_account.email,
+			nickname: properties.nickname,
+		});
+		await newUser.save();
+		return done(null, newUser);
+	} catch (error) {
+		return done(error);
+	}
 };
 
 //카카오 토큰 보내주기
 exports.kakaoLogin = async (req, res) => {
-	//id = kakaoId, TODO: kakao ID로 바꾸자고 성목님한테 말하기(반응형 끝나고)
 	const { kakaoId } = req.body;
 	const user = await User.findOne({ kakaoId });
 	const nickname = user.nickname;
@@ -114,10 +117,10 @@ exports.kakaoLogin = async (req, res) => {
 		process.env.SECRET_KEY
 	);
 	console.log("postkakao", kakaoId);
-	//userid -> kakao id로 바꾸기(프론트와 협의 필요 )
 	res.send({ access_token: token, userid: user._id, nickname });
 };
 
+//찜한 상품
 exports.pick = async (req, res) => {
 	const user = res.locals.user;
 
