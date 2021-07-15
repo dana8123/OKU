@@ -17,7 +17,10 @@ const {
 	marketadd,
 	marketshow,
 } = require("../controllers/userController");
-const { checkEmail, checkNickname } = require("../middlewares/checkUser");
+const {
+	checkEmailForClient,
+	checkNicknameForClient,
+} = require("../middlewares/checkUser");
 const passport = require("passport");
 const { validateUser } = require("../schema/user");
 const validateMiddleware = require("../middlewares/validateMiddleware");
@@ -25,8 +28,8 @@ const userRouter = express.Router();
 
 //jwt 로그인
 userRouter.post("/signup", [validateMiddleware(validateUser)], signup);
-userRouter.get("/signup/email/:email", checkEmail);
-userRouter.get("/signup/nickname/:nickname", checkNickname);
+userRouter.get("/signup/email/:email", checkEmailForClient);
+userRouter.get("/signup/nickname/:nickname", checkNicknameForClient);
 userRouter.post("/login", login);
 //passport 소셜로그인
 userRouter.get("/kakao", passport.authenticate("kakao"));
