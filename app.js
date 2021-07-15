@@ -1,7 +1,8 @@
 // main 연결페이지
 const express = require("express");
 const app = express();
-require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config();
 const cron = require("node-cron");
 const helmet = require("helmet");
 const path = require("path");
@@ -14,10 +15,6 @@ const webSocket = require("./socket");
 const mongoose = require("mongoose");
 const connect = require("./schema/dbConnect");
 connect();
-
-//임시 뷰, 소켓만 끝나면 지워버려야합니다.
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
 
 // CORS 처리
 const cors = require("cors");
@@ -37,15 +34,15 @@ const { chatRouter } = require("./routes/chatRoutes");
 const { userRouter } = require("./routes/userRoutes");
 const { socketRouter } = require("./routes/socketRoute");
 const checkAuction = require("./controllers/checkAuction");
-const checkChatting = require("./controllers/chekChatting");
+//채팅내역 삭제하는 코드, 현재 사용하지않음
+//const checkChatting = require("./controllers/chekChatting");
 
 // second minute hour day-of-month month day-of-week
-cron.schedule("1* * * * *", function () {
-	checkAuction();
-});
-cron.schedule("00 8 * * 0", function () {
-	checkChatting();
-});
+
+//TODO: 리팩토링 후 주석 해제
+// cron.schedule("1* * * * *", function () {
+// 	checkAuction();
+// });
 
 app.use("/chat", chatRouter);
 app.use("/product", productRouter);

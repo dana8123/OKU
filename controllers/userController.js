@@ -110,6 +110,7 @@ exports.kakaoLoginCallback = async (
 //카카오 토큰 보내주기
 exports.kakaoLogin = async (req, res) => {
 	const { kakaoId } = req.body;
+	const jwt = require("jsonwebtoken");
 	const user = await User.findOne({ kakaoId });
 	const nickname = user.nickname;
 	const token = jwt.sign(
