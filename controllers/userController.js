@@ -1,25 +1,16 @@
-const passport = require("passport");
 const { User } = require("../schema/user");
 const Product = require("../schema/product");
 const Like = require("../schema/like");
-
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-const product = require("../schema/product");
-const saltRounds = 10;
-const request = require("request");
 require("dotenv").config();
 
-
 exports.signup = async (req, res) => {
+	const bcrypt = require("bcrypt");
+	const { checkEmail, checkNickname } = require("../middlewares/checkUser");
+	const { password, password2, nickname, email } = req.body;
+	const saltRounds = 10;
 	try {
-		const { password, password2, nickname, email } = req.body;
-		const checkEmail = await User.findOne({ email });
-		const checkNickname = await User.findOne({ nickname });
-
 		//userEmail 중복 여부 체크
-		if (checkEmail) {
+		if (checkEmail == false) {
 			return res.send({
 				msg: {
 					dupMsg: "email False",
@@ -36,7 +27,7 @@ exports.signup = async (req, res) => {
 		}
 
 		//usernickname 중복 여부 체크
-		if (checkNickname) {
+		if (checkNickname == false) {
 			return res.send({
 				msg: {
 					dupMsg: "nicknameFalse",
@@ -65,29 +56,11 @@ exports.signup = async (req, res) => {
 	}
 };
 
-exports.checkEmail = async (req, res) => {
-	const { params: email } = req;
-	const user = await User.findOne(email);
-	if (user) {
-		res.send({ result: false });
-		return;
-	}
-	res.send({ result: true });
-};
-
-exports.checkNickname = async (req, res) => {
-	const { params: nickname } = req;
-	const user = await User.findOne(nickname);
-	if (user) {
-		res.send({ result: false });
-		return;
-	}
-	res.send({ result: true });
-};
-
 //Login
 exports.login = async (req, res) => {
+	const bcrypt = require("bcrypt");
 	const { email, password } = req.body;
+	const jwt = require("jsonwebtoken");
 	const user = await User.findOne({ email });
 	try {
 		if (user == null) {
@@ -250,67 +223,6 @@ exports.myinfo = async (req, res) => {
 	const user = res.locals.user;
 	try {
 		res.send({ okay: true, user });
-	} catch (error) {
-		res.send({ okay: false });
-	}
-};
-
-exports.numberconfirm = async (req, res) => {
-	const phoneNumber = req.body.phoneNumber;
-	console.log(phoneNumber);
-	const NCP_secretKey = process.env.SMSseceretKey;
-	const NCP_accessKey = process.env.SMSaccesskey;
-	const NCP_serviceID = process.env.SMSserviceId;
-	const myPhoneNumber = process.env.myPhoneNumber;
-
-	const space = " "; // one space
-	const newLine = "\n"; // new line
-	const method = "POST"; // method
-
-	const url = `https://sens.apigw.ntruss.com/sms/v2/services/${NCP_serviceID}/messages`;
-	const url2 = `/sms/v2/services/${NCP_serviceID}/messages`;
-
-	const timestamp = Date.now().toString(); // current timestamp (epoch)
-	let message = [];
-	let hmac = crypto.createHmac("sha256", NCP_secretKey);
-
-	message.push(method);
-	message.push(space);
-	message.push(url2);
-	message.push(newLine);
-	message.push(timestamp);
-	message.push(newLine);
-	message.push(NCP_accessKey);
-	const signature = hmac.update(message.join("")).digest("base64");
-
-	const number = Math.floor(Math.random() * (999999 - 100000)) + 100000;
-	console.log(number);
-
-	try {
-		request({
-			method: method,
-			json: true,
-			uri: url,
-			headers: {
-				"Contenc-type": "application/json; charset=utf-8",
-				"x-ncp-iam-access-key": NCP_accessKey,
-				"x-ncp-apigw-timestamp": timestamp,
-				"x-ncp-apigw-signature-v2": signature.toString(),
-			},
-			body: {
-				type: "SMS",
-				countryCode: "82",
-				from: myPhoneNumber,
-				content: ` OKU 인증번호 ${number} 입니다.`,
-				messages: [
-					{
-						to: `${phoneNumber}`,
-					},
-				],
-			},
-		});
-
-		res.send({ okay: true });
 	} catch (error) {
 		res.send({ okay: false });
 	}
