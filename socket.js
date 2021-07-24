@@ -36,7 +36,7 @@ module.exports = (server) => {
 				content.msg = "거래 이후 채팅 가능합니다.";
 			}
 			//챗봇
-			if (data.product === "1") {
+			else if (data.product === "1") {
 				if (data.msg.includes("사용법")) {
 					content.msg =
 						"오타쿠 굿즈를 판매하고싶다면, \n왼쪽 상단의 물건등록을 눌러주세요.\n 구매하려면 경매물품을 최고가에 입찰해봅시다!";
@@ -53,9 +53,9 @@ module.exports = (server) => {
 					content.msg =
 						"어떤점이 불편하셨나요? itsoku@naver.com 으로 보내주시면 귀담아 듣겠습니다.";
 				}
+			} else {
+				await content.save();
 			}
-			console.log(data);
-			await content.save();
 
 			// 저장한 데이터를 클라이언트에게 receive라는 emit으로 전송
 			chatSpace.to(room).emit("receive", content);
