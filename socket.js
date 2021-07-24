@@ -1,12 +1,7 @@
 //socketIo 모듈을 불러오기
-const SocketIO = require("socket.io");
-const Chat = require("./schema/chathistory");
-
-//TODO: productID 보내주기
-
-//app.js와 websocket을 연결하는 작업
-module.exports = (server, app) => {
-	//path는 클라이언트쪽 코드와 맞춰놔야함(현재입력값이 디폴트값임.)
+module.exports = (server) => {
+	const SocketIO = require("socket.io");
+	const Chat = require("./schema/chathistory");
 	const io = SocketIO(server, {
 		cors: {
 			origin: "*",
