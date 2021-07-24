@@ -4,6 +4,7 @@ const PriceHistory = require("../schema/pricehistory");
 const Product = require("../schema/product");
 const nodemailer = require("../nodemailer");
 const { User } = require("../schema/user");
+require("dotenv");
 
 //채팅 리스트
 exports.chatList = async (req, res) => {
@@ -15,7 +16,7 @@ exports.chatList = async (req, res) => {
 			_id: 1,
 			title: `운영자`,
 			nickname: `오쿠`,
-			sellerunique: `60a4f2d3de0f1132fe023a1f`,
+			sellerunique: process.env.ADMIN_ID,
 			soldById: user._id,
 		},
 	];
