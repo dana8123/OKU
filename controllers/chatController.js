@@ -7,8 +7,18 @@ const { User } = require("../schema/user");
 
 //채팅 리스트
 exports.chatList = async (req, res) => {
-	let targets = [];
 	const user = res.locals.user;
+
+	let targets = [
+		{
+			soldBy: user.nickname,
+			_id: 1,
+			title: `운영자`,
+			nickname: `오쿠`,
+			sellerunique: `60a4f2d3de0f1132fe023a1f`,
+			soldById: user._id,
+		},
+	];
 	// 낙찰 완료된 상품
 	const product = await Product.find(
 		{ onSale: false },
@@ -46,6 +56,7 @@ exports.chatList = async (req, res) => {
 	// // 판매자와 구매자에게 메일보내주기
 	// nodemailer(sellerEmail.email, subject);
 	// nodemailer(buyerEmail.email, subject);
+	console.log("TARGET =>", targets);
 	res.send({ targets });
 };
 
