@@ -1,12 +1,7 @@
-// 상품 리스트 관련
-const Product = require("../schema/product");
-const { User } = require("../schema/user");
-const Like = require("../schema/like");
-const { authMiddlesware } = require("../middlewares/auth-middleware.js");
-
+// 상품 대분류 API
 exports.bigCate = async (req, res) => {
 	const { bigCategory } = req.params;
-	console.log(bigCategory);
+	const Product = require("../schema/product");
 
 	try {
 		const product = await Product.find({ bigCategory: bigCategory }).sort(
@@ -18,9 +13,11 @@ exports.bigCate = async (req, res) => {
 	}
 };
 
+// 상품 소분류 API
 exports.smallCate = async (req, res) => {
 	const { bigCategory, smallCategory } = req.params;
-	console.log(bigCategory, smallCategory);
+	const Product = require("../schema/product");
+
 	try {
 		const product = await Product.find({
 			bigCategory: bigCategory,
@@ -32,8 +29,10 @@ exports.smallCate = async (req, res) => {
 	}
 };
 
+// 검색 API
 exports.search = async (req, res) => {
-	console.log(req.query);
+	const Product = require("../schema/product");
+
 	try {
 		const a = req.query["term"];
 		const product = await Product.find(
@@ -47,6 +46,7 @@ exports.search = async (req, res) => {
 	}
 };
 
+// 찜하기 API
 exports.pick = async (req, res) => {
 	const user = res.locals.user;
 	const productId = req.params;
@@ -79,9 +79,13 @@ exports.pick = async (req, res) => {
 	}
 };
 
+// MD추천 API
 exports.gayeonpick = async (req, res) => {
 	// 추천해주는 사람의 아이디
+	const Like = require("../schema/like");
 	const md = "admin";
+	const Product = require("../schema/product");
+	const { User } = require("../schema/user");
 
 	try {
 		// 필요한 정보 제품이름,제품사진,현재입찰가

@@ -1,13 +1,9 @@
-const Chat = require("../schema/chathistory");
-const Room = require("../schema/chatroom");
-const PriceHistory = require("../schema/pricehistory");
-const Product = require("../schema/product");
-const nodemailer = require("../nodemailer");
-const { User } = require("../schema/user");
 require("dotenv");
 
 //채팅 리스트
 exports.chatList = async (req, res) => {
+	const nodemailer = require("../nodemailer");
+	const Product = require("../schema/product");
 	const user = res.locals.user;
 
 	let targets = [
@@ -46,24 +42,19 @@ exports.chatList = async (req, res) => {
 			targets.push(product[i]);
 		}
 	}
-
-	// // 판매자 찾기
-	// const sellerId = product[product.length - 1].sellerunique;
-	// const buyerId = product[product.length - 1].soldById;
-	// console.log("챗컨트롤러", sellerId, buyerId);
-	// const sellerEmail = await User.findOne({ _id: sellerId });
-	// const buyerEmail = await User.findOne({ _id: buyerId });
-	// console.log("chatController-mail", sellerEmail.email, buyerEmail.email);
-	// // 판매자와 구매자에게 메일보내주기
-	// nodemailer(sellerEmail.email, subject);
-	// nodemailer(buyerEmail.email, subject);
-	console.log("TARGET =>", targets);
+	
+	//채팅 리스트 출력하는 console
+	//console.log("TARGET =>", targets);
 	res.send({ targets });
 };
 
 // 채팅방 삭제
 exports.chatDelete = async (req, res) => {
+	const Chat = require("../schema/chathistory");
+	const Product = require("../schema/product");
 	const { params: product, firstUser, secondUser } = req;
+	const { User } = require("../schema/user");
+
 	try {
 		await Product.deleteOne({ _id: product.product });
 		await Chat.deleteMany({ productId: product.product });

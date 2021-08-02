@@ -1,5 +1,5 @@
-const Chat = require("../schema/chathistory");
 module.exports = async (req, res) => {
+	const Chat = require("../schema/chathistory");
 	try {
 		const today = new Date();
 		const weekAgo = today.setDate(today.getDate() - 7);

@@ -1,9 +1,9 @@
-const Product = require("../schema/product");
-const PriceHistory = require("../schema/pricehistory");
-const Alert = require("../schema/alert");
-const { User } = require("../schema/user");
-
 module.exports = async () => {
+	const Product = require("../schema/product");
+	const PriceHistory = require("../schema/pricehistory");
+	const Alert = require("../schema/alert");
+	const { User } = require("../schema/user");
+
 	try {
 		// 오늘날짜
 		const today = new Date();

@@ -1,17 +1,15 @@
 // 상품등록관련
 require("dotenv").config();
-const multer = require("multer");
-const Product = require("../schema/product");
-const { User } = require("../schema/user");
-const QuestNanswer = require("../schema/questNanswer");
-const Alert = require("../schema/alert");
-const nodemailer = require("../nodemailer");
 
-//post
+// 문의글 API
 exports.quest = async (req, res) => {
+	const Alert = require("../schema/alert");
 	const user = res.locals.user;
 	const { contents, sellerunique } = req.body;
+	const nodemailer = require("../nodemailer");
 	const productId = req.params;
+	const Product = require("../schema/product");
+	const QuestNanswer = require("../schema/questNanswer");
 
 	try {
 		//문의글이 올라온 상품
@@ -42,11 +40,16 @@ exports.quest = async (req, res) => {
 	}
 };
 
-// post
+// 문의글 답변 API
 exports.answer = async (req, res) => {
+	const Alert = require("../schema/alert");
 	const user = res.locals.user;
+	const { User } = require("../schema/user");
 	const { sellerunique, contents } = req.body;
+	const nodemailer = require("../nodemailer");
 	const questId = req.params;
+	const Product = require("../schema/product");
+	const QuestNanswer = require("../schema/questNanswer");
 
 	try {
 		// 주의할점 문의글 get할때 나오는 _id값을 기준으로 불러옴
@@ -82,10 +85,12 @@ exports.answer = async (req, res) => {
 	}
 };
 
-// get
-// for문 안쓰도록 수정
+// 문의글 불러오기 API
 exports.questget = async (req, res) => {
 	const productId = req.params;
+	const { User } = require("../schema/user");
+	const QuestNanswer = require("../schema/questNanswer");
+
 	// console.log(productId["id"]);
 
 	try {

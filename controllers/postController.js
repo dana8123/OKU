@@ -1,11 +1,10 @@
 // 상품등록관련
 require("dotenv").config();
-const multer = require("multer");
-const Product = require("../schema/product");
-const { User } = require("../schema/user");
 
 //상품 등록하기
 exports.productpost = async (req, res, next) => {
+	const Product = require("../schema/product");
+	const multer = require("multer");
 	const user = res.locals.user;
 
 	try {
@@ -75,6 +74,7 @@ exports.productpost = async (req, res, next) => {
 
 //상품 목록 조회순으로 불러오기
 exports.popular = async (req, res) => {
+	const Product = require("../schema/product");
 	try {
 		// onSale:true
 		const popularList = await Product.aggregate([
@@ -91,6 +91,7 @@ exports.popular = async (req, res) => {
 
 //상품 목록 최신순으로 불러오기
 exports.newone = async (req, res) => {
+	const Product = require("../schema/product");
 	let productList = [];
 	//마지막으로 불러들인 아이템, query문으로 받아옴.
 	let lastId = req.query["lastId"];
@@ -121,6 +122,7 @@ exports.newone = async (req, res) => {
 };
 
 exports.allProducts = async (req, res) => {
+	const Product = require("../schema/product");
 	const result = await Product.find({}).sort({ createAt: -1 });
 	try {
 		res.send({ result });
@@ -132,6 +134,7 @@ exports.allProducts = async (req, res) => {
 //마감임박 상품 목록 뿌려주기
 exports.deadLineList = async (req, res) => {
 	const halfHour = 1800000;
+	const Product = require("../schema/product");
 	const today = new Date();
 	const list = [];
 	try {
@@ -160,6 +163,8 @@ exports.deadLineList = async (req, res) => {
 };
 
 exports.detail = async (req, res) => {
+	const { User } = require("../schema/user");
+	const Product = require("../schema/product");
 	// res.send(req.params);
 	// console.log(req.params["id"]);
 	try {
@@ -181,6 +186,7 @@ exports.detail = async (req, res) => {
 
 exports.relate = async (req, res) => {
 	// 소분류 카테고리값 받는게 더 나을것같음
+	const Product = require("../schema/product");
 	const { smallCategory, tag } = req.body;
 
 	// console.log(product);

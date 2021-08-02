@@ -1,7 +1,6 @@
-const PriceHistory = require("../schema/pricehistory");
-const nodemailer = require("../nodemailer");
-
 module.exports = async () => {
+	const PriceHistory = require("../schema/pricehistory");
+	const nodemailer = require("../nodemailer");
 	try {
 		const notYetMailing = await PriceHistory.find({
 			mailing: false,

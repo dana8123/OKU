@@ -1,23 +1,15 @@
-// 소켓 리스트 관련
-const Product = require("../schema/product");
-const PriceHistory = require("../schema/pricehistory");
-const ChatRoom = require("../schema/chatroom");
-const { User } = require("../schema/user");
-const Like = require("../schema/like");
-const Alert = require("../schema/alert");
-const { authMiddlesware } = require("../middlewares/auth-middleware.js");
-const pricehistory = require("../schema/pricehistory");
-const product = require("../schema/product");
-const Joi = require("@hapi/joi");
-
 //입찰하기
 exports.bid = async (req, res) => {
 	const user = res.locals.user;
 	const { id } = req.params;
 	try {
+		const Joi = require("@hapi/joi");
 		let result = false;
+		const Product = require("../schema/product");
 		const product = await Product.findById(id);
+		const PriceHistory = require("../schema/pricehistory");
 		const seller = product.sellerunique;
+		const { User } = require("../schema/user");
 		const bidList = await PriceHistory.find({
 			productId: id,
 		});
@@ -87,8 +79,12 @@ exports.bid = async (req, res) => {
 
 //즉시 낙찰하기
 exports.sucbid = async (req, res) => {
+	const Alert = require("../schema/alert");
+	const ChatRoom = require("../schema/chatroom");
 	const user = res.locals.user;
+	const Product = require("../schema/product");
 	const productId = req.params;
+	const PriceHistory = require("../schema/pricehistory");
 	const { sucbid, sellerunique } = req.body;
 
 	try {
@@ -166,8 +162,11 @@ exports.sucbid = async (req, res) => {
 
 // 변경된 즉시낙찰로직
 exports.newsucbid = async (req, res) => {
+	const Alert = require("../schema/alert");
 	const user = res.locals.user;
+	const Product = require("../schema/product");
 	const productId = req.params;
+	const PriceHistory = require("../schema/pricehistory");
 	const { sucbid, sellerunique } = req.body;
 	// 이미 즉시 낙찰된 기록이 있을 경우 onSale:true , history가 이미 있는경우
 	const prehistory = await Alert.findOne({
@@ -179,13 +178,11 @@ exports.newsucbid = async (req, res) => {
 	try {
 		// 판매자가 상품을 산다면
 		if (sellerunique == user.id) {
-			console.log("여기서걸리는거야?1");
 			return res.send({ okay: false, msg: "판매자는 낙찰하지 못합니다." });
 			// 판매자 이외의 구매자가 즉시낙찰을 시도함
 		} else {
 			// 이미 누군가 즉시낙찰을 했다면
 			if (prehistory) {
-				console.log("여깁니다.", prehistory);
 				return res.send({ okay: false, msg: "이미 거래중인 물건입니다." });
 				// 즉시낙찰 내역이 없는 경우
 			} else {
@@ -225,6 +222,7 @@ exports.newsucbid = async (req, res) => {
 // 알림안에있는 buyerId값으로 불러옴
 exports.buyerCheck = async (req, res) => {
 	const { id } = req.params;
+	const { User } = require("../schema/user");
 
 	try {
 		const buyer = await User.findOne(
@@ -240,10 +238,15 @@ exports.buyerCheck = async (req, res) => {
 // 거래진행 yes or no로 나누어야함
 exports.sellerSelct = async (req, res) => {
 	// 1. true false값 , 2. 판매성공 알람 objectId값이 필요함
+	const Alert = require("../schema/alert");
 
 	const { decision } = req.body;
 	// 알람 objectId값임
+	const ChatRoom = require("../schema/chatroom");
 	const { id } = req.params;
+	const Product = require("../schema/product");
+	const PriceHistory = require("../schema/pricehistory");
+	const { User } = require("../schema/user");
 
 	//console.log(decision, id);
 
@@ -342,6 +345,7 @@ exports.sellerSelct = async (req, res) => {
 
 // 바로 알림
 exports.alert = async (req, res) => {
+	const Alert = require("../schema/alert");
 	const user = res.locals.user;
 	try {
 		const notCheck = await Alert.find({
@@ -367,6 +371,7 @@ exports.alert = async (req, res) => {
 // 이전 입찰정보 불러오기
 exports.bidinfo = async (req, res) => {
 	const productId = req.params;
+	const PriceHistory = require("../schema/pricehistory");
 
 	try {
 		const info = await PriceHistory.find(

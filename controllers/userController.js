@@ -1,9 +1,6 @@
-const { User } = require("../schema/user");
-const Product = require("../schema/product");
-const Like = require("../schema/like");
 require("dotenv").config();
 
-// 회원가입
+// 회원가입 API
 exports.signup = async (req, res) => {
 	const bcrypt = require("bcrypt");
 	const { password, password2, nickname, email } = req.body;
@@ -11,6 +8,8 @@ exports.signup = async (req, res) => {
 	const checkEmail = await User.findOne({ email });
 	const checkNickname = await User.findOne({ nickname });
 	let result = { msg: { dupMsg: false } };
+	const { User } = require("../schema/user");
+
 	try {
 		//userEmail 중복 여부 체크
 
@@ -43,11 +42,12 @@ exports.signup = async (req, res) => {
 	}
 };
 
-//Login
+//Login API
 exports.login = async (req, res) => {
 	const bcrypt = require("bcrypt");
 	const { email, password } = req.body;
 	const jwt = require("jsonwebtoken");
+	const { User } = require("../schema/user");
 	const user = await User.findOne({ email });
 	try {
 		if (user == null) {
@@ -85,6 +85,7 @@ exports.kakaoLoginCallback = async (
 	profile,
 	done
 ) => {
+	const { User } = require("../schema/user");
 	const {
 		_json: { id, properties, kakao_account },
 	} = profile;
@@ -111,6 +112,7 @@ exports.kakaoLoginCallback = async (
 exports.kakaoLogin = async (req, res) => {
 	const { kakaoId } = req.body;
 	const jwt = require("jsonwebtoken");
+	const { User } = require("../schema/user");
 	const user = await User.findOne({ kakaoId });
 	const nickname = user.nickname;
 	const token = jwt.sign(
@@ -123,6 +125,8 @@ exports.kakaoLogin = async (req, res) => {
 
 //찜한 상품
 exports.pick = async (req, res) => {
+	const Like = require("../schema/like");
+	const Product = require("../schema/product");
 	const user = res.locals.user;
 
 	// 타이틀이랑 현재입찰가까지 넘겨주기
@@ -148,6 +152,7 @@ exports.pick = async (req, res) => {
 };
 
 exports.pickdelete = async (req, res) => {
+	const Like = require("../schema/like");
 	const user = res.locals.user;
 	const productId = req.params;
 	try {
@@ -163,6 +168,7 @@ exports.pickdelete = async (req, res) => {
 };
 
 exports.myproduct = async (req, res) => {
+	const Product = require("../schema/product");
 	const user = res.locals.user;
 
 	try {
@@ -187,6 +193,7 @@ exports.mypronick = async (req, res) => {
 };
 
 exports.mypronickedit = async (req, res) => {
+	const { User } = require("../schema/user");
 	const user = res.locals.user;
 	const { nick } = req.body;
 	// INFO : profile img = 1 ea 라서 array -> string 으로 수정
@@ -223,6 +230,7 @@ exports.mypronickedit = async (req, res) => {
 	}
 };
 
+// 마이페이지 내 정보 API
 exports.myinfo = async (req, res) => {
 	const user = res.locals.user;
 	try {
@@ -232,8 +240,10 @@ exports.myinfo = async (req, res) => {
 	}
 };
 
+// 마이페이지 상점 정보
 exports.marketadd = async (req, res) => {
 	const content = req.body.content;
+	const { User } = require("../schema/user");
 	const user = res.locals.user;
 
 	try {
@@ -244,7 +254,9 @@ exports.marketadd = async (req, res) => {
 	}
 };
 
+// 마이페이지 상점 정보
 exports.marketshow = async (req, res) => {
+	const { User } = require("../schema/user");
 	const user = res.locals.user;
 
 	try {
