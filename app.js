@@ -1,16 +1,16 @@
 // main 연결페이지
 const express = require("express");
-const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
 const cron = require("node-cron");
+const Http = require("http");
 const helmet = require("helmet");
 const path = require("path");
 const passport = require("passport");
 const passportConfig = require("./middlewares/passport");
-const port = process.env.EXPRESS_PORT;
-const webSocket = require("./socket");
 
+const app = express();
+const http = Http.createServer(app);
 // DB연결
 const mongoose = require("mongoose");
 const connect = require("./schema/dbConnect");
@@ -49,8 +49,10 @@ app.use("/product", productRouter);
 app.use("/user", userRouter);
 app.use("/bid", socketRouter);
 
-const server = app.listen(port, () => {
-	console.log(`Server start at http://localhost:${port}`);
-});
+module.exports = http;
 
-webSocket(server);
+// const server = app.listen(port, () => {
+// 	console.log(`Server start at http://localhost:${port}`);
+// });
+
+// webSocket(server);
