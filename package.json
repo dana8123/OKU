@@ -2,7 +2,7 @@
 	"name": "hanghae99Final",
 	"version": "1.0.0",
 	"description": "Goods auction site with Node.js.",
-	"main": "test.js",
+	"main": "server.js",
 	"scripts": {
 		"test": "mocha socket.spec.js"
 	},
