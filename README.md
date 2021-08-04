@@ -4,9 +4,10 @@
 
 ### 사용법
 
-`npm install`
-`npm start` || `node server.js`
-`env` 파일 없이는 정상작동 하지 않습니다.
+1. `npm install`
+2. `npm start` || `node server.js`
+
+- `env` 파일 없이는 정상작동 하지 않습니다.
 
 ### 사이트 주소
 
