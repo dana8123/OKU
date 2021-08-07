@@ -2,6 +2,26 @@
 
 ![image](https://user-images.githubusercontent.com/57881683/120354904-d215d680-c33d-11eb-8133-3e16bfc1cfd8.png)
 
+- [0부터 9까지 뭐든 OKAY! OKU](#0---9------okay--oku)
+    + [사용법](#---)
+    + [사이트 주소](#------)
+    + [시연 영상](#-----)
+    + [발표 영상](#-----)
+  * [프로젝트 기간](#-------)
+  * [팀원소개](#----)
+  * [기술소개](#----)
+    + [1. 개발 환경](#1------)
+    + [2. 사용 라이브러리](#2---------)
+    + [3. 주요 기능](#3------)
+    + [4. 개선 사항 및 고민거리](#4-------------)
+      - [거래 성사 이후 생기는 채팅방](#----------------)
+      - [정적 이미지파일 S3에 분리하여 저장](#---------s3---------)
+      - [즉시 낙찰 로직 변경](#-----------)
+      - [알림 구현](#-----)
+  * [UPDATE 및 코드 리팩토링](#UPDATE 및 코드 리팩토링)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 ### 사용법
 
 1. `npm install`
@@ -178,7 +198,7 @@ exports.sucbid = async (req, res) => {
 <details>
 <summary>변경된 로직</summary>
 <div markdown="1">
-	
+
 ```
 // 변경된 즉시낙찰로직
 exports.newsucbid = async (req, res) => {
@@ -354,5 +374,41 @@ exports.sellerSelct = async (req, res) => {
 </details>
 
 #### 알림 구현
-  - 알림의 경우 판매실패 & 판매성공(즉시낙찰에만 있는로직) > 거래완료 , 즉시낙찰&입찰실패(낙찰한사람제외다른사람),상품낙찰성공(성공한사람만),문의하기&문의답글달렸을때의 경우 알림을 저장합니다. 초기의 알림은 쌓인 알림을 전부 불러와 보여주는 식이었으나 이는 이미 읽은 알림과 읽지 않은 알림을 구분해주지 않아 사용자 입장에서 불편할거란 판단이 들었습니다. 그래서 알림 collection에 view column을 추가해 알림이 추가되면 기본적으로 false상태로 데이터를 collection에 삽입합니다. 이후 alert API를 호출시 notCheck와 alreadyCheck로 데이터를 내려주는데 이때 호출을 한다면 notCheck에 존재하는 모든 데이터들의 view상태를 true로 변경후 collection에 해주어 다음번 호출시엔 alreadyCheck로 내려줍니다.
+
+- 알림의 경우 판매실패 & 판매성공(즉시낙찰에만 있는로직) > 거래완료 , 즉시낙찰&입찰실패(낙찰한사람제외다른사람),상품낙찰성공(성공한사람만),문의하기&문의답글달렸을때의 경우 알림을 저장합니다. 초기의 알림은 쌓인 알림을 전부 불러와 보여주는 식이었으나 이는 이미 읽은 알림과 읽지 않은 알림을 구분해주지 않아 사용자 입장에서 불편할거란 판단이 들었습니다. 그래서 알림 collection에 view column을 추가해 알림이 추가되면 기본적으로 false상태로 데이터를 collection에 삽입합니다. 이후 alert API를 호출시 notCheck와 alreadyCheck로 데이터를 내려주는데 이때 호출을 한다면 notCheck에 존재하는 모든 데이터들의 view상태를 true로 변경후 collection에 해주어 다음번 호출시엔 alreadyCheck로 내려줍니다.
+
 ```
+
+```
+
+## UPDATE 및 코드 리팩토링
+
+1. user validation 코드 수정 (21.07)
+
+   1. 정규식 변경
+      - 한글을 제외한 영 대,소문자와 숫자만 닉네임으로 입력되는 등 클라이언트측에서 보이는 조건과 다른 조건으로 정규식이 설정되어 있었음
+
+   ```javascript
+   nickname: Joi.string().pattern(
+   	new RegExp("^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣a-zA-Z0-9]{1,10}$")
+   );
+   ```
+
+   2. 코드 간소화
+
+      - 좀 더 보기 좋은 코드로 변경하기 위해 `throw` 를 활용
+
+      * https://github.com/danaisboss/OKU/commit/85edf463a6259d723504f0a406d775b62e27e5bc
+
+   3. 중복된(or 잘못된) 변수명 수정
+      - 입력과 동시에 유효성 여부를 검사하는 코드와 응답 보내면서 유효성 여부를 검사하는 코드의 변수명이 같아, 가독성 및 에러 방지를 위해 변수명 변경 (ex: `checkEmail` -> `checkEmailForClient` )
+
+2. socket.js 코드 수정 (21.08)
+   1. 의도치않은 broadcasting이 되는 문제 수정
+      - 서버측에서 전송된 데이터를 모든 클라이언트가 볼 수 있는 broadcasting 이벤트가 발생
+      - socket.io의 room 기능에 의한 문제 발생
+      - 해당 nameSpace에 접속 할 경우, Default room에서의 분기처리를 이용해 해결
+      - https://github.com/danaisboss/OKU/commit/87e14cb7256ae6468378db9faae781f20df71ae5
+   2. 실행 코드와 로직 코드의 분리
+      - 가독성을 위해 코드 추상화 작업을 하였음
+      - https://github.com/danaisboss/OKU/commit/62771d577747f8c40ac337d6c6fbaac2db1f1a76
