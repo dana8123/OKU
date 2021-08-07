@@ -4,7 +4,7 @@
 	"description": "Goods auction site with Node.js.",
 	"main": "server.js",
 	"scripts": {
-		"test": "mocha socket.spec.js"
+		"test": "jest"
 	},
 	"repository": {
 		"type": "git",
@@ -45,6 +45,8 @@
 	},
 	"devDependencies": {
 		"chai": "^4.3.4",
-		"mocha": "^9.0.2"
+		"jest": "^27.0.6",
+		"mocha": "^9.0.2",
+		"supertest": "^6.1.4"
 	}
 }

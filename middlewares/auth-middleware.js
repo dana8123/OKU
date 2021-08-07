@@ -2,9 +2,6 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../schema/user");
 require("dotenv").config();
 
-// module.exports < 이렇게 export했다가 오지게 에러나서
-// 이렇게 수정함
-
 exports.authMiddlesware = (req, res, next) => {
 	try {
 		const { access_token } = req.headers;
@@ -12,12 +9,12 @@ exports.authMiddlesware = (req, res, next) => {
 		const { kakaoId } = jwt.verify(access_token, process.env.SECRET_KEY);
 
 		if (email != undefined) {
-			User.findOne({ email }).then((user) => {
+			User.findOne(email).then((user) => {
 				res.locals.user = user;
 				next();
 			});
 		} else {
-			User.findOne({ kakaoId }).then((user) => {
+			User.findOne(kakaoId).then((user) => {
 				res.locals.user = user;
 				next();
 			});
