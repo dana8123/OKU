@@ -18,7 +18,7 @@
       - [정적 이미지파일 S3에 분리하여 저장](#---------s3---------)
       - [즉시 낙찰 로직 변경](#-----------)
       - [알림 구현](#-----)
-  * [UPDATE 및 코드 리팩토링](#UPDATE 및 코드 리팩토링)
+  * [UPDATE 및 코드 리팩토링](#update----------)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
