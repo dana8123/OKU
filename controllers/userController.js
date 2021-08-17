@@ -119,7 +119,7 @@ exports.kakaoLogin = async (req, res) => {
 		{ kakaoId, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 },
 		process.env.SECRET_KEY
 	);
-	console.log("postkakao", kakaoId);
+	//console.log("postkakao", kakaoId);
 	res.send({ access_token: token, userid: user._id, nickname });
 };
 

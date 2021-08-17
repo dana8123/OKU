@@ -4,7 +4,6 @@ require("dotenv").config();
 //상품 등록하기
 exports.productpost = async (req, res, next) => {
 	const Product = require("../schema/product");
-	const multer = require("multer");
 	const user = res.locals.user;
 
 	try {
@@ -58,17 +57,13 @@ exports.productpost = async (req, res, next) => {
 			deadLine: addTime(new Date(), duration),
 		});
 
-		newProduct.save();
-
-		res.send({ msg: "상품이 등록되었습니다" });
-	} catch (error) {
-		if (error instanceof multer.MulterError) {
-			console.log("multer error", error);
-			res.send({ msg: "multer error" });
-		}
-
-		res.send({ msg: "상품 등록에 실패하였습니다.", error });
-		console.log(error);
+		res.json(newProduct);
+	} catch (err) {
+		// if (error instanceof multer.MulterError) {
+		// 	console.log("multer error", error);
+		// 	res.send({ msg: "multer error" });
+		// }
+		next(err);
 	}
 };
 

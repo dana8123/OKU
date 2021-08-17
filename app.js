@@ -49,10 +49,9 @@ app.use("/product", productRouter);
 app.use("/user", userRouter);
 app.use("/bid", socketRouter);
 
+app.use((err, req, res, next) => {
+	console.error(err.stack);
+	res.status(500).json({ message: err.message });
+});
+
 module.exports = http;
-
-// const server = app.listen(port, () => {
-// 	console.log(`Server start at http://localhost:${port}`);
-// });
-
-// webSocket(server);

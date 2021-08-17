@@ -1,0 +1,24 @@
+{
+	"img": [
+		"https://okuhanghae.s3.ap-northeast-2.amazonaws.com/1629124320921.jpeg"
+	],
+	"tag": ["#디지몬#친구들#렛츠고"],
+	"views": 0,
+	"onSale": true,
+	"soldBy": null,
+	"_id": "611a76ec4b6572676e7a93e6",
+	"title": "디지몬",
+	"nickname": "위드미",
+	"sellerunique": "60a4f2d3de0f1132fe023a1f",
+	"lowBid": 100000,
+	"sucBid": 1000000,
+	"state": "C급",
+	"description": "귀여운 디지몬 구경하세요",
+	"bigCategory": "2D",
+	"smallCategory": "피규어",
+	"region": "서울시 강남구",
+	"deliveryPrice": true,
+	"deadLine": "2021-08-16T14:35:12.501Z",
+	"createAt": "2021-08-16T14:32:12.506Z",
+	"__v": 0
+}

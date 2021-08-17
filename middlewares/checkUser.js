@@ -6,7 +6,6 @@ exports.checkEmailForClient = async (req, res) => {
 	const user = await User.findOne(email);
 	if (user) {
 		res.send({ result: false });
-		return;
 	}
 	res.send({ result: true });
 };
