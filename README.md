@@ -412,5 +412,9 @@ exports.sellerSelct = async (req, res) => {
    2. 실행 코드와 로직 코드의 분리
       - 가독성을 위해 코드 추상화 작업을 하였음
       - https://github.com/danaisboss/OKU/commit/62771d577747f8c40ac337d6c6fbaac2db1f1a76
+   
 3. 테스트 코드 작성 (21.08) - 작성 중
-   1. auth-middleware.js에 대한 테스트 코드 작성
+   
+   1. ` npm test ` 로 실행한다. (test tool : jest, node-mocks-http, supertest)
+   2. auth-middleware.js에 대한 테스트 코드 작성
+   3. postController.js에 대한 테스트 코드 작성

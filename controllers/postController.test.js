@@ -2,10 +2,16 @@ const httpMocks = require("node-mocks-http");
 const postController = require("./postController");
 const Product = require("../schema/product");
 const newProduct = require("../test/data/new-product");
-const user = require("../test/data/user");
-const { authMiddleware } = require("../middlewares/auth-middleware");
+const newUser = require("../test/data/user.json");
+const allProducts = require("../test/data/all-products.json");
+const { User } = require("../schema/user");
 
 Product.create = jest.fn();
+Product.find = jest.fn();
+Product.sort = jest.fn();
+Product.limit = jest.fn();
+Product.findOneAndUpdate = jest.fn();
+User.findOne = jest.fn();
 
 let req, res, next;
 
@@ -15,25 +21,75 @@ beforeEach(() => {
 	next = jest.fn();
 });
 
-test("productpost function이 실행되어야한다.", () => {
-	expect(typeof postController.productpost).toBe("function");
+describe("postController, productpost", () => {
+	test("productpost function이 실행되어야한다.", () => {
+		expect(typeof postController.productpost).toBe("function");
+	});
+
+	test("200 상태코드와 json형태로 응답해야한다.", async () => {
+		Product.create.mockReturnValue(newProduct);
+		res.locals.user = jest.fn();
+		await postController.productpost(req, res, next);
+
+		expect(res.statusCode).toBe(200);
+		expect(res._isEndCalled()).toBeTruthy();
+		expect(res._getJSONData()).toStrictEqual(newProduct);
+	});
+
+	test("에러를 핸들링한다.", async () => {
+		res.locals.user = jest.fn();
+		const err = { msg: "title is required" };
+		const rejectPromise = Promise.reject(err);
+		Product.create.mockReturnValue(rejectPromise);
+		await postController.productpost(req, res, next);
+		expect(next).toBeCalledWith(err);
+	});
 });
 
-test("200 상태코드와 json형태로 응답해야한다.", async () => {
-	Product.create.mockReturnValue(newProduct);
-	res.locals.user = jest.fn();
-	await postController.productpost(req, res, next);
+describe("productController, newone", () => {
+	test("newone function이 실행되어야한다.", () => {
+		expect(typeof postController.newone).toBe("function");
+	});
 
-	expect(res.statusCode).toBe(200);
-	expect(res._isEndCalled()).toBeTruthy();
-	expect(res._getJSONData()).toStrictEqual(newProduct);
+	test("Product.find({onSale:true})를 실행시켜야한다.", async () => {
+		await postController.newone(req, res, next);
+		expect(Product.find).toHaveBeenCalledWith({ onSale: true });
+	});
+
+	test("성공할 경우, {okay : true, productList : {}}의 형식으로 응답한다.", async () => {
+		Product.find.mockReturnValue(allProducts);
+		await postController.newone(req, res, next);
+		expect(res._getData()).toStrictEqual({
+			okay: true,
+			productList: allProducts,
+		});
+	});
 });
 
-test("에러를 핸들링한다.", async () => {
-	res.locals.user = jest.fn();
-	const err = { msg: "error!" };
-	const rejectPromise = Promise.reject(err);
-	Product.create.mockReturnValue(rejectPromise);
-	await postController.productpost(req, res, next);
-	expect(next).toBeCalled();
+describe("postController, detail", () => {
+	test("detail함수가 실행되어야한다.", () => {
+		expect(typeof postController.detail).toBe("function");
+	});
+	test("Product.findOneAndUpdate가 실행되어야한다.", async () => {
+		await postController.detail(req, res);
+		expect(Product.findOneAndUpdate).toHaveBeenCalled();
+	});
+
+	test("Product를 게시한 user에 대해 User.findOne이 실행되어야한다.", async () => {
+		Product.findOneAndUpdate.mockReturnValue(newProduct);
+		await postController.detail(req, res);
+		expect(User.findOne).toHaveBeenCalled();
+	});
+
+	test("{okay: true, result: {}, seller,{} }의 형태로 응답한다.", async () => {
+		Product.findOneAndUpdate.mockReturnValue(newProduct);
+		User.findOne.mockReturnValue(newUser);
+		await postController.detail(req, res);
+		expect(res._getData()).toStrictEqual({
+			okay: true,
+			result: newProduct,
+			seller: newUser,
+		});
+		expect(res._isEndCalled);
+	});
 });

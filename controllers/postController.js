@@ -20,8 +20,6 @@ exports.productpost = async (req, res, next) => {
 			//res.send({ image: false });
 		}
 
-		// 유효성 검사
-		// title 글자수 , sucBid 5000만 이하 , descript 300자 이하
 		const {
 			title,
 			lowbid,
@@ -160,8 +158,7 @@ exports.deadLineList = async (req, res) => {
 exports.detail = async (req, res) => {
 	const { User } = require("../schema/user");
 	const Product = require("../schema/product");
-	// res.send(req.params);
-	// console.log(req.params["id"]);
+
 	try {
 		const product = await Product.findOneAndUpdate(
 			{ _id: req.params["id"] },
@@ -173,9 +170,9 @@ exports.detail = async (req, res) => {
 			{ _id: product["sellerunique"] },
 			{ profileImg: 1, nickname: 1, _id: 1 }
 		);
-		res.json({ okay: true, result: product, seller: user });
+		res.send({ okay: true, result: product, seller: user });
 	} catch (error) {
-		res.send({ okay: false });
+		res.send({ okay: false, error });
 	}
 };
 

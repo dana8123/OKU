@@ -26,7 +26,6 @@ const { quest, questget, answer } = require("../controllers/qnaController");
 const { authMiddlesware } = require("../middlewares/auth-middleware.js");
 
 // 상품등록
-// 미들웨어 붙이고 로그인처리 필요
 productRouter.post("/", upload.array("img", 3), authMiddlesware, productpost);
 
 // 상품상세보기
