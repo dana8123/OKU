@@ -106,8 +106,8 @@ exports.newone = async (req, res) => {
 				.sort({ createAt: -1 })
 				.limit(print_count);
 		}
-		productList.push(products);
-		res.send({ okay: true, productList });
+		//productList.push(products);
+		res.send({ okay: true, productList: products });
 	} catch (error) {
 		res.send({ okay: false, error });
 		console.log(error);
