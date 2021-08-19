@@ -57,7 +57,8 @@ describe("productController, newone", () => {
 	});
 
 	test("성공할 경우, {okay : true, productList : {}}의 형식으로 응답한다.", async () => {
-		Product.find.mockReturnValue(allProducts);
+		Product.find.mockReturnValue(newProduct);
+
 		await postController.newone(req, res, next);
 		expect(res._getData()).toStrictEqual({
 			okay: true,
@@ -91,5 +92,14 @@ describe("postController, detail", () => {
 			seller: newUser,
 		});
 		expect(res._isEndCalled);
+	});
+
+	test("실패할 경우, {okay: false}의 형태로 응답하고, Error를 핸들링한다.", async () => {
+		const err = { msg: "no product information" };
+		const rejectPromise = Promise.reject(err);
+		Product.findOneAndUpdate.mockReturnValue(rejectPromise);
+		await postController.detail(req, res, next);
+		expect(res._getData()).toStrictEqual({ okay: false });
+		expect(next).toBeCalledWith(err);
 	});
 });

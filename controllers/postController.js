@@ -83,7 +83,7 @@ exports.popular = async (req, res) => {
 };
 
 //상품 목록 최신순으로 불러오기
-exports.newone = async (req, res) => {
+exports.newone = async (req, res, next) => {
 	const Product = require("../schema/product");
 	let productList = [];
 	//마지막으로 불러들인 아이템, query문으로 받아옴.
@@ -91,21 +91,9 @@ exports.newone = async (req, res) => {
 	let products;
 	const print_count = 12;
 	try {
-		//무한스크롤
-		if (lastId) {
-			//무한스크롤 도중일 경우
-			products = await Product.find({ onSale: true })
-				.sort({ createAt: -1 })
-				.where("_id")
-				.lt(lastId)
-				.limit(print_count);
-			console.log("lastId", products);
-		} else {
-			//처음 페이지에서 스크롤을 내리기 시작할 때
-			products = await Product.find({ onSale: true })
-				.sort({ createAt: -1 })
-				.limit(print_count);
-		}
+		products = await Product.find({ onSale: true })
+			.sort({ createAt: -1 })
+			.limit(print_count);
 		//productList.push(products);
 		res.send({ okay: true, productList: products });
 	} catch (error) {
@@ -155,7 +143,7 @@ exports.deadLineList = async (req, res) => {
 	}
 };
 
-exports.detail = async (req, res) => {
+exports.detail = async (req, res, next) => {
 	const { User } = require("../schema/user");
 	const Product = require("../schema/product");
 
@@ -172,7 +160,8 @@ exports.detail = async (req, res) => {
 		);
 		res.send({ okay: true, result: product, seller: user });
 	} catch (error) {
-		res.send({ okay: false, error });
+		res.send({ okay: false });
+		next(error);
 	}
 };
 
