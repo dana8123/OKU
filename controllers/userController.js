@@ -5,16 +5,15 @@ exports.signup = async (req, res) => {
 	const bcrypt = require("bcrypt");
 	const { password, password2, nickname, email } = req.body;
 	const saltRounds = 10;
+	const { User } = require("../schema/user");
 	const checkEmail = await User.findOne({ email });
 	const checkNickname = await User.findOne({ nickname });
 	let result = { msg: { dupMsg: false } };
-	const { User } = require("../schema/user");
 
 	try {
 		//userEmail 중복 여부 체크
-
 		if (checkEmail) {
-			throw (result.msg.dupMsg = "eamil False");
+			throw (result.msg.dupMsg = "email False");
 		}
 
 		if (password != password2) {
