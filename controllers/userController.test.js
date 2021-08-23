@@ -40,3 +40,41 @@ describe("userController.signUp", () => {
 		expect(res._getData()).toStrictEqual({ msg: { dupMsg: true } });
 	});
 });
+
+describe("userController, login", () => {
+	test("login 함수를 실행한다.", () => {
+		expect(typeof userController.login).toBe("function");
+	});
+
+	test("User.findOne을 실행한다.", async () => {
+		await userController.login(req, res);
+		expect(User.findOne).toHaveBeenCalled();
+	});
+
+	test("올바른 로그인 정보라면, access_token,nickname,userId를 리턴한다.", async () => {
+		const token =
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjk3OTMxMjMsImlhdCI6MTYyOTcwNjcyM30.UBS0aly49SBA3moJMfOOc2JqPAieLirSW6paG5ZyoTI";
+		User.findOne.mockReturnValue(oldUser);
+		bycrypt.compare.mockReturnValue("somthing..");
+		jwt.sign.mockReturnValue(token);
+		await userController.login(req, res);
+		expect(res._getData()).toEqual({
+			access_token: token,
+			nickname: oldUser.nickname,
+			userId: oldUser._id,
+		});
+	});
+
+	test("없는 유저라면, msg: email False 를 리턴한다.", async () => {
+		User.findOne.mockReturnValue(null);
+		await userController.login(req, res);
+		expect(res._getData()).toStrictEqual({ msg: "email False" });
+	});
+
+	test("비밀번호 불일치 시, msg: password False 를 리턴한다.", async () => {
+		User.findOne.mockReturnValue(oldUser);
+		bycrypt.compare.mockReturnValue(null);
+		await userController.login(req, res);
+		expect(res._getData()).toStrictEqual({ msg: "password False" });
+	});
+});
