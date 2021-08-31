@@ -43,11 +43,26 @@ const initSocket = (socket) => {
 		// 특정 room에 join
 		watchJoin: () => {
 			watchEvent("join", async (data) => {
+				const sizeof = require("object-sizeof");
 				const Chat = require("./schema/chathistory");
 				const { room } = data;
+				let today = new Date();
+				let thisMonth = today.getMonth();
+				let oneMonthAgo = new Date();
+				oneMonthAgo.setUTCMonth(thisMonth - 1);
 				socket.join(room);
-				const chats = await Chat.find({ room });
-				console.log("Hello watchJoin!");
+				const chats = await Chat.find({
+					room,
+					time: {
+						$gte: oneMonthAgo.toISOString(),
+						$lte: today.toISOString(),
+					},
+				})
+					.limit(30)
+					.lean();
+
+				console.log(sizeof(chats));
+
 				console.log(socket.rooms.size);
 				notifyToChat("load", chats);
 			});
